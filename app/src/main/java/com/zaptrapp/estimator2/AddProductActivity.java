@@ -27,6 +27,10 @@ public class AddProductActivity extends AppCompatActivity {
     private EditText etAddVaFive;
     private EditText etAddVaSix;
     private EditText etAddVaAboveSix;
+    private RadioGroup rgCustomVa;
+    private RadioButton rbVaDefault;
+    private RadioButton rbVaCustom;
+
     private void initView() {
         rgAdd = (RadioGroup) findViewById(R.id.rg_add);
         rbAddProduct = (RadioButton) findViewById(R.id.rb_add_product);
@@ -45,6 +49,9 @@ public class AddProductActivity extends AppCompatActivity {
         etAddVaFive = (EditText) findViewById(R.id.et_add_va_five);
         etAddVaSix = (EditText) findViewById(R.id.et_add_va_six);
         etAddVaAboveSix = (EditText) findViewById(R.id.et_add_va_above_six);
+        rgCustomVa = (RadioGroup) findViewById(R.id.rg_custom_va);
+        rbVaDefault = (RadioButton) findViewById(R.id.rb_va_default);
+        rbVaCustom = (RadioButton) findViewById(R.id.rb_va_custom);
     }
 
     @Override
@@ -58,7 +65,7 @@ public class AddProductActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 addProductMode();
-        }
+            }
         });
 
         rbAddVa.setOnClickListener(new View.OnClickListener() {
@@ -69,11 +76,35 @@ public class AddProductActivity extends AppCompatActivity {
         });
 
 
+
+
+    }
+
+    private void showCustomVAInput() {
+        layoutAddVa.setVisibility(View.VISIBLE);
     }
 
     private void addProductMode() {
         layoutAddProduct.setVisibility(View.VISIBLE);
         rgAddGoldOrSilver.setVisibility(View.VISIBLE);
+        layoutAddVa.setVisibility(View.GONE);
+        rgCustomVa.setVisibility(View.VISIBLE);
+        rbVaCustom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showCustomVAInput();
+            }
+        });
+        rbVaDefault.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDefaultProductInput();
+            }
+        });
+
+    }
+
+    private void showDefaultProductInput() {
         layoutAddVa.setVisibility(View.GONE);
     }
 
@@ -81,14 +112,15 @@ public class AddProductActivity extends AppCompatActivity {
         layoutAddProduct.setVisibility(View.GONE);
         rgAddGoldOrSilver.setVisibility(View.VISIBLE);
         layoutAddVa.setVisibility(View.VISIBLE);
+        rgCustomVa.setVisibility(View.GONE);
     }
 
     private void initDisplayViews() {
         layoutAddProduct.setVisibility(View.GONE);
         rgAddGoldOrSilver.setVisibility(View.GONE);
         layoutAddVa.setVisibility(View.GONE);
+        rgCustomVa.setVisibility(View.GONE);
     }
-
 
 
 }

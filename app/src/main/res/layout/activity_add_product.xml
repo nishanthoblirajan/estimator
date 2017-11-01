@@ -24,7 +24,23 @@
             android:layout_height="wrap_content"
             android:text="Value Added" />
     </RadioGroup>
+    <RadioGroup
+        android:id="@+id/rg_custom_va"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <RadioButton
+            android:id="@+id/rb_va_default"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Default VA" />
+
+        <RadioButton
+            android:id="@+id/rb_va_custom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Custom VA" />
+    </RadioGroup>
     <RadioGroup
         android:id="@+id/rg_add_gold_or_silver"
         android:layout_width="match_parent"
