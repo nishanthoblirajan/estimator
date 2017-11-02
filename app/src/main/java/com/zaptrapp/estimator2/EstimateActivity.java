@@ -3,7 +3,7 @@ package com.zaptrapp.estimator2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,8 +13,30 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.zaptrapp.estimator2.Models.VA;
 
 public class EstimateActivity extends AppCompatActivity {
+
+    //required VAs
+    double lessThanOne;
+    double one;
+    double two;
+    double three;
+    double four;
+    double five;
+    double six;
+    double greaterThanSix;
+
+
+
+    public static final String TAG = EstimateActivity.class.getSimpleName();
 
     private EditText etGramRate;
     private EditText etProductGram;
@@ -44,15 +66,72 @@ public class EstimateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estimate);
+        initDatabase();
         initView();
+    }
+
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+    private void initDatabase() {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("estimator2");
     }
 
 
     //On Estimate Button Click
     public void onClickEstimate(View view) {
+        String product_estimate = goldOrSilver();
+        Toast.makeText(this, product_estimate, Toast.LENGTH_SHORT).show();
+        retrieveDataFromFirebase(product_estimate);
 
     }
 
+    private void retrieveDataFromFirebase(String product_estimate) {
+        Log.d(TAG, "retrieveDataFromFirebase: "+product_estimate);
+        DatabaseReference databaseReference1 = firebaseDatabase.getReference("estimator2/VA/"+product_estimate);
+        databaseReference1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                VA valueAdded = dataSnapshot.getValue(VA.class);
+                Log.d(TAG,valueAdded.toString());
+                initVAs(valueAdded);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void initVAs(VA valueAdded) {
+        double lessThanOne;
+        double one;
+        double two;
+        double three;
+        double four;
+        double five;
+        double six;
+        double greaterThanSix;
+
+    }
+
+    private String goldOrSilver() {
+        int product_id = rgProduct.getCheckedRadioButtonId();
+        String product = "Error";
+        switch (product_id) {
+            case R.id.rb_gold:
+                product = "gold";
+                break;
+            case R.id.rb_silver:
+                product = "silver";
+                break;
+            default:
+                product = "Error";
+                break;
+        }
+        return product;
+    }
     //onOptionsmenuCreated
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

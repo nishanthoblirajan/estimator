@@ -1,124 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.zaptrapp.estimator2.AddProductActivity">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context="com.zaptrapp.estimator2.AddProductActivity">
+    <ScrollView android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="vertical">
 
-    <RadioGroup
-        android:id="@+id/rg_add"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            <RadioGroup
+                android:id="@+id/rg_add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <RadioButton
-            android:id="@+id/rb_add_product"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Product" />
+                <RadioButton
+                    android:id="@+id/rb_add_product"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Product"/>
 
-        <RadioButton
-            android:id="@+id/rb_add_va"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Value Added" />
-    </RadioGroup>
-    <RadioGroup
-        android:id="@+id/rg_custom_va"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/rb_add_va"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Value Added"/>
+            </RadioGroup>
 
-        <RadioButton
-            android:id="@+id/rb_va_default"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Default VA" />
+            <RadioGroup
+                android:id="@+id/rg_add_gold_or_silver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <RadioButton
-            android:id="@+id/rb_va_custom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Custom VA" />
-    </RadioGroup>
-    <RadioGroup
-        android:id="@+id/rg_add_gold_or_silver"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/rb_add_gold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gold"/>
 
-        <RadioButton
-            android:id="@+id/rb_add_va_gold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Gold" />
+                <RadioButton
+                    android:id="@+id/rb_add_silver"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Silver"/>
+            </RadioGroup>
+            <RadioGroup
+                android:id="@+id/rg_custom_va"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <RadioButton
-            android:id="@+id/rb_add_va_silver"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Silver" />
-    </RadioGroup>
+                <RadioButton
+                    android:id="@+id/rb_va_default"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Default VA"/>
 
-    <LinearLayout
-        android:id="@+id/layout_add_product"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+                <RadioButton
+                    android:id="@+id/rb_va_custom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Custom VA"/>
+            </RadioGroup>
+            <LinearLayout
+                android:id="@+id/layout_add_product"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/et_add_product_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Product Name" />
-    </LinearLayout>
+                <EditText
+                    android:id="@+id/et_add_product_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Product Name"/>
+            </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/layout_add_va"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/layout_add_va"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/et_add_va_below_one"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Less than 1g" />
+                <EditText
+                    android:id="@+id/et_add_va_below_one"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:hint="Less than 1g"/>
 
-        <EditText
-            android:id="@+id/et_add_va_one"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="1g" />
+                <EditText
+                    android:id="@+id/et_add_va_one"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:hint="1g"/>
 
-        <EditText
-            android:id="@+id/et_add_va_two"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="2g" />
-        <EditText
-            android:id="@+id/et_add_va_three"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="3g" />
-        <EditText
-            android:id="@+id/et_add_va_four"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="4g" />
-        <EditText
-            android:id="@+id/et_add_va_five"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="5g" />
-        <EditText
-            android:id="@+id/et_add_va_six"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="6g" />
-        <EditText
-            android:id="@+id/et_add_va_above_six"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Greater than 6g" />
-    </LinearLayout>
+                <EditText
+                    android:id="@+id/et_add_va_two"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:hint="2g"/>
+                <EditText
+                    android:id="@+id/et_add_va_three"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:hint="3g"/>
+                <EditText
+                    android:id="@+id/et_add_va_four"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:hint="4g"/>
+                <EditText
+                    android:id="@+id/et_add_va_five"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:hint="5g"/>
+                <EditText
+                    android:id="@+id/et_add_va_six"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:hint="6g"/>
+                <EditText
+                    android:id="@+id/et_add_va_above_six"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:hint="Greater than 6g"/>
+            </LinearLayout>
+
+            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:id="@+id/bt_add_product"
+            android:onClick="onClickAddProduct"
+            android:text="Add Product"/>
+            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:id="@+id/bt_add_va"
+                    android:onClick="onClickAddVA"
+            android:text="Add VA"/>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
