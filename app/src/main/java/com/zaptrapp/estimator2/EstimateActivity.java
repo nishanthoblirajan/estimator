@@ -34,7 +34,6 @@ import com.zaptrapp.estimator2.Models.VA;
 public class EstimateActivity extends AppCompatActivity {
 
 
-
     public static final String TAG = EstimateActivity.class.getSimpleName();
 
     private EditText etGramRate;
@@ -80,12 +79,15 @@ public class EstimateActivity extends AppCompatActivity {
         rgProduct.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
+                switch (checkedId) {
                     case R.id.rb_gold:
                         initRecycler("gold");
+                        setRecyclerViewWithQuery(databaseReference.child("gold"));
                         break;
                     case R.id.rb_silver:
                         initRecycler("silver");
+                        setRecyclerViewWithQuery(databaseReference.child("silver"));
+
                         break;
                     default:
                         break;
@@ -113,9 +115,6 @@ public class EstimateActivity extends AppCompatActivity {
     }
 
 
-
-
-
     FirebaseRecyclerAdapter<Product, ProductHolder> adapter;
 
     private void initRecycler(String product) {
@@ -125,7 +124,7 @@ public class EstimateActivity extends AppCompatActivity {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onDataChange: "+dataSnapshot.getValue().toString());
+                Log.d(TAG, "onDataChange: " + dataSnapshot.getValue().toString());
             }
 
             @Override
@@ -136,10 +135,14 @@ public class EstimateActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
+        setRecyclerViewWithQuery(query);
+    }
+
+    private void setRecyclerViewWithQuery(Query query) {
         FirebaseRecyclerOptions<Product> productOptions =
                 new FirebaseRecyclerOptions.Builder<Product>()
-                .setQuery(query,Product.class)
-                .build();
+                        .setQuery(query, Product.class)
+                        .build();
         adapter = new FirebaseRecyclerAdapter<Product, ProductHolder>(productOptions) {
             @Override
             protected void onBindViewHolder(ProductHolder holder, int position, Product model) {
@@ -151,18 +154,21 @@ public class EstimateActivity extends AppCompatActivity {
             public ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 Log.d(TAG, "initRecycler onCreateViewHolder: ");
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recycler_items,parent,false);
+                        .inflate(R.layout.recycler_items, parent, false);
                 return new ProductHolder(view);
             }
         };
 
         recyclerView.setAdapter(adapter);
     }
+
+
     @Override
     protected void onStart() {
         super.onStart();
         adapter.startListening();
     }
+
     private String goldOrSilver() {
         int product_id = rgProduct.getCheckedRadioButtonId();
         String product = "Error";
@@ -229,6 +235,7 @@ public class EstimateActivity extends AppCompatActivity {
     double five;
     double six;
     double aboveSix;
+
     //onCancelled
     private void initVAs() {
         belowOne = 0;
@@ -240,6 +247,7 @@ public class EstimateActivity extends AppCompatActivity {
         six = 0;
         aboveSix = 0;
     }
+
     //on receiving the value from the Firebase Database
     private void initVAs(VA valueAdded) {
         belowOne = valueAdded.getLessThanOne();
