@@ -2,6 +2,7 @@ package com.zaptrapp.estimator2;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,12 +11,16 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.zaptrapp.estimator2.Models.Product;
 import com.zaptrapp.estimator2.Models.VA;
 
 public class AddProductActivity extends AppCompatActivity {
+    public static final String TAG = AddProductActivity.class.getSimpleName();
 
     private RadioGroup rgAdd;
     private RadioButton rbAddProduct;
@@ -124,6 +129,25 @@ public class AddProductActivity extends AppCompatActivity {
             }
         });
 
+        productType();
+
+
+    }
+
+    private void productType() {
+        rbAddGold.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                retrieveDataFromFirebase("gold");
+            }
+        });
+
+        rbAddSilver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                retrieveDataFromFirebase("silver");
+            }
+        });
     }
 
     private void showDefaultProductInput() {
@@ -171,7 +195,6 @@ public class AddProductActivity extends AppCompatActivity {
 
 
     public void onClickAddProduct(View view) {
-        String product = goldOrSilver();
 
         int va_choice = rgCustomVa.getCheckedRadioButtonId();
         String vaChoice = "Error";
@@ -186,8 +209,6 @@ public class AddProductActivity extends AppCompatActivity {
                 vaChoice = "Error";
                 break;
         }
-
-
         Product productModel;
         switch (vaChoice) {
             case "custom":
@@ -203,36 +224,56 @@ public class AddProductActivity extends AppCompatActivity {
                         doubleFromET(etAddVaAboveSix));
                 break;
             case "default":
-                productModel = new Product(stringFromET(etAddProductName));
+                productModel = new Product(
+                        stringFromET(etAddProductName),
+                        belowOne,
+                        one,
+                        two,
+                        three,
+                        four,
+                        five,
+                        six,
+                        aboveSix);
                 break;
             default:
                 productModel = new Product();
                 break;
         }
-        databaseReference.child(product).child(productModel.getProductName()).setValue(productModel);
-
-
-    }
-
-    private String goldOrSilver() {
-        int product_id = rgAddGoldOrSilver.getCheckedRadioButtonId();
-        String product = "Error";
-        switch (product_id) {
+        int product_type = rgAddGoldOrSilver.getCheckedRadioButtonId();
+        String product_choice = "Error";
+        switch (product_type) {
             case R.id.rb_add_gold:
-                product = "gold";
+                product_choice = "gold";
                 break;
             case R.id.rb_add_silver:
-                product = "silver";
+                product_choice = "silver";
                 break;
             default:
-                product = "Error";
+                product_choice = "Error";
                 break;
         }
-        return product;
+
+        databaseReference.child(product_choice).child(productModel.getProductName()).setValue(productModel);
+
+
     }
 
     public void onClickAddVA(View view) {
-        String product = goldOrSilver();
+        int product_type = rgAddGoldOrSilver.getCheckedRadioButtonId();
+        String product_choice = "Error";
+        switch (product_type) {
+            case R.id.rb_add_gold:
+                product_choice = "gold";
+                break;
+            case R.id.rb_add_silver:
+                product_choice = "silver";
+                break;
+            default:
+                product_choice = "Error";
+                break;
+        }
+
+        String product = product_choice;
         VA vaModel = new VA(
                 product,
                 doubleFromET(etAddVaBelowOne),
@@ -246,6 +287,58 @@ public class AddProductActivity extends AppCompatActivity {
 
         databaseReference.child("VA").child(vaModel.getMaterial()).setValue(vaModel);
 
+    }
+
+
+
+    ///////Retrival of Default VAs from Firebase Database
+    private void retrieveDataFromFirebase(String product_estimate) {
+        Log.d(TAG, "retrieveDataFromFirebase: " + product_estimate);
+        DatabaseReference databaseReference1 = firebaseDatabase.getReference("estimator2/VA/" + product_estimate);
+        databaseReference1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                VA valueAdded = dataSnapshot.getValue(VA.class);
+                Log.d(TAG, valueAdded.toString());
+                initVAs(valueAdded);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                initVAs();
+            }
+        });
+    }
+    //required VAs
+    double belowOne;
+    double one;
+    double two;
+    double three;
+    double four;
+    double five;
+    double six;
+    double aboveSix;
+    //onCancelled
+    private void initVAs() {
+        belowOne = 0;
+        one = 0;
+        two = 0;
+        three = 0;
+        four = 0;
+        five = 0;
+        six = 0;
+        aboveSix = 0;
+    }
+    //on receiving the value from the Firebase Database
+    private void initVAs(VA valueAdded) {
+        belowOne = valueAdded.getLessThanOne();
+        one = valueAdded.getOne();
+        two = valueAdded.getTwo();
+        three = valueAdded.getThree();
+        four = valueAdded.getFour();
+        five = valueAdded.getFive();
+        six = valueAdded.getSix();
+        aboveSix = valueAdded.getGreaterThanSix();
     }
 
 }
