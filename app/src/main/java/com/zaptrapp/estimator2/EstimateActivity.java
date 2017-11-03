@@ -196,6 +196,10 @@ public class EstimateActivity extends AppCompatActivity {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        //set the values for the VAs
+                        initVAFromProduct(model);
+
+                        //testing
                         testingTv.setText(model.toString());
                     }
                 });
@@ -242,6 +246,10 @@ public class EstimateActivity extends AppCompatActivity {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        //set the values for the VAs
+                        initVAFromProduct(model);
+
+                        //testing
                         testingTv.setText(model.toString());
                     }
                 });
@@ -324,5 +332,18 @@ public class EstimateActivity extends AppCompatActivity {
         five = valueAdded.getFive();
         six = valueAdded.getSix();
         aboveSix = valueAdded.getGreaterThanSix();
+        Log.d(TAG, "VALUES: "+valueAdded.toString());
+    }
+    
+    private void initVAFromProduct(Product product){
+        belowOne = product.getLessThanOne();
+        one = product.getOne();
+        two = product.getTwo();
+        three = product.getThree();
+        four = product.getFour();
+        five = product.getFive();
+        six = product.getSix();
+        aboveSix = product.getGreaterThanSix();
+        Log.d(TAG, "VALUES: "+product.toString());
     }
 }
