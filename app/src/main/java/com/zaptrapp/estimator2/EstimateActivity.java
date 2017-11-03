@@ -46,7 +46,8 @@ public class EstimateActivity extends AppCompatActivity {
     private RadioButton rbKdm;
     private Button btEstimate;
     private TextView tvEstimateOut;
-    private RecyclerView recyclerView;
+    private RecyclerView goldRecyclerView;
+    private RecyclerView silverRecyclerView;
 
     //View initalization
     private void initView() {
@@ -60,7 +61,8 @@ public class EstimateActivity extends AppCompatActivity {
         rbKdm = (RadioButton) findViewById(R.id.rb_kdm);
         btEstimate = (Button) findViewById(R.id.bt_estimate);
         tvEstimateOut = (TextView) findViewById(R.id.tv_estimate_out);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        goldRecyclerView = (RecyclerView) findViewById(R.id.gold_recyclerView);
+        silverRecyclerView = (RecyclerView) findViewById(R.id.silver_recyclerView);
     }
 
     @Override
@@ -69,32 +71,51 @@ public class EstimateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_estimate);
         initDatabase();
         initView();
-        initRecycler(goldOrSilver());
-        onCheckChangeListener();
+        initRadioButtons();
+        initGoldRecycler("gold");
+        initSilverRecycler("silver");
 
     }
 
-    private void onCheckChangeListener() {
-
+    private void initRadioButtons() {
         rgProduct.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i) {
                     case R.id.rb_gold:
-                        initRecycler("gold");
-                        setRecyclerViewWithQuery(databaseReference.child("gold"));
+                        product = "gold";
+                        Log.d(TAG, "onCheckedChanged: " + product);
+
                         break;
                     case R.id.rb_silver:
-                        initRecycler("silver");
-                        setRecyclerViewWithQuery(databaseReference.child("silver"));
-
+                        product = "silver";
+                        Log.d(TAG, "onCheckedChanged: " + product);
                         break;
                     default:
+                        product = "silver";
+                        Log.d(TAG, "onCheckedChanged: " + product);
                         break;
                 }
+                showRecycler(product);
             }
         });
+    }
 
+    private void showRecycler(String product) {
+        switch (product) {
+            case "silver":
+                silverRecyclerView.setVisibility(View.VISIBLE);
+                goldRecyclerView.setVisibility(View.GONE);
+                break;
+            case "gold":
+                goldRecyclerView.setVisibility(View.VISIBLE);
+                silverRecyclerView.setVisibility(View.GONE);
+                break;
+            default:
+                goldRecyclerView.setVisibility(View.GONE);
+                silverRecyclerView.setVisibility(View.GONE);
+                break;
+        }
     }
 
     FirebaseDatabase firebaseDatabase;
@@ -108,83 +129,13 @@ public class EstimateActivity extends AppCompatActivity {
 
     //On Estimate Button Click
     public void onClickEstimate(View view) {
-        String product_estimate = goldOrSilver();
+        String product_estimate = product;
         Toast.makeText(this, product_estimate, Toast.LENGTH_SHORT).show();
         retrieveDataFromFirebase(product_estimate);
 
     }
 
-
-    FirebaseRecyclerAdapter<Product, ProductHolder> adapter;
-
-    private void initRecycler(String product) {
-        Log.d(TAG, "initRecycler: ");
-        Query query = databaseReference.child(product);
-        Log.d(TAG, "initRecycler: " + query.getRef());
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onDataChange: " + dataSnapshot.getValue().toString());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-
-        setRecyclerViewWithQuery(query);
-    }
-
-    private void setRecyclerViewWithQuery(Query query) {
-        FirebaseRecyclerOptions<Product> productOptions =
-                new FirebaseRecyclerOptions.Builder<Product>()
-                        .setQuery(query, Product.class)
-                        .build();
-        adapter = new FirebaseRecyclerAdapter<Product, ProductHolder>(productOptions) {
-            @Override
-            protected void onBindViewHolder(ProductHolder holder, int position, Product model) {
-                Log.d(TAG, "initRecycler onBindViewHolder: ");
-                holder.product.setText(model.getProductName());
-            }
-
-            @Override
-            public ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                Log.d(TAG, "initRecycler onCreateViewHolder: ");
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recycler_items, parent, false);
-                return new ProductHolder(view);
-            }
-        };
-
-        recyclerView.setAdapter(adapter);
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        adapter.startListening();
-    }
-
-    private String goldOrSilver() {
-        int product_id = rgProduct.getCheckedRadioButtonId();
-        String product = "Error";
-        switch (product_id) {
-            case R.id.rb_gold:
-                product = "gold";
-                break;
-            case R.id.rb_silver:
-                product = "silver";
-                break;
-            default:
-                product = "Error";
-                break;
-        }
-        return product;
-    }
+    String product = "silver";
 
     //onOptionsmenuCreated
     @Override
@@ -207,7 +158,106 @@ public class EstimateActivity extends AppCompatActivity {
         }
     }
 
-    ///////Retrival of Default VAs from Firebase Database
+    ////////////////////////////////////////Setting the gold and silver recycler view///////////////////////////////////
+    FirebaseRecyclerAdapter<Product, ProductHolder> goldAdapter;
+    FirebaseRecyclerAdapter<Product, ProductHolder> silverAdapter;
+
+    Query goldQuery;
+    Query silverQuery;
+
+    private void initGoldRecycler(String product) {
+        Log.d(TAG, "initGoldRecycler: ");
+        goldQuery = databaseReference.child(product);
+        Log.d(TAG, "initGoldRecycler: " + goldQuery.getRef());
+        goldRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        goldQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange: " + dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        FirebaseRecyclerOptions<Product> productOptions =
+                new FirebaseRecyclerOptions.Builder<Product>()
+                        .setQuery(goldQuery, Product.class)
+                        .build();
+        goldAdapter = new FirebaseRecyclerAdapter<Product, ProductHolder>(productOptions) {
+            @Override
+            protected void onBindViewHolder(ProductHolder holder, int position, Product model) {
+                Log.d(TAG, "initGoldRecycler onBindViewHolder: ");
+                holder.product.setText(model.getProductName());
+            }
+
+            @Override
+            public ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                Log.d(TAG, "initGoldRecycler onCreateViewHolder: ");
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.recycler_items, parent, false);
+                return new ProductHolder(view);
+            }
+        };
+        goldRecyclerView.setAdapter(goldAdapter);
+    }
+
+    private void initSilverRecycler(String product) {
+        Log.d(TAG, "initSilverRecycler: ");
+        silverQuery = databaseReference.child(product);
+        Log.d(TAG, "initSilverRecycler: " + silverQuery.getRef());
+        silverRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        silverQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange: " + dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        FirebaseRecyclerOptions<Product> productOptions =
+                new FirebaseRecyclerOptions.Builder<Product>()
+                        .setQuery(silverQuery, Product.class)
+                        .build();
+        silverAdapter = new FirebaseRecyclerAdapter<Product, ProductHolder>(productOptions) {
+            @Override
+            protected void onBindViewHolder(ProductHolder holder, int position, Product model) {
+                Log.d(TAG, "initSilverRecycler onBindViewHolder: ");
+                holder.product.setText(model.getProductName());
+            }
+
+            @Override
+            public ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                Log.d(TAG, "initSilverRecycler onCreateViewHolder: ");
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.recycler_items, parent, false);
+                return new ProductHolder(view);
+            }
+        };
+        silverRecyclerView.setAdapter(silverAdapter);
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        goldAdapter.startListening();
+        silverAdapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        goldAdapter.stopListening();
+        silverAdapter.stopListening();
+    }
+
+    /////////////////////////////////////Retrival of Default VAs from Firebase Database////////////////////////////////
     private void retrieveDataFromFirebase(String product_estimate) {
         Log.d(TAG, "retrieveDataFromFirebase: " + product_estimate);
         DatabaseReference databaseReference1 = firebaseDatabase.getReference("estimator2/VA/" + product_estimate);
