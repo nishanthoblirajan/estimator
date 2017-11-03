@@ -64,6 +64,10 @@
             android:text="KDM"
             android:id="@+id/rb_kdm"/>
     </RadioGroup>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/testing_tv" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

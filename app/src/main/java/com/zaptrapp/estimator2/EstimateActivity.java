@@ -48,6 +48,7 @@ public class EstimateActivity extends AppCompatActivity {
     private TextView tvEstimateOut;
     private RecyclerView goldRecyclerView;
     private RecyclerView silverRecyclerView;
+    private TextView testingTv;
 
     //View initalization
     private void initView() {
@@ -63,6 +64,7 @@ public class EstimateActivity extends AppCompatActivity {
         tvEstimateOut = (TextView) findViewById(R.id.tv_estimate_out);
         goldRecyclerView = (RecyclerView) findViewById(R.id.gold_recyclerView);
         silverRecyclerView = (RecyclerView) findViewById(R.id.silver_recyclerView);
+        testingTv = (TextView) findViewById(R.id.testing_tv);
     }
 
     @Override
@@ -188,9 +190,15 @@ public class EstimateActivity extends AppCompatActivity {
                         .build();
         goldAdapter = new FirebaseRecyclerAdapter<Product, ProductHolder>(productOptions) {
             @Override
-            protected void onBindViewHolder(ProductHolder holder, int position, Product model) {
+            protected void onBindViewHolder(ProductHolder holder, int position, final Product model) {
                 Log.d(TAG, "initGoldRecycler onBindViewHolder: ");
                 holder.product.setText(model.getProductName());
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        testingTv.setText(model.toString());
+                    }
+                });
             }
 
             @Override
@@ -200,6 +208,8 @@ public class EstimateActivity extends AppCompatActivity {
                         .inflate(R.layout.recycler_items, parent, false);
                 return new ProductHolder(view);
             }
+
+
         };
         goldRecyclerView.setAdapter(goldAdapter);
     }
@@ -226,9 +236,15 @@ public class EstimateActivity extends AppCompatActivity {
                         .build();
         silverAdapter = new FirebaseRecyclerAdapter<Product, ProductHolder>(productOptions) {
             @Override
-            protected void onBindViewHolder(ProductHolder holder, int position, Product model) {
+            protected void onBindViewHolder(ProductHolder holder, int position, final Product model) {
                 Log.d(TAG, "initSilverRecycler onBindViewHolder: ");
                 holder.product.setText(model.getProductName());
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        testingTv.setText(model.toString());
+                    }
+                });
             }
 
             @Override

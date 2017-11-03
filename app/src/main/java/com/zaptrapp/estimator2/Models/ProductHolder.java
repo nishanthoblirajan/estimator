@@ -8,7 +8,7 @@ import android.widget.TextView;
  * Created by Nishanth on 02-Nov-17.
  */
 
-public class ProductHolder extends RecyclerView.ViewHolder {
+public class ProductHolder extends RecyclerView.ViewHolder{
     public final TextView product;
     public ProductHolder(View itemView) {
         super(itemView);

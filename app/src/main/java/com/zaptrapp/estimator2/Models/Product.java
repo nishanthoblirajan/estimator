@@ -15,6 +15,21 @@ public class Product {
     double six;
     double greaterThanSix;
 
+    @Override
+    public String toString() {
+        return "Product{" +
+                "productName='" + productName + '\'' +
+                ", lessThanOne=" + lessThanOne +
+                ", one=" + one +
+                ", two=" + two +
+                ", three=" + three +
+                ", four=" + four +
+                ", five=" + five +
+                ", six=" + six +
+                ", greaterThanSix=" + greaterThanSix +
+                '}';
+    }
+
     public Product() {
     }
 
