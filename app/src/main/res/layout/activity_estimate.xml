@@ -32,7 +32,6 @@
             android:id="@+id/rb_gold"/>
         <RadioButton
             android:layout_width="match_parent"
-            android:checked="true"
             android:layout_height="wrap_content"
             android:text="Silver"
             android:id="@+id/rb_silver"/>
