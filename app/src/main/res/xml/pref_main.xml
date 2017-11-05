@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:title="Product">
+    <PreferenceCategory android:title="Product">
         <ListPreference
-            android:title="Material Selector"
-            android:key="listPref"
             android:defaultValue="1"
             android:entries="@array/listArray"
-            android:entryValues="@array/listValues" />
+            android:entryValues="@array/listValues"
+            android:key="materialPref"
+            android:title="Material Selector" />
     </PreferenceCategory>
 </PreferenceScreen>

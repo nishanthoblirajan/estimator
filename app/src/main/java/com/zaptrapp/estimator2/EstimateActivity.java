@@ -86,7 +86,7 @@ public class EstimateActivity extends AppCompatActivity {
 
     private void initSharedPreference() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String choice = sharedPreferences.getString("listPref", "0");
+        String choice = sharedPreferences.getString("materialPref", "0");
         Toast.makeText(this, choice, Toast.LENGTH_SHORT).show();
 
         //TODO show only gold or silver based on the sharedpreference
