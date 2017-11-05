@@ -155,6 +155,9 @@ public class EstimateActivity extends AppCompatActivity {
             case R.id.menu_add:
                 startActivity(new Intent(this, AddProductActivity.class));
                 return true;
+            case R.id.menu_settings:
+                startActivity(new Intent(this,SettingsActivity.class));
+                return true;
             default:
                 return false;
         }

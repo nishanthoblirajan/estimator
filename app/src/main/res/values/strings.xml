@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Estimator2</string>
+    <string-array name="listArray">
+        <item>Gold</item>
+        <item>Silver</item>
+    </string-array>
+
+    <string-array name="listValues">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>
