@@ -1,7 +1,9 @@
 package com.zaptrapp.estimator2;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -76,7 +78,35 @@ public class EstimateActivity extends AppCompatActivity {
         initRadioButtons();
         initGoldRecycler("gold");
         initSilverRecycler("silver");
+        initSharedPreference();
 
+    }
+
+    SharedPreferences sharedPreferences;
+
+    private void initSharedPreference() {
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String choice = sharedPreferences.getString("listPref", "0");
+        Toast.makeText(this, choice, Toast.LENGTH_SHORT).show();
+
+        //TODO show only gold or silver based on the sharedpreference
+        switch (choice) {
+            case "1":
+                //This is gold
+                break;
+            case "2":
+                //This is silver
+                break;
+            default:
+                //This is default
+                break;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initSharedPreference();
     }
 
     private void initRadioButtons() {
@@ -156,7 +186,7 @@ public class EstimateActivity extends AppCompatActivity {
                 startActivity(new Intent(this, AddProductActivity.class));
                 return true;
             case R.id.menu_settings:
-                startActivity(new Intent(this,SettingsActivity.class));
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             default:
                 return false;
@@ -335,10 +365,10 @@ public class EstimateActivity extends AppCompatActivity {
         five = valueAdded.getFive();
         six = valueAdded.getSix();
         aboveSix = valueAdded.getGreaterThanSix();
-        Log.d(TAG, "VALUES: "+valueAdded.toString());
+        Log.d(TAG, "VALUES: " + valueAdded.toString());
     }
-    
-    private void initVAFromProduct(Product product){
+
+    private void initVAFromProduct(Product product) {
         belowOne = product.getLessThanOne();
         one = product.getOne();
         two = product.getTwo();
@@ -347,6 +377,6 @@ public class EstimateActivity extends AppCompatActivity {
         five = product.getFive();
         six = product.getSix();
         aboveSix = product.getGreaterThanSix();
-        Log.d(TAG, "VALUES: "+product.toString());
+        Log.d(TAG, "VALUES: " + product.toString());
     }
 }
