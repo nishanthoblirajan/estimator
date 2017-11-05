@@ -93,9 +93,17 @@ public class EstimateActivity extends AppCompatActivity {
         switch (choice) {
             case "1":
                 //This is gold
+                rbGold.setChecked(true);
+                rbGold.setEnabled(true);
+                rbSilver.setChecked(false);
+                rbSilver.setEnabled(false);
                 break;
             case "2":
                 //This is silver
+                rbGold.setChecked(false);
+                rbGold.setEnabled(false);
+                rbSilver.setChecked(true);
+                rbSilver.setEnabled(true);
                 break;
             default:
                 //This is default
