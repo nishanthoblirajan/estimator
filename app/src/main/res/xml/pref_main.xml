@@ -9,4 +9,12 @@
             android:key="materialPref"
             android:title="Material Selector" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="Printer">
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/printerArray"
+            android:entryValues="@array/printerValues"
+            android:key="printerPref"
+            android:title="Printer Selector" />
+    </PreferenceCategory>
 </PreferenceScreen>

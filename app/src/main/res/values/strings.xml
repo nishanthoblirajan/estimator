@@ -9,4 +9,14 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+
+    <string-array name="printerArray">
+        <item>Epson m30</item>
+        <item>Epson p20</item>
+    </string-array>
+
+    <string-array name="printerValues">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>
