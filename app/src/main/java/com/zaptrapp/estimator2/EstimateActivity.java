@@ -34,6 +34,10 @@ import com.zaptrapp.estimator2.Models.Product;
 import com.zaptrapp.estimator2.Models.ProductHolder;
 import com.zaptrapp.estimator2.Models.VA;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 import io.reactivex.functions.Consumer;
 
 public class EstimateActivity extends AppCompatActivity {
@@ -56,6 +60,7 @@ public class EstimateActivity extends AppCompatActivity {
     private TextView testingTv;
     private EditText etVaPercentage;
     private EditText etVaNumber;
+    private TextView tvChoiceClicked;
 
     //View initalization
     private void initView() {
@@ -74,12 +79,17 @@ public class EstimateActivity extends AppCompatActivity {
         testingTv = (TextView) findViewById(R.id.testing_tv);
         etVaPercentage = (EditText) findViewById(R.id.et_va_percentage);
         etVaNumber = (EditText) findViewById(R.id.et_va_number);
+        tvChoiceClicked = (TextView) findViewById(R.id.tv_choice_clicked);
+
+        etVaPercentage.setVisibility(View.GONE);
+        etVaNumber.setVisibility(View.GONE);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estimate);
+        initVAs();
         initDatabase();
         initView();
         initRadioButtons();
@@ -87,6 +97,66 @@ public class EstimateActivity extends AppCompatActivity {
         initSilverRecycler("silver");
         initSharedPreference();
 
+        setupListeners();
+    }
+
+    //Listeners to know whether the program gram has been inputed
+    private void setupListeners() {
+        RxTextView.textChanges(etProductGram)
+                .subscribe(new Consumer<CharSequence>() {
+                    @Override
+                    public void accept(CharSequence charSequence) throws Exception {
+                        if (charSequence.length() > 0) {
+                            showVAs();
+                            if (etGramRate.getText() != null) {
+                                double productGram = Double.parseDouble(charSequence.toString());
+                                if (productGram >= 7) {
+                                    vaPercentShow(aboveSix,etGramRate.getText().toString());
+                                } else if (productGram < 7 && productGram >= 6) {
+                                    vaPercentShow(six,etGramRate.getText().toString());
+                                } else if (productGram < 6 && productGram >= 5) {
+                                    vaPercentShow(five,etGramRate.getText().toString());
+                                } else if (productGram < 5 && productGram >= 4) {
+                                    vaPercentShow(four,etGramRate.getText().toString());
+                                } else if (productGram < 4 && productGram >= 3) {
+                                    vaPercentShow(three,etGramRate.getText().toString());
+                                } else if (productGram < 3 && productGram >= 2) {
+                                    vaPercentShow(two,etGramRate.getText().toString());
+                                } else if (productGram < 2 && productGram >= 1) {
+                                    vaPercentShow(one,etGramRate.getText().toString());
+                                } else {
+                                    vaPercentShow(belowOne,etGramRate.getText().toString());
+                                }
+                            } else {
+                                unshowVAs();
+                            }
+                        }
+                    }
+                });
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+    private void vaPercentShow(double input,String gramRateString){
+        double gramRate = Double.parseDouble(gramRateString);
+        etVaPercentage.setHint(String.valueOf(input)+"%");
+        double vaNumberDouble = (input/100)*gramRate;
+        etVaNumber.setHint(String.valueOf(round(vaNumberDouble,2)));
+    }
+
+    private void unshowVAs() {
+        etVaPercentage.setVisibility(View.GONE);
+        etVaNumber.setVisibility(View.GONE);
+    }
+
+    private void showVAs() {
+        etVaPercentage.setVisibility(View.VISIBLE);
+        etVaNumber.setVisibility(View.VISIBLE);
     }
 
     SharedPreferences sharedPreferences;
@@ -210,6 +280,7 @@ public class EstimateActivity extends AppCompatActivity {
         }
     }
 
+
     ////////////////////////////////////////Setting the gold and silver recycler view///////////////////////////////////
     FirebaseRecyclerAdapter<Product, ProductHolder> goldAdapter;
     FirebaseRecyclerAdapter<Product, ProductHolder> silverAdapter;
@@ -250,7 +321,9 @@ public class EstimateActivity extends AppCompatActivity {
                         initVAFromProduct(model);
                         //testing
                         testingTv.setText(model.toString());
-                        listenForProductGramEntry();
+                        tvChoiceClicked.setText(model.getProductName());
+                        setupListeners();
+
                     }
                 });
             }
@@ -266,49 +339,6 @@ public class EstimateActivity extends AppCompatActivity {
 
         };
         goldRecyclerView.setAdapter(goldAdapter);
-    }
-
-    private void listenForProductGramEntry() {
-        try {
-
-            RxTextView.textChanges(etProductGram)
-                    .subscribe(new Consumer<CharSequence>() {
-                        @Override
-                        public void accept(CharSequence charSequence) throws Exception {
-                            double productGram = Double.parseDouble(charSequence.toString());
-                            if (productGram >= 7) {
-                                vaPercentShow(aboveSix);
-                            } else if (productGram < 7 && productGram >= 6) {
-                                vaPercentShow(six);
-                            } else if (productGram < 6 && productGram >= 5) {
-                                vaPercentShow(five);
-                            } else if (productGram < 5 && productGram >= 4) {
-                                vaPercentShow(four);
-                            } else if (productGram < 4 && productGram >= 3) {
-                                vaPercentShow(three);
-                            } else if (productGram < 3 && productGram >= 2) {
-                                vaPercentShow(two);
-                            } else if (productGram < 2 && productGram >= 1) {
-                                vaPercentShow(one);
-                            } else {
-                                vaPercentShow(belowOne);
-                            }
-                        }
-                    });
-        }catch (Exception e){
-
-        }
-    }
-
-    private void vaPercentShow(double input){
-        etVaPercentage.setHint(String.valueOf(input));
-        vaNumberShow(input);
-    }
-
-    private void vaNumberShow(double input){
-        double gramRate = Double.parseDouble(etGramRate.getText().toString());
-        double vaPercent = Double.parseDouble(etVaPercentage.getHint().toString());
-        etVaNumber.setHint(String.valueOf((vaPercent/100)*gramRate));
     }
 
     private void initSilverRecycler(String product) {
@@ -343,7 +373,8 @@ public class EstimateActivity extends AppCompatActivity {
                         initVAFromProduct(model);
                         //testing
                         testingTv.setText(model.toString());
-                        listenForProductGramEntry();
+                        tvChoiceClicked.setText(model.getProductName());
+                        setupListeners();
 
                     }
                 });

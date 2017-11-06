@@ -22,10 +22,15 @@
         android:id="@+id/et_product_gram" />
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/rg_product">
+        android:id="@+id/rg_product"
+        android:layout_weight="1">
         <RadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,6 +42,16 @@
             android:text="Silver"
             android:id="@+id/rb_silver"/>
     </RadioGroup>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/tv_choice_clicked"
+            android:layout_gravity="center_vertical"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:text="Choice Clicked"/>
+    </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/gold_recyclerView"
         android:layout_width="match_parent"
