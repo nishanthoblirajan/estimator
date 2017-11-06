@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -30,13 +32,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.zaptrapp.estimator2.Models.Product;
 import com.zaptrapp.estimator2.Models.ProductHolder;
 import com.zaptrapp.estimator2.Models.VA;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 
 import io.reactivex.functions.Consumer;
 
@@ -44,7 +46,24 @@ public class EstimateActivity extends AppCompatActivity {
 
 
     public static final String TAG = EstimateActivity.class.getSimpleName();
-
+    SharedPreferences sharedPreferences;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+    String product = "silver";
+    ////////////////////////////////////////Setting the gold and silver recycler view///////////////////////////////////
+    FirebaseRecyclerAdapter<Product, ProductHolder> goldAdapter;
+    FirebaseRecyclerAdapter<Product, ProductHolder> silverAdapter;
+    Query goldQuery;
+    Query silverQuery;
+    //required VAs
+    double belowOne;
+    double one;
+    double two;
+    double three;
+    double four;
+    double five;
+    double six;
+    double aboveSix;
     private EditText etGramRate;
     private EditText etProductGram;
     private RadioGroup rgProduct;
@@ -61,28 +80,42 @@ public class EstimateActivity extends AppCompatActivity {
     private EditText etVaPercentage;
     private EditText etVaNumber;
     private TextView tvChoiceClicked;
+    private FrameLayout toolbarContainer;
+    private Toolbar toolbar;
+    private MaterialSearchView searchView;
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
 
     //View initalization
     private void initView() {
-        etGramRate = (EditText) findViewById(R.id.et_gram_rate);
-        etProductGram = (EditText) findViewById(R.id.et_product_gram);
-        rgProduct = (RadioGroup) findViewById(R.id.rg_product);
-        rbGold = (RadioButton) findViewById(R.id.rb_gold);
-        rbSilver = (RadioButton) findViewById(R.id.rb_silver);
-        rgHOrK = (RadioGroup) findViewById(R.id.rg_h_or_k);
-        rbHallmark = (RadioButton) findViewById(R.id.rb_hallmark);
-        rbKdm = (RadioButton) findViewById(R.id.rb_kdm);
-        btEstimate = (Button) findViewById(R.id.bt_estimate);
-        tvEstimateOut = (TextView) findViewById(R.id.tv_estimate_out);
-        goldRecyclerView = (RecyclerView) findViewById(R.id.gold_recyclerView);
-        silverRecyclerView = (RecyclerView) findViewById(R.id.silver_recyclerView);
-        testingTv = (TextView) findViewById(R.id.testing_tv);
-        etVaPercentage = (EditText) findViewById(R.id.et_va_percentage);
-        etVaNumber = (EditText) findViewById(R.id.et_va_number);
-        tvChoiceClicked = (TextView) findViewById(R.id.tv_choice_clicked);
+        etGramRate = findViewById(R.id.et_gram_rate);
+        etProductGram = findViewById(R.id.et_product_gram);
+        rgProduct = findViewById(R.id.rg_product);
+        rbGold = findViewById(R.id.rb_gold);
+        rbSilver = findViewById(R.id.rb_silver);
+        rgHOrK = findViewById(R.id.rg_h_or_k);
+        rbHallmark = findViewById(R.id.rb_hallmark);
+        rbKdm = findViewById(R.id.rb_kdm);
+        btEstimate = findViewById(R.id.bt_estimate);
+        tvEstimateOut = findViewById(R.id.tv_estimate_out);
+        goldRecyclerView = findViewById(R.id.gold_recyclerView);
+        silverRecyclerView = findViewById(R.id.silver_recyclerView);
+        testingTv = findViewById(R.id.testing_tv);
+        etVaPercentage = findViewById(R.id.et_va_percentage);
+        etVaNumber = findViewById(R.id.et_va_number);
+        tvChoiceClicked = findViewById(R.id.tv_choice_clicked);
 
         etVaPercentage.setVisibility(View.GONE);
         etVaNumber.setVisibility(View.GONE);
+        toolbarContainer = findViewById(R.id.toolbar_container);
+        toolbar = findViewById(R.id.toolbar);
+        searchView = findViewById(R.id.search_view);
     }
 
     @Override
@@ -92,6 +125,8 @@ public class EstimateActivity extends AppCompatActivity {
         initVAs();
         initDatabase();
         initView();
+        initToolbar();
+
         initRadioButtons();
         initGoldRecycler("gold");
         initSilverRecycler("silver");
@@ -99,6 +134,12 @@ public class EstimateActivity extends AppCompatActivity {
 
         setupListeners();
     }
+
+    private void initToolbar() {
+        setSupportActionBar(toolbar);
+
+    }
+    //onOptionsItemSelected
 
     //Listeners to know whether the program gram has been inputed
     private void setupListeners() {
@@ -111,21 +152,21 @@ public class EstimateActivity extends AppCompatActivity {
                             if (etGramRate.getText() != null) {
                                 double productGram = Double.parseDouble(charSequence.toString());
                                 if (productGram >= 7) {
-                                    vaPercentShow(aboveSix,etGramRate.getText().toString());
+                                    vaPercentShow(aboveSix, etGramRate.getText().toString());
                                 } else if (productGram < 7 && productGram >= 6) {
-                                    vaPercentShow(six,etGramRate.getText().toString());
+                                    vaPercentShow(six, etGramRate.getText().toString());
                                 } else if (productGram < 6 && productGram >= 5) {
-                                    vaPercentShow(five,etGramRate.getText().toString());
+                                    vaPercentShow(five, etGramRate.getText().toString());
                                 } else if (productGram < 5 && productGram >= 4) {
-                                    vaPercentShow(four,etGramRate.getText().toString());
+                                    vaPercentShow(four, etGramRate.getText().toString());
                                 } else if (productGram < 4 && productGram >= 3) {
-                                    vaPercentShow(three,etGramRate.getText().toString());
+                                    vaPercentShow(three, etGramRate.getText().toString());
                                 } else if (productGram < 3 && productGram >= 2) {
-                                    vaPercentShow(two,etGramRate.getText().toString());
+                                    vaPercentShow(two, etGramRate.getText().toString());
                                 } else if (productGram < 2 && productGram >= 1) {
-                                    vaPercentShow(one,etGramRate.getText().toString());
+                                    vaPercentShow(one, etGramRate.getText().toString());
                                 } else {
-                                    vaPercentShow(belowOne,etGramRate.getText().toString());
+                                    vaPercentShow(belowOne, etGramRate.getText().toString());
                                 }
                             } else {
                                 unshowVAs();
@@ -135,18 +176,11 @@ public class EstimateActivity extends AppCompatActivity {
                 });
     }
 
-    public static double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
-
-        BigDecimal bd = new BigDecimal(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
-    }
-    private void vaPercentShow(double input,String gramRateString){
+    private void vaPercentShow(double input, String gramRateString) {
         double gramRate = Double.parseDouble(gramRateString);
-        etVaPercentage.setHint(String.valueOf(input)+"%");
-        double vaNumberDouble = (input/100)*gramRate;
-        etVaNumber.setHint(String.valueOf(round(vaNumberDouble,2)));
+        etVaPercentage.setHint(String.valueOf(input) + "%");
+        double vaNumberDouble = (input / 100) * gramRate;
+        etVaNumber.setHint(String.valueOf(round(vaNumberDouble, 2)));
     }
 
     private void unshowVAs() {
@@ -159,15 +193,13 @@ public class EstimateActivity extends AppCompatActivity {
         etVaNumber.setVisibility(View.VISIBLE);
     }
 
-    SharedPreferences sharedPreferences;
-
     private void initSharedPreference() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String choice = sharedPreferences.getString("materialPref", "1");
         Toast.makeText(this, choice, Toast.LENGTH_SHORT).show();
 
         //setting the gramrate from the preference screen
-        etGramRate.setText(sharedPreferences.getString("gramRatePref","0"));
+        etGramRate.setText(sharedPreferences.getString("gramRatePref", "0"));
         etGramRate.setEnabled(false);
         //TODOCOMPLETED show only gold or silver based on the sharedpreference
         switch (choice) {
@@ -239,14 +271,10 @@ public class EstimateActivity extends AppCompatActivity {
         }
     }
 
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
-
     private void initDatabase() {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("estimator2");
     }
-
 
     //On Estimate Button Click
     public void onClickEstimate(View view) {
@@ -256,18 +284,24 @@ public class EstimateActivity extends AppCompatActivity {
 
     }
 
-    String product = "silver";
-
-
     //onOptionsmenuCreated
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main_menu, menu);
+        MenuItem item = menu.findItem(R.id.menu_search);
+        searchView.setMenuItem(item);
         return true;
     }
 
-    //onOptionsItemSelected
+    @Override
+    public void onBackPressed() {
+        if (searchView.isSearchOpen()) {
+            searchView.closeSearch();
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -282,14 +316,6 @@ public class EstimateActivity extends AppCompatActivity {
                 return false;
         }
     }
-
-
-    ////////////////////////////////////////Setting the gold and silver recycler view///////////////////////////////////
-    FirebaseRecyclerAdapter<Product, ProductHolder> goldAdapter;
-    FirebaseRecyclerAdapter<Product, ProductHolder> silverAdapter;
-
-    Query goldQuery;
-    Query silverQuery;
 
     private void initGoldRecycler(String product) {
         Log.d(TAG, "initGoldRecycler: ");
@@ -394,7 +420,6 @@ public class EstimateActivity extends AppCompatActivity {
         silverRecyclerView.setAdapter(silverAdapter);
     }
 
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -427,16 +452,6 @@ public class EstimateActivity extends AppCompatActivity {
             }
         });
     }
-
-    //required VAs
-    double belowOne;
-    double one;
-    double two;
-    double three;
-    double four;
-    double five;
-    double six;
-    double aboveSix;
 
     //onCancelled
     private void initVAs() {
