@@ -14,12 +14,7 @@
         android:inputType="numberDecimal"
         android:id="@+id/et_gram_rate" />
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Product Gram"
-        android:inputType="numberDecimal"
-        android:id="@+id/et_product_gram" />
+
 
     <RadioGroup
         android:layout_width="match_parent"
@@ -63,6 +58,20 @@
             android:text="KDM"
             android:id="@+id/rb_kdm"/>
     </RadioGroup>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Product Gram"
+        android:inputType="numberDecimal"
+        android:id="@+id/et_product_gram" />
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:hint="VA%"
+              android:id="@+id/et_va_percentage"
+    android:inputType="numberDecimal"/>
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:hint="VA Amount"
+              android:id="@+id/et_va_number"
+              android:inputType="numberDecimal"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

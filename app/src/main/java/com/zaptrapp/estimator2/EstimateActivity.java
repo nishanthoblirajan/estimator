@@ -29,9 +29,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.zaptrapp.estimator2.Models.Product;
 import com.zaptrapp.estimator2.Models.ProductHolder;
 import com.zaptrapp.estimator2.Models.VA;
+
+import io.reactivex.functions.Consumer;
 
 public class EstimateActivity extends AppCompatActivity {
 
@@ -51,6 +54,8 @@ public class EstimateActivity extends AppCompatActivity {
     private RecyclerView goldRecyclerView;
     private RecyclerView silverRecyclerView;
     private TextView testingTv;
+    private EditText etVaPercentage;
+    private EditText etVaNumber;
 
     //View initalization
     private void initView() {
@@ -67,6 +72,8 @@ public class EstimateActivity extends AppCompatActivity {
         goldRecyclerView = (RecyclerView) findViewById(R.id.gold_recyclerView);
         silverRecyclerView = (RecyclerView) findViewById(R.id.silver_recyclerView);
         testingTv = (TextView) findViewById(R.id.testing_tv);
+        etVaPercentage = (EditText) findViewById(R.id.et_va_percentage);
+        etVaNumber = (EditText) findViewById(R.id.et_va_number);
     }
 
     @Override
@@ -86,7 +93,7 @@ public class EstimateActivity extends AppCompatActivity {
 
     private void initSharedPreference() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String choice = sharedPreferences.getString("materialPref", "0");
+        String choice = sharedPreferences.getString("materialPref", "1");
         Toast.makeText(this, choice, Toast.LENGTH_SHORT).show();
 
         //TODO show only gold or silver based on the sharedpreference
@@ -97,6 +104,7 @@ public class EstimateActivity extends AppCompatActivity {
                 rbGold.setEnabled(true);
                 rbSilver.setChecked(false);
                 rbSilver.setEnabled(false);
+
                 break;
             case "2":
                 //This is silver
@@ -177,6 +185,7 @@ public class EstimateActivity extends AppCompatActivity {
 
     String product = "silver";
 
+
     //onOptionsmenuCreated
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -239,9 +248,9 @@ public class EstimateActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         //set the values for the VAs
                         initVAFromProduct(model);
-
                         //testing
                         testingTv.setText(model.toString());
+                        listenForProductGramEntry();
                     }
                 });
             }
@@ -257,6 +266,43 @@ public class EstimateActivity extends AppCompatActivity {
 
         };
         goldRecyclerView.setAdapter(goldAdapter);
+    }
+
+    private void listenForProductGramEntry() {
+        etProductGram.setEnabled(true);
+                RxTextView.textChanges(etProductGram)
+                        .subscribe(new Consumer<CharSequence>() {
+                            @Override
+                            public void accept(CharSequence charSequence) throws Exception {
+                                double productGram = Double.parseDouble(charSequence.toString());
+                                if(productGram>=7){
+                                    vaPercentShow(aboveSix);
+                                }else if(productGram<7 && productGram>=6){
+                                    vaPercentShow(six);
+                                }else if(productGram<6 && productGram>=5){
+                                    vaPercentShow(five);
+                                }else if(productGram<5 && productGram>=4){
+                                    vaPercentShow(four);
+                                }else if(productGram<4 && productGram>=3){
+                                    vaPercentShow(three);
+                                }else if(productGram<3 && productGram>=2){
+                                    vaPercentShow(two);
+                                }else if(productGram<2 && productGram>=1){
+                                    vaPercentShow(one);
+                                }else{
+                                    vaPercentShow(belowOne);
+                                }
+                            }
+                        });
+    }
+
+    private void vaPercentShow(double input){
+        etVaPercentage.setText(String.valueOf(input));
+        vaNumberShow(input);
+    }
+
+    private void vaNumberShow(double input){
+
     }
 
     private void initSilverRecycler(String product) {
@@ -289,9 +335,10 @@ public class EstimateActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         //set the values for the VAs
                         initVAFromProduct(model);
-
                         //testing
                         testingTv.setText(model.toString());
+                        listenForProductGramEntry();
+
                     }
                 });
             }
