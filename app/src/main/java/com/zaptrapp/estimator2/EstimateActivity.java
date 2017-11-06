@@ -166,7 +166,10 @@ public class EstimateActivity extends AppCompatActivity {
         String choice = sharedPreferences.getString("materialPref", "1");
         Toast.makeText(this, choice, Toast.LENGTH_SHORT).show();
 
-        //TODO show only gold or silver based on the sharedpreference
+        //setting the gramrate from the preference screen
+        etGramRate.setText(sharedPreferences.getString("gramRatePref","0"));
+        etGramRate.setEnabled(false);
+        //TODOCOMPLETED show only gold or silver based on the sharedpreference
         switch (choice) {
             case "1":
                 //This is gold
