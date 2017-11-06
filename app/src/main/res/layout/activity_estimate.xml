@@ -7,13 +7,19 @@
     android:orientation="vertical"
     tools:context="com.zaptrapp.estimator2.EstimateActivity">
 
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Gram Rate"
         android:inputType="numberDecimal"
         android:id="@+id/et_gram_rate" />
-
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Product Gram"
+        android:inputType="numberDecimal"
+        android:id="@+id/et_product_gram" />
 
 
     <RadioGroup
@@ -58,12 +64,6 @@
             android:text="KDM"
             android:id="@+id/rb_kdm"/>
     </RadioGroup>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Product Gram"
-        android:inputType="numberDecimal"
-        android:id="@+id/et_product_gram" />
     <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
     android:hint="VA%"
               android:id="@+id/et_va_percentage"

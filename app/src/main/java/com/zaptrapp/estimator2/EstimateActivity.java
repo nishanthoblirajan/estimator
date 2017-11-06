@@ -269,40 +269,46 @@ public class EstimateActivity extends AppCompatActivity {
     }
 
     private void listenForProductGramEntry() {
-        etProductGram.setEnabled(true);
-                RxTextView.textChanges(etProductGram)
-                        .subscribe(new Consumer<CharSequence>() {
-                            @Override
-                            public void accept(CharSequence charSequence) throws Exception {
-                                double productGram = Double.parseDouble(charSequence.toString());
-                                if(productGram>=7){
-                                    vaPercentShow(aboveSix);
-                                }else if(productGram<7 && productGram>=6){
-                                    vaPercentShow(six);
-                                }else if(productGram<6 && productGram>=5){
-                                    vaPercentShow(five);
-                                }else if(productGram<5 && productGram>=4){
-                                    vaPercentShow(four);
-                                }else if(productGram<4 && productGram>=3){
-                                    vaPercentShow(three);
-                                }else if(productGram<3 && productGram>=2){
-                                    vaPercentShow(two);
-                                }else if(productGram<2 && productGram>=1){
-                                    vaPercentShow(one);
-                                }else{
-                                    vaPercentShow(belowOne);
-                                }
+        try {
+
+            RxTextView.textChanges(etProductGram)
+                    .subscribe(new Consumer<CharSequence>() {
+                        @Override
+                        public void accept(CharSequence charSequence) throws Exception {
+                            double productGram = Double.parseDouble(charSequence.toString());
+                            if (productGram >= 7) {
+                                vaPercentShow(aboveSix);
+                            } else if (productGram < 7 && productGram >= 6) {
+                                vaPercentShow(six);
+                            } else if (productGram < 6 && productGram >= 5) {
+                                vaPercentShow(five);
+                            } else if (productGram < 5 && productGram >= 4) {
+                                vaPercentShow(four);
+                            } else if (productGram < 4 && productGram >= 3) {
+                                vaPercentShow(three);
+                            } else if (productGram < 3 && productGram >= 2) {
+                                vaPercentShow(two);
+                            } else if (productGram < 2 && productGram >= 1) {
+                                vaPercentShow(one);
+                            } else {
+                                vaPercentShow(belowOne);
                             }
-                        });
+                        }
+                    });
+        }catch (Exception e){
+
+        }
     }
 
     private void vaPercentShow(double input){
-        etVaPercentage.setText(String.valueOf(input));
+        etVaPercentage.setHint(String.valueOf(input));
         vaNumberShow(input);
     }
 
     private void vaNumberShow(double input){
-
+        double gramRate = Double.parseDouble(etGramRate.getText().toString());
+        double vaPercent = Double.parseDouble(etVaPercentage.getHint().toString());
+        etVaNumber.setHint(String.valueOf((vaPercent/100)*gramRate));
     }
 
     private void initSilverRecycler(String product) {
