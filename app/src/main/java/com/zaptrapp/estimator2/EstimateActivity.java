@@ -133,6 +133,24 @@ public class EstimateActivity extends AppCompatActivity {
         initSharedPreference();
 
         setupListeners();
+        setupSearchListener();
+    }
+
+    private void setupSearchListener() {
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //TODO implement the change in the recyclerview gold/silver based on query submit
+                initGoldRecycler("gold",databaseReference.child("gold").orderByChild("productName").equalTo(query));
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                initGoldRecycler("gold",databaseReference.child("gold").orderByChild("productName").equalTo(newText));
+                return true;
+            }
+        });
     }
 
     private void initToolbar() {
@@ -317,9 +335,61 @@ public class EstimateActivity extends AppCompatActivity {
         }
     }
 
+    private void initGoldRecycler(String product,Query goldQuery) {
+        Log.d(TAG, "initGoldRecycler: ");
+        Log.d(TAG, "initGoldRecycler: " + goldQuery.getRef());
+        goldRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        goldQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange: " + dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        FirebaseRecyclerOptions<Product> productOptions =
+                new FirebaseRecyclerOptions.Builder<Product>()
+                        .setQuery(goldQuery, Product.class)
+                        .build();
+        goldAdapter = new FirebaseRecyclerAdapter<Product, ProductHolder>(productOptions) {
+            @Override
+            protected void onBindViewHolder(ProductHolder holder, int position, final Product model) {
+                Log.d(TAG, "initGoldRecycler onBindViewHolder: ");
+                holder.product.setText(model.getProductName());
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //set the values for the VAs
+                        initVAFromProduct(model);
+                        //testing
+                        testingTv.setText(model.toString());
+                        tvChoiceClicked.setText(model.getProductName());
+                        setupListeners();
+
+                    }
+                });
+            }
+
+            @Override
+            public ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                Log.d(TAG, "initGoldRecycler onCreateViewHolder: ");
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.recycler_items, parent, false);
+                return new ProductHolder(view);
+            }
+
+
+        };
+        goldRecyclerView.setAdapter(goldAdapter);
+    }
     private void initGoldRecycler(String product) {
         Log.d(TAG, "initGoldRecycler: ");
         goldQuery = databaseReference.child(product);
+//        goldQuery = databaseReference.child("gold").orderByChild("productName").startAt("custom");
         Log.d(TAG, "initGoldRecycler: " + goldQuery.getRef());
         goldRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         goldQuery.addValueEventListener(new ValueEventListener() {
