@@ -16,8 +16,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -32,7 +35,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.jakewharton.rxbinding2.widget.RxTextView;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.zaptrapp.estimator2.Models.Product;
 import com.zaptrapp.estimator2.Models.ProductHolder;
 import com.zaptrapp.estimator2.Models.VA;
@@ -83,6 +85,12 @@ public class EstimateActivity extends AppCompatActivity {
     private TextView tvChoiceClicked;
     private FrameLayout toolbarContainer;
     private Toolbar toolbar;
+    private RecyclerView searchRecyclerView;
+    private CheckBox cbBuying;
+    private LinearLayout llBuying;
+    private EditText etBuyingPrice;
+    private EditText etGrossWeight;
+    private EditText etNetWeight;
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -116,12 +124,20 @@ public class EstimateActivity extends AppCompatActivity {
         toolbarContainer = findViewById(R.id.toolbar_container);
         toolbar = findViewById(R.id.toolbar);
 
+        searchRecyclerView = (RecyclerView) findViewById(R.id.search_recyclerView);
+        cbBuying = (CheckBox) findViewById(R.id.cb_buying);
+        llBuying = (LinearLayout) findViewById(R.id.ll_buying);
+        etBuyingPrice = (EditText) findViewById(R.id.et_buying_price);
+        etGrossWeight = (EditText) findViewById(R.id.et_gross_weight);
+        etNetWeight = (EditText) findViewById(R.id.et_net_weight);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estimate);
+
+        buyingItem = false;
         initVAs();
         initDatabase();
         initView();
@@ -175,8 +191,23 @@ public class EstimateActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+        cbBuying.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    llBuying.setVisibility(View.VISIBLE);
+                    buyingItem = true;
+                }else{
+                    llBuying.setVisibility(View.GONE);
+                    buyingItem = false;
+                }
+            }
+        });
+
     }
 
+    boolean buyingItem;
     private void vaPercentShow(double input, String gramRateString) {
         double gramRate = Double.parseDouble(gramRateString);
         etVaPercentage.setHint(String.valueOf(input) + "%");

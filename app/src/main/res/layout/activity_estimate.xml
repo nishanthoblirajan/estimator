@@ -84,9 +84,14 @@
         android:layout_height="wrap_content"
         android:overScrollMode="never"
         android:visibility="gone" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
     <RadioGroup
         android:id="@+id/rg_h_or_k"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
         android:layout_height="wrap_content">
         <RadioButton
             android:id="@+id/rb_hallmark"
@@ -99,7 +104,44 @@
             android:layout_height="wrap_content"
             android:text="KDM" />
     </RadioGroup>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cb_buying"
+            android:text="Buying"
+            android:layout_gravity="center"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/ll_buying"
+        android:visibility="gone">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Buying Price"
+            android:layout_weight="1"
+            android:inputType="numberDecimal"
+            android:id="@+id/et_buying_price"/>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Gross Weight"
+            android:layout_weight="1"
 
+            android:inputType="numberDecimal"
+            android:id="@+id/et_gross_weight"/>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Net Weight"
+            android:layout_weight="1"
+
+            android:inputType="numberDecimal"
+            android:id="@+id/et_net_weight"/>
+    </LinearLayout>
     <EditText
         android:id="@+id/et_va_percentage"
         android:layout_width="match_parent"
