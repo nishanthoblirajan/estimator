@@ -96,44 +96,44 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
-                    android:hint="1g"/>
+                    android:hint="1-2g"/>
 
                 <EditText
                     android:id="@+id/et_add_va_two"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
-                    android:hint="2g"/>
+                    android:hint="2-3g"/>
                 <EditText
                     android:id="@+id/et_add_va_three"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
-                    android:hint="3g"/>
+                    android:hint="3-4g"/>
                 <EditText
                     android:id="@+id/et_add_va_four"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
-                    android:hint="4g"/>
+                    android:hint="4-5g"/>
                 <EditText
                     android:id="@+id/et_add_va_five"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
-                    android:hint="5g"/>
+                    android:hint="5-6g"/>
                 <EditText
                     android:id="@+id/et_add_va_six"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
-                    android:hint="6g"/>
+                    android:hint="6-7g"/>
                 <EditText
                     android:id="@+id/et_add_va_above_six"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
-                    android:hint="Greater than 6g"/>
+                    android:hint="Greater than 7g"/>
             </LinearLayout>
 
             <Button android:layout_width="match_parent" android:layout_height="wrap_content"

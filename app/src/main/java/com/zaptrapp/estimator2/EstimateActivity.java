@@ -85,7 +85,6 @@ public class EstimateActivity extends AppCompatActivity {
     private TextView tvChoiceClicked;
     private FrameLayout toolbarContainer;
     private Toolbar toolbar;
-    private RecyclerView searchRecyclerView;
     private CheckBox cbBuying;
     private LinearLayout llBuying;
     private EditText etBuyingPrice;
@@ -123,8 +122,6 @@ public class EstimateActivity extends AppCompatActivity {
         etVaNumber.setVisibility(View.GONE);
         toolbarContainer = findViewById(R.id.toolbar_container);
         toolbar = findViewById(R.id.toolbar);
-
-        searchRecyclerView = (RecyclerView) findViewById(R.id.search_recyclerView);
         cbBuying = (CheckBox) findViewById(R.id.cb_buying);
         llBuying = (LinearLayout) findViewById(R.id.ll_buying);
         etBuyingPrice = (EditText) findViewById(R.id.et_buying_price);
@@ -185,13 +182,17 @@ public class EstimateActivity extends AppCompatActivity {
                                 } else {
                                     vaPercentShow(belowOne, etGramRate.getText().toString());
                                 }
+
                             } else {
                                 unshowVAs();
                             }
                         }
+
                     }
                 });
 
+        //get the checkbox buying and set the buying boolean the buying boolean to true
+        //to check whether there is any buying input
         cbBuying.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -202,19 +203,91 @@ public class EstimateActivity extends AppCompatActivity {
                     llBuying.setVisibility(View.GONE);
                     buyingItem = false;
                 }
+                viewLog();
             }
         });
 
+
+        //get the Hallmark or KDM String from the H_or_K radiogroup
+        rgHOrK.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch(checkedId){
+                    case R.id.rb_hallmark:
+                        hallmarkOrKDM = "Hallmark";
+                        break;
+                    case R.id.rb_kdm:
+                        hallmarkOrKDM = "KDM";
+                        break;
+                }
+                viewLog();
+            }
+        });
+
+        RxTextView.textChanges(etVaPercentage)
+                .subscribe(new Consumer<CharSequence>() {
+                    @Override
+                    public void accept(CharSequence charSequence) throws Exception {
+                        if(charSequence.length()>0){
+                            etVaNumber.setText("");
+                            estimateVaPercent = Double.parseDouble(charSequence.toString());
+                            estimateVaNumber = setVANumber(estimateVaPercent);
+                            etVaNumber.setHint(String.valueOf(estimateVaNumber));
+                        }
+
+                        viewLog();
+                    }
+                });
+        RxTextView.textChanges(etVaNumber)
+                .subscribe(new Consumer<CharSequence>() {
+                    @Override
+                    public void accept(CharSequence charSequence) throws Exception {
+                        if(charSequence.length()>0){
+                            etVaPercentage.setText("");
+                            estimateVaNumber = Double.parseDouble(charSequence.toString());
+                            estimateVaPercent = setVAPercent(estimateVaNumber);
+                            etVaPercentage.setHint(String.valueOf(estimateVaPercent));
+                        }
+                        viewLog();
+                    }
+                });
     }
 
+    private double setVAPercent(double vaNumber){
+        if(etGramRate.getText()!=null && etProductGram.getText()!=null){
+            double gram_rate = Double.parseDouble(etGramRate.getText().toString());
+            return (vaNumber/gram_rate)*100;
+        }else{
+            return 0;
+        }
+    }
+    private double setVANumber(double vaPercent){
+        if(etGramRate.getText()!=null && etProductGram.getText()!=null){
+            double gram_rate = Double.parseDouble(etGramRate.getText().toString());
+            return (vaPercent/100)*gram_rate;
+        }else{
+            return 0;
+        }
+    }
+    String hallmarkOrKDM = "";
     boolean buyingItem;
+    double estimateVaPercent = 0;
+    double estimateVaNumber = 0;
+
+    private void viewLog(){
+        Log.d(TAG, "viewLog: buying Item "+buyingItem+"\nvaPercent "+estimateVaPercent+"\nvaNumber "+estimateVaNumber
+        +"\nhallmarkOrKDM "+hallmarkOrKDM);
+    }
     private void vaPercentShow(double input, String gramRateString) {
         double gramRate = Double.parseDouble(gramRateString);
-        etVaPercentage.setHint(String.valueOf(input) + "%");
+        etVaPercentage.setHint(String.valueOf(input));
         double vaNumberDouble = (input / 100) * gramRate;
         etVaNumber.setHint(String.valueOf(round(vaNumberDouble, 2)));
-    }
+        estimateVaPercent = Double.valueOf(etVaPercentage.getHint().toString());
+        estimateVaNumber = Double.valueOf(etVaNumber.getHint().toString());
 
+        viewLog();
+    }
     private void unshowVAs() {
         etVaPercentage.setVisibility(View.GONE);
         etVaNumber.setVisibility(View.GONE);
