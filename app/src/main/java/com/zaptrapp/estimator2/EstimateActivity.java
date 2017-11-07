@@ -157,6 +157,8 @@ public class EstimateActivity extends AppCompatActivity {
 
     //Listeners to know whether the program gram has been inputed
     private void setupListeners() {
+
+        //get the product gram input and set the default VAs respective to the product gram
         RxTextView.textChanges(etProductGram)
                 .subscribe(new Consumer<CharSequence>() {
                     @Override
@@ -165,6 +167,7 @@ public class EstimateActivity extends AppCompatActivity {
                             showVAs();
                             if (etGramRate.getText() != null) {
                                 double productGram = Double.parseDouble(charSequence.toString());
+                                estimateProductGram = productGram;
                                 setDefaultVA(productGram);
                             } else {
                                 unshowVAs();
@@ -222,6 +225,7 @@ public class EstimateActivity extends AppCompatActivity {
                         } else {
 
                             //not working
+                            setDefaultVA(estimateProductGram);
 //                            estimateVaNumber = Double.parseDouble(etVaNumber.getHint().toString());
 //                            estimateVaPercent = Double.parseDouble(etVaPercentage.getHint().toString());
                         }
@@ -239,7 +243,9 @@ public class EstimateActivity extends AppCompatActivity {
                             estimateVaPercent = setVAPercent(estimateVaNumber);
                             etVaPercentage.setHint(String.valueOf(estimateVaPercent));
                         } else {
+
                             //not working
+                            setDefaultVA(estimateProductGram);
 //                            estimateVaNumber = Double.parseDouble(etVaNumber.getHint().toString());
 //                            estimateVaPercent = Double.parseDouble(etVaPercentage.getHint().toString());
                         }
