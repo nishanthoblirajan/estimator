@@ -277,7 +277,7 @@ public class EstimateActivity extends AppCompatActivity {
     private double setVAPercent(double vaNumber) {
         if (etGramRate.getText() != null && etProductGram.getText() != null) {
             double gram_rate = Double.parseDouble(etGramRate.getText().toString());
-            return (vaNumber / gram_rate) * 100;
+            return round((vaNumber / gram_rate) * 100,2);
         } else {
             return 0;
         }
@@ -286,7 +286,7 @@ public class EstimateActivity extends AppCompatActivity {
     private double setVANumber(double vaPercent) {
         if (etGramRate.getText() != null && etProductGram.getText() != null) {
             double gram_rate = Double.parseDouble(etGramRate.getText().toString());
-            return (vaPercent / 100) * gram_rate;
+            return round((vaPercent / 100) * gram_rate,2);
         } else {
             return 0;
         }
