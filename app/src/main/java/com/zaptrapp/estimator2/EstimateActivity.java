@@ -165,28 +165,14 @@ public class EstimateActivity extends AppCompatActivity {
                             showVAs();
                             if (etGramRate.getText() != null) {
                                 double productGram = Double.parseDouble(charSequence.toString());
-                                if (productGram >= 7) {
-                                    vaPercentShow(aboveSix, etGramRate.getText().toString());
-                                } else if (productGram < 7 && productGram >= 6) {
-                                    vaPercentShow(six, etGramRate.getText().toString());
-                                } else if (productGram < 6 && productGram >= 5) {
-                                    vaPercentShow(five, etGramRate.getText().toString());
-                                } else if (productGram < 5 && productGram >= 4) {
-                                    vaPercentShow(four, etGramRate.getText().toString());
-                                } else if (productGram < 4 && productGram >= 3) {
-                                    vaPercentShow(three, etGramRate.getText().toString());
-                                } else if (productGram < 3 && productGram >= 2) {
-                                    vaPercentShow(two, etGramRate.getText().toString());
-                                } else if (productGram < 2 && productGram >= 1) {
-                                    vaPercentShow(one, etGramRate.getText().toString());
-                                } else {
-                                    vaPercentShow(belowOne, etGramRate.getText().toString());
-                                }
-
+                                setDefaultVA(productGram);
                             } else {
                                 unshowVAs();
                             }
+                        }else{
+                            unshowVAs();
                         }
+                        viewLog();
 
                     }
                 });
@@ -199,7 +185,7 @@ public class EstimateActivity extends AppCompatActivity {
                 if (b) {
                     llBuying.setVisibility(View.VISIBLE);
                     buyingItem = true;
-                }else{
+                } else {
                     llBuying.setVisibility(View.GONE);
                     buyingItem = false;
                 }
@@ -212,7 +198,7 @@ public class EstimateActivity extends AppCompatActivity {
         rgHOrK.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch(checkedId){
+                switch (checkedId) {
                     case R.id.rb_hallmark:
                         hallmarkOrKDM = "Hallmark";
                         break;
@@ -228,11 +214,16 @@ public class EstimateActivity extends AppCompatActivity {
                 .subscribe(new Consumer<CharSequence>() {
                     @Override
                     public void accept(CharSequence charSequence) throws Exception {
-                        if(charSequence.length()>0){
+                        if (charSequence.length() > 0) {
                             etVaNumber.setText("");
                             estimateVaPercent = Double.parseDouble(charSequence.toString());
                             estimateVaNumber = setVANumber(estimateVaPercent);
                             etVaNumber.setHint(String.valueOf(estimateVaNumber));
+                        } else {
+
+                            //not working
+//                            estimateVaNumber = Double.parseDouble(etVaNumber.getHint().toString());
+//                            estimateVaPercent = Double.parseDouble(etVaPercentage.getHint().toString());
                         }
 
                         viewLog();
@@ -242,42 +233,71 @@ public class EstimateActivity extends AppCompatActivity {
                 .subscribe(new Consumer<CharSequence>() {
                     @Override
                     public void accept(CharSequence charSequence) throws Exception {
-                        if(charSequence.length()>0){
+                        if (charSequence.length() > 0) {
                             etVaPercentage.setText("");
                             estimateVaNumber = Double.parseDouble(charSequence.toString());
                             estimateVaPercent = setVAPercent(estimateVaNumber);
                             etVaPercentage.setHint(String.valueOf(estimateVaPercent));
+                        } else {
+                            //not working
+//                            estimateVaNumber = Double.parseDouble(etVaNumber.getHint().toString());
+//                            estimateVaPercent = Double.parseDouble(etVaPercentage.getHint().toString());
                         }
                         viewLog();
                     }
                 });
     }
 
-    private double setVAPercent(double vaNumber){
-        if(etGramRate.getText()!=null && etProductGram.getText()!=null){
+    private void setDefaultVA(double productGram) {
+        if (productGram >= 7) {
+            vaPercentShow(aboveSix, etGramRate.getText().toString());
+        } else if (productGram < 7 && productGram >= 6) {
+            vaPercentShow(six, etGramRate.getText().toString());
+        } else if (productGram < 6 && productGram >= 5) {
+            vaPercentShow(five, etGramRate.getText().toString());
+        } else if (productGram < 5 && productGram >= 4) {
+            vaPercentShow(four, etGramRate.getText().toString());
+        } else if (productGram < 4 && productGram >= 3) {
+            vaPercentShow(three, etGramRate.getText().toString());
+        } else if (productGram < 3 && productGram >= 2) {
+            vaPercentShow(two, etGramRate.getText().toString());
+        } else if (productGram < 2 && productGram >= 1) {
+            vaPercentShow(one, etGramRate.getText().toString());
+        } else {
+            vaPercentShow(belowOne, etGramRate.getText().toString());
+        }
+    }
+
+    private double setVAPercent(double vaNumber) {
+        if (etGramRate.getText() != null && etProductGram.getText() != null) {
             double gram_rate = Double.parseDouble(etGramRate.getText().toString());
-            return (vaNumber/gram_rate)*100;
-        }else{
+            return (vaNumber / gram_rate) * 100;
+        } else {
             return 0;
         }
     }
-    private double setVANumber(double vaPercent){
-        if(etGramRate.getText()!=null && etProductGram.getText()!=null){
+
+    private double setVANumber(double vaPercent) {
+        if (etGramRate.getText() != null && etProductGram.getText() != null) {
             double gram_rate = Double.parseDouble(etGramRate.getText().toString());
-            return (vaPercent/100)*gram_rate;
-        }else{
+            return (vaPercent / 100) * gram_rate;
+        } else {
             return 0;
         }
     }
+
     String hallmarkOrKDM = "";
     boolean buyingItem;
     double estimateVaPercent = 0;
     double estimateVaNumber = 0;
+    double estimateProductGram =0;
 
-    private void viewLog(){
-        Log.d(TAG, "viewLog: buying Item "+buyingItem+"\nvaPercent "+estimateVaPercent+"\nvaNumber "+estimateVaNumber
-        +"\nhallmarkOrKDM "+hallmarkOrKDM);
+    private void viewLog() {
+        Log.d(TAG, "viewLog: buying Item " + buyingItem + "\nvaPercent " + estimateVaPercent + "\nvaNumber " + estimateVaNumber
+                + "\nhallmarkOrKDM " + hallmarkOrKDM
+        +"\nproductGram "+estimateProductGram);
     }
+
     private void vaPercentShow(double input, String gramRateString) {
         double gramRate = Double.parseDouble(gramRateString);
         etVaPercentage.setHint(String.valueOf(input));
@@ -288,6 +308,7 @@ public class EstimateActivity extends AppCompatActivity {
 
         viewLog();
     }
+
     private void unshowVAs() {
         etVaPercentage.setVisibility(View.GONE);
         etVaNumber.setVisibility(View.GONE);
