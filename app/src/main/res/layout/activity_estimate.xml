@@ -169,11 +169,17 @@
 
     <Button
         android:id="@+id/bt_estimate"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:onClick="onClickEstimate"
+    android:text="Estimate" />
+
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:onClick="onClickEstimate"
-        android:text="Estimate" />
+        android:text="Test Printer"
+        android:onClick="testPrinter"/>
     <TextView
         android:id="@+id/tv_estimate_out"
         android:layout_width="match_parent"
