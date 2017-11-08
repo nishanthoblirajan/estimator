@@ -1,8 +1,7 @@
 package com.zaptrapp.estimator2;
 
-import android.preference.PreferenceActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 
 public class SettingsActivity extends PreferenceActivity {
 
@@ -11,5 +10,12 @@ public class SettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment()).commit();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 }

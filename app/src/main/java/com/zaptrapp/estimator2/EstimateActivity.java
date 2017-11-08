@@ -35,6 +35,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.zaptrapp.estimator2.Models.CreateEstimate;
 import com.zaptrapp.estimator2.Models.Product;
 import com.zaptrapp.estimator2.Models.ProductHolder;
 import com.zaptrapp.estimator2.Models.VA;
@@ -188,6 +189,7 @@ public class EstimateActivity extends AppCompatActivity {
                 if (b) {
                     llBuying.setVisibility(View.VISIBLE);
                     buyingItem = true;
+
                 } else {
                     llBuying.setVisibility(View.GONE);
                     buyingItem = false;
@@ -298,6 +300,9 @@ public class EstimateActivity extends AppCompatActivity {
     double estimateVaNumber = 0;
     double estimateProductGram =0;
 
+    double estimateBuyingPrice=0;
+    double estimateBuyingGrossWeight = 0;
+    double estimateBuyingNetWeight = 0;
     private void viewLog() {
         Log.d(TAG, "viewLog: buying Item " + buyingItem + "\nvaPercent " + estimateVaPercent + "\nvaNumber " + estimateVaNumber
                 + "\nhallmarkOrKDM " + hallmarkOrKDM
@@ -325,14 +330,32 @@ public class EstimateActivity extends AppCompatActivity {
         etVaNumber.setVisibility(View.VISIBLE);
     }
 
+    String material;
+    String printer;
+    double gramRate;
+    double sgst;
+    double cgst;
+
     private void initSharedPreference() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+        //retrieve gold/silver
         String choice = sharedPreferences.getString("materialPref", "1");
+        material = choice;
         Toast.makeText(this, choice, Toast.LENGTH_SHORT).show();
 
-        //setting the gramrate from the preference screen
-        etGramRate.setText(sharedPreferences.getString("gramRatePref", "0"));
+        //retrieve printer
+        printer = sharedPreferences.getString("printerPrf","1");
+
+        //retrieve gramrate
+        gramRate = Double.parseDouble(sharedPreferences.getString("gramRatePref", "0"));
+        etGramRate.setText(String.valueOf(gramRate));
         etGramRate.setEnabled(false);
+
+        //retrieve sgst and cgst
+        sgst = Double.parseDouble(sharedPreferences.getString("sgstRatePref","0"));
+        cgst = Double.parseDouble(sharedPreferences.getString("cgstRatePref","0"));
+
         //TODOCOMPLETED show only gold or silver based on the sharedpreference
         switch (choice) {
             case "1":
@@ -414,7 +437,54 @@ public class EstimateActivity extends AppCompatActivity {
         Toast.makeText(this, product_estimate, Toast.LENGTH_SHORT).show();
         retrieveDataFromFirebase(product_estimate);
 
+        //TODO implement the Estimate Button Click
+        //retrieve all datas from the preference.xml file
+        //check if all inputs are available
+        createEstimate(
+                material,
+                printer,
+                gramRate,
+                estimateProductGram,
+                estimateVaPercent,
+                estimateVaNumber,
+                sgst,
+                cgst,
+                buyingItem
+        );
+        //if all check out log the estimate copy to the logcat window
+
     }
+
+    private void createEstimate(String material, String printer, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double sgst, double cgst, boolean buyingItem) {
+
+        CreateEstimate createEstimate = new CreateEstimate(material,
+                printer,
+                gramRate,
+                estimateProductGram,
+                estimateVaPercent,
+                estimateVaNumber,
+                sgst,
+                cgst,
+                buyingItem,0,0,0);
+
+
+        //if buying is true
+        if(createEstimate.isBuyingItem()){
+            createEstimate.setEstimateBuyingPrice(estimateBuyingPrice);
+            createEstimate.setEstimateBuyingGrossWeight(estimateBuyingGrossWeight);
+            createEstimate.setEstimateBuyingNetWeight(estimateBuyingNetWeight);
+        }
+        Log.d(TAG, "createEstimate: "+createEstimate.toString());
+        sendToPrinter(createEstimate);
+    }
+
+    //implement send to printer
+    private void sendToPrinter(CreateEstimate createEstimate) {
+        String printer  = createEstimate.printer;
+
+
+    }
+
 
     //onOptionsmenuCreated
     @Override

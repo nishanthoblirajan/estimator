@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Gram Rate">
-        <EditTextPreference
-            android:dialogTitle="Gram Rate"
-            android:inputType="numberDecimal"
-            android:key="gramRatePref"
-            android:summary="Set the gram rate for the product"
-            android:title="Gram Rate" />
-    </PreferenceCategory>
     <PreferenceCategory android:title="Product">
         <ListPreference
             android:defaultValue="1"
@@ -24,4 +16,25 @@
             android:key="printerPref"
             android:title="Printer Selector" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="Price">
+        <EditTextPreference
+            android:dialogTitle="Gram Rate"
+            android:inputType="numberDecimal"
+            android:key="gramRatePref"
+            android:summary="Set the gram rate for the product"
+            android:title="Gram Rate" />
+        <EditTextPreference
+            android:dialogTitle="SGST"
+            android:inputType="numberDecimal"
+            android:key="sgstRatePref"
+            android:summary="Set the State GST"
+            android:title="SGST" />
+        <EditTextPreference
+            android:dialogTitle="CGST"
+            android:inputType="numberDecimal"
+            android:key="cgstRatePref"
+            android:summary="Set the State GST"
+            android:title="CGST" />
+    </PreferenceCategory>
+
 </PreferenceScreen>
