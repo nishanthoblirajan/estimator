@@ -3,10 +3,6 @@ package com.zaptrapp.estimator2.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by nishanth on 08/11/17.
- */
-
 public class CreateEstimate implements Parcelable {
     public String material;
     public String printer;

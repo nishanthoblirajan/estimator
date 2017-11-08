@@ -42,6 +42,8 @@ import com.zaptrapp.estimator2.Models.VA;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.functions.Consumer;
 
@@ -431,13 +433,15 @@ public class EstimateActivity extends AppCompatActivity {
         databaseReference = firebaseDatabase.getReference("estimator2");
     }
 
-    //On Estimate Button Click
-    public void onClickEstimate(View view) {
+    List<CreateEstimate> mCreateEstimateList = new ArrayList<CreateEstimate>();
+    //onClickAddAnother
+    public void onClickAddAnotherEstimate(View view) {
+
         String product_estimate = product;
         Toast.makeText(this, product_estimate, Toast.LENGTH_SHORT).show();
         retrieveDataFromFirebase(product_estimate);
 
-        //TODO implement the Estimate Button Click
+        //TODOcompleted implement the Add Another Button Click
         //retrieve all datas from the preference.xml file
         //check if all inputs are available
         createEstimate(
@@ -451,6 +455,25 @@ public class EstimateActivity extends AppCompatActivity {
                 cgst,
                 buyingItem
         );
+
+
+        resetViews();
+    }
+
+    private void resetViews() {
+        etProductGram.setText("");
+        rgHOrK.clearCheck();
+        cbBuying.setChecked(false);
+
+    }
+
+    //On Estimate Button Click
+    public void onClickEstimate(View view) {
+        onClickAddAnotherEstimate(view);
+        for(int i =0;i<mCreateEstimateList.size();i++){
+            Log.d(TAG, "Estimate List: "+mCreateEstimateList.get(i).toString());
+        }
+
         //if all check out log the estimate copy to the logcat window
 
     }
@@ -475,10 +498,12 @@ public class EstimateActivity extends AppCompatActivity {
             createEstimate.setEstimateBuyingNetWeight(estimateBuyingNetWeight);
         }
         Log.d(TAG, "createEstimate: "+createEstimate.toString());
-        sendToPrinter(createEstimate);
+        mCreateEstimateList.add(createEstimate);
+        Log.d(TAG, "createEstimate: "+mCreateEstimateList.size());
+
     }
 
-    //implement send to printer
+    //TODO implement send to printer
     private void sendToPrinter(CreateEstimate createEstimate) {
         String printer  = createEstimate.printer;
 
@@ -682,4 +707,6 @@ public class EstimateActivity extends AppCompatActivity {
         aboveSix = product.getGreaterThanSix();
         Log.d(TAG, "VALUES: " + product.toString());
     }
+
+
 }

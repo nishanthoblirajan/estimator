@@ -160,6 +160,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <Button
+        android:id="@+id/bt_add_another_estimate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:onClick="onClickAddAnotherEstimate"
+        android:text="Add Another" />
+
+    <Button
         android:id="@+id/bt_estimate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
