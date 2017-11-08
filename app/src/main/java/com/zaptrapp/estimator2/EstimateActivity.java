@@ -348,6 +348,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     double gramRate;
     double sgst;
     double cgst;
+    String modelName;
 
     private void initSharedPreference() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -471,6 +472,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         resetViews();
     }
 
+
+
     private void resetViews() {
         etProductGram.setText("");
         rgHOrK.clearCheck();
@@ -512,12 +515,34 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         Log.d(TAG, "createEstimate: "+createEstimate.toString());
         mCreateEstimateList.add(createEstimate);
         Log.d(TAG, "createEstimate: "+mCreateEstimateList.size());
-
+        sendToPrinter(createEstimate);
     }
 
     //TODO implement send to printer
     private void sendToPrinter(CreateEstimate createEstimate) {
-        String printer  = createEstimate.printer;
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("------------------------------------------\n");
+        stringBuilder.append("Description      wt (g)  Gram Rate (Rs/g)\n");
+        stringBuilder.append("------------------------------------------\n");
+//        stringBuilder.append(String.format("%-17s",String.valueOf(modelName))  + String.valueOf(weight) + "            " + String.valueOf(gramRate) + "     \n");
+        stringBuilder.append(String.format("%-17s",String.valueOf(modelName))  + String.format("%-5s",String.valueOf(estimateProductGram)) + String.format("%15s",String.valueOf(gramRate))+"\n");
+        stringBuilder.append("\n");
+        stringBuilder.append(String.valueOf(hallmarkOrKDM)+"\n");
+        double gramTimesWeight = gramRate*estimateProductGram;
+        stringBuilder.append(String.format("%-22s",String.valueOf("")) +" "+String.format("%15s",String.valueOf(gramTimesWeight))+"\n" );
+        stringBuilder.append(String.format("%-22s",String.valueOf("VA")) +"-"+String.format("%15s",String.valueOf(estimateVaPercent))+"\n" );
+//        stringBuilder.append(String.format("%-22s",String.valueOf("Extra Charges (Rs)")) +"-"+String.format("%15s",String.valueOf(extraChargesDisplay))+"\n" );
+        double sgst_value = (sgst/100)*(gramTimesWeight+estimateVaNumber);
+        double cgst_value = (cgst/100)*(gramTimesWeight+estimateVaNumber);
+        stringBuilder.append(String.format("%-22s",String.valueOf("CGST     " + sgst + "%")) +"-"+String.format("%15s",String.valueOf(sgst_value))+"\n" );
+        stringBuilder.append(String.format("%-22s",String.valueOf("SGST     " + sgst + "%")) +"-"+String.format("%15s",String.valueOf(cgst_value))+"\n" );
+
+        double total = gramTimesWeight+estimateVaNumber+sgst_value+cgst_value;
+        stringBuilder.append(String.format("%-22s",String.valueOf("Total")) +"-"+String.format("%15s",String.valueOf(total))+"\n" );
+        stringBuilder.append("_" + String.valueOf(total));
+
+        runPrintReceiptSequence(stringBuilder.toString());
 
     }
 
@@ -580,6 +605,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                         //testing
                         testingTv.setText(model.toString());
                         tvChoiceClicked.setText(model.getProductName());
+                        modelName = model.getProductName();
                         setupListeners();
 
                     }
@@ -632,6 +658,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                         //testing
                         testingTv.setText(model.toString());
                         tvChoiceClicked.setText(model.getProductName());
+                        modelName = model.getProductName();
                         setupListeners();
 
                     }
