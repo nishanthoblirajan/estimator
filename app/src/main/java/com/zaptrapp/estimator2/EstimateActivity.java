@@ -509,8 +509,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                         mCreateEstimateList.get(i).estimateBuyingGrossWeight);
 
             }
-        runPrintReceiptSequence(stringBuilder.toString());
         }
+        runPrintReceiptSequence(stringBuilder.toString());
 
 
         mCreateEstimateList.clear();
