@@ -8,6 +8,26 @@ public class CreateEstimate implements Parcelable {
     public String printer;
     public String modelName;
 
+    @Override
+    public String toString() {
+        return "CreateEstimate{" +
+                "material='" + material + '\'' +
+                ", printer='" + printer + '\'' +
+                ", modelName='" + modelName + '\'' +
+                ", hallmarkOrKDM='" + hallmarkOrKDM + '\'' +
+                ", gramRate=" + gramRate +
+                ", estimateProductGram=" + estimateProductGram +
+                ", estimateVaPercent=" + estimateVaPercent +
+                ", estimateVaNumber=" + estimateVaNumber +
+                ", sgst=" + sgst +
+                ", cgst=" + cgst +
+                ", buyingItem=" + buyingItem +
+                ", estimateBuyingPrice=" + estimateBuyingPrice +
+                ", estimateBuyingGrossWeight=" + estimateBuyingGrossWeight +
+                ", estimateBuyingNetWeight=" + estimateBuyingNetWeight +
+                '}';
+    }
+
     public CreateEstimate() {
     }
 
@@ -81,21 +101,6 @@ public class CreateEstimate implements Parcelable {
 
     public void setEstimateBuyingNetWeight(double estimateBuyingNetWeight) {
         this.estimateBuyingNetWeight = estimateBuyingNetWeight;
-    }
-
-    @Override
-    public String toString() {
-        return "CreateEstimate{" +
-                "material='" + material + '\'' +
-                ", printer='" + printer + '\'' +
-                ", gramRate=" + gramRate +
-                ", estimateProductGram=" + estimateProductGram +
-                ", estimateVaPercent=" + estimateVaPercent +
-                ", estimateVaNumber=" + estimateVaNumber +
-                ", sgst=" + sgst +
-                ", cgst=" + cgst +
-                ", buyingItem=" + buyingItem +
-                '}';
     }
 
 
