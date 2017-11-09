@@ -496,8 +496,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 //        insertVA(mCreateEstimateList,stringBuilder);
         insertGSTValues(mCreateEstimateList,stringBuilder);
         insertTotal(mCreateEstimateList,stringBuilder);
-        Log.d(TAG, "onClickEstimate: "+stringBuilder.toString());
-        //if all check out log the estimate copy to the logcat window
+        Log.d(TAG, "onClickEstimate: \n"+stringBuilder.toString());
+
+        mCreateEstimateList.clear();
 
     }
 
@@ -573,7 +574,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private void insertTotal(List<CreateEstimate> createEstimate, StringBuilder stringBuilder) {
         double total =0;
         for(int i=0;i<createEstimate.size();i++) {
-            round(calculateGramTimesWeight(createEstimate.get(i)) + calculateVA(createEstimate.get(i)) + calculateGSTValue(createEstimate.get(i))[0] + calculateGSTValue(createEstimate.get(i))[1], 2);
+            total += round(calculateGramTimesWeight(createEstimate.get(i)) + calculateVA(createEstimate.get(i)) + calculateGSTValue(createEstimate.get(i))[0] + calculateGSTValue(createEstimate.get(i))[1], 2);
         }
         stringBuilder.append(String.format("%-22s",String.valueOf("Total")) +"-"+String.format("%15s",String.valueOf(total))+"\n" );
         stringBuilder.append("_" + String.valueOf(total));
@@ -581,9 +582,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     private double[] calculateGSTValue(CreateEstimate createEstimate){
         double[] return_double = new double[2];
-        double sgst_value = (sgst/100)*(calculateGramTimesWeight(createEstimate));
+        double sgst_value = (sgst/100)*((calculateGramTimesWeight(createEstimate))+calculateVA(createEstimate));
         return_double[0] = round(sgst_value,2);
-        double cgst_value = (cgst/100)*(calculateGramTimesWeight(createEstimate));
+        double cgst_value = (cgst/100)*((calculateGramTimesWeight(createEstimate))+calculateVA(createEstimate));
         return_double[1] = round(cgst_value,2);
         return return_double;
     }
