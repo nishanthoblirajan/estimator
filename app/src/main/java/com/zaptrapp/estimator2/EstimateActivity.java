@@ -485,7 +485,11 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etVaPercentage.setText("");
 
     }
-
+    public void createBuyingEstimate(View view) {
+        StringBuilder stringBuilder = new StringBuilder();
+        buyingEstimateCreator(stringBuilder,"Old Item",Double.parseDouble(etBuyingPrice.getText().toString()),Double.parseDouble(etNetWeight.getText().toString()),Double.parseDouble(etGrossWeight.getText().toString()));
+        runPrintReceiptSequence(stringBuilder.toString());
+    }
     //On Estimate Button Click
     public void onClickEstimate(View view) {
         onClickAddAnotherEstimate(view);
@@ -501,15 +505,15 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         insertTotal(mCreateEstimateList, stringBuilder);
         Log.d(TAG, "onClickEstimate: \n" + stringBuilder.toString());
 
-        for (int i = 0; i < mCreateEstimateList.size(); i++) {
-            if (mCreateEstimateList.get(i).isBuyingItem()) {
-                buyingEstimateCreator(stringBuilder, "old item",
-                        mCreateEstimateList.get(i).estimateBuyingPrice,
-                        mCreateEstimateList.get(i).estimateBuyingNetWeight,
-                        mCreateEstimateList.get(i).estimateBuyingGrossWeight);
-
-            }
-        }
+//        for (int i = 0; i < mCreateEstimateList.size(); i++) {
+//            if (mCreateEstimateList.get(i).isBuyingItem()) {
+//                buyingEstimateCreator(stringBuilder, "old item",
+//                        mCreateEstimateList.get(i).estimateBuyingPrice,
+//                        mCreateEstimateList.get(i).estimateBuyingNetWeight,
+//                        mCreateEstimateList.get(i).estimateBuyingGrossWeight);
+//
+//            }
+//        }
         runPrintReceiptSequence(stringBuilder.toString());
 
 
@@ -1152,4 +1156,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         runPrintReceiptSequence("Testing0_20");
 
     }
+
+
 }

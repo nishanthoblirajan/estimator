@@ -28,6 +28,7 @@
         android:layout_height="wrap_content"
         android:hint="Gram Rate"
         android:inputType="numberDecimal" />
+
     <EditText
         android:id="@+id/et_product_gram"
         android:layout_width="match_parent"
@@ -40,22 +41,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-    <RadioGroup
-        android:id="@+id/rg_product"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-        <RadioButton
-            android:id="@+id/rb_gold"
+
+        <RadioGroup
+            android:id="@+id/rg_product"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Gold" />
-        <RadioButton
-            android:id="@+id/rb_silver"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Silver" />
-    </RadioGroup>
+            android:layout_weight="1">
+
+            <RadioButton
+                android:id="@+id/rb_gold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Gold" />
+
+            <RadioButton
+                android:id="@+id/rb_silver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Silver" />
+        </RadioGroup>
+
         <TextView
             android:id="@+id/tv_choice_clicked"
             android:layout_width="match_parent"
@@ -66,99 +71,127 @@
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Title" />
     </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/search_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:overScrollMode="never"
         android:visibility="gone" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/gold_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:overScrollMode="never"
         android:visibility="gone" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/silver_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:overScrollMode="never"
         android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-    <RadioGroup
-        android:id="@+id/rg_h_or_k"
-        android:layout_width="wrap_content"
-        android:layout_weight="1"
-        android:layout_height="wrap_content">
-        <RadioButton
-            android:id="@+id/rb_hallmark"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Hallmark" />
-        <RadioButton
-            android:id="@+id/rb_kdm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="KDM" />
-    </RadioGroup>
-        <CheckBox
+
+        <RadioGroup
+            android:id="@+id/rg_h_or_k"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <RadioButton
+                android:id="@+id/rb_hallmark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hallmark" />
+
+            <RadioButton
+                android:id="@+id/rb_kdm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="KDM" />
+        </RadioGroup>
+
+        <CheckBox
             android:id="@+id/cb_buying"
-            android:text="Buying"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="Buying" />
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/ll_buying"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/ll_buying"
-        android:visibility="gone">
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Buying Price"
-            android:layout_weight="1"
-            android:inputType="numberDecimal"
-            android:id="@+id/et_buying_price"/>
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Gross Weight"
-            android:layout_weight="1"
+        android:orientation="vertical">
 
-            android:inputType="numberDecimal"
-            android:id="@+id/et_gross_weight"/>
-        <EditText
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            >
+
+            <EditText
+                android:id="@+id/et_buying_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Buying Price"
+                android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/et_gross_weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+
+                android:hint="Gross Weight"
+                android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/et_net_weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+
+                android:hint="Net Weight"
+                android:inputType="numberDecimal" />
+        </LinearLayout>
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Net Weight"
-            android:layout_weight="1"
-
-            android:inputType="numberDecimal"
-            android:id="@+id/et_net_weight"/>
+            android:onClick="createBuyingEstimate"
+            android:text="Create Buying"/>
     </LinearLayout>
+
     <EditText
         android:id="@+id/et_va_percentage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="VA%"
-    android:inputType="numberDecimal"/>
+        android:inputType="numberDecimal" />
 
     <EditText
         android:id="@+id/et_va_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-              android:hint="VA Amount"
-              android:inputType="numberDecimal"/>
+        android:hint="VA Amount"
+        android:inputType="numberDecimal" />
+
     <TextView
         android:id="@+id/testing_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/bt_add_another_estimate"
         android:layout_width="wrap_content"
@@ -169,22 +202,22 @@
 
     <Button
         android:id="@+id/bt_estimate"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:onClick="onClickEstimate"
-    android:text="Estimate" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:onClick="onClickEstimate"
+        android:text="Estimate" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test Printer"
-        android:onClick="testPrinter"/>
+        android:onClick="testPrinter"
+        android:text="Test Printer" />
+
     <TextView
         android:id="@+id/tv_estimate_out"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
 
 
 </LinearLayout>
