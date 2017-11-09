@@ -6,7 +6,9 @@ import android.os.Parcelable;
 public class CreateEstimate implements Parcelable {
     public String material;
     public String printer;
+    public String modelName;
     public double gramRate;
+
     public double estimateProductGram;
     public double estimateVaPercent;
     public double estimateVaNumber;
@@ -18,11 +20,10 @@ public class CreateEstimate implements Parcelable {
     public double estimateBuyingGrossWeight;
     public double estimateBuyingNetWeight;
 
-
-
-    public CreateEstimate(String material, String printer, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double sgst, double cgst, boolean buyingItem, double estimateBuyingPrice, double estimateBuyingGrossWeight, double estimateBuyingNetWeight) {
+    public CreateEstimate(String material, String printer, String modelName, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double sgst, double cgst, boolean buyingItem, double estimateBuyingPrice, double estimateBuyingGrossWeight, double estimateBuyingNetWeight) {
         this.material = material;
         this.printer = printer;
+        this.modelName = modelName;
         this.gramRate = gramRate;
         this.estimateProductGram = estimateProductGram;
         this.estimateVaPercent = estimateVaPercent;
@@ -33,6 +34,14 @@ public class CreateEstimate implements Parcelable {
         this.estimateBuyingPrice = estimateBuyingPrice;
         this.estimateBuyingGrossWeight = estimateBuyingGrossWeight;
         this.estimateBuyingNetWeight = estimateBuyingNetWeight;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
     }
 
     public double getEstimateBuyingPrice() {
@@ -167,6 +176,7 @@ public class CreateEstimate implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.material);
         dest.writeString(this.printer);
+        dest.writeString(this.modelName);
         dest.writeDouble(this.gramRate);
         dest.writeDouble(this.estimateProductGram);
         dest.writeDouble(this.estimateVaPercent);
@@ -182,6 +192,7 @@ public class CreateEstimate implements Parcelable {
     protected CreateEstimate(Parcel in) {
         this.material = in.readString();
         this.printer = in.readString();
+        this.modelName = in.readString();
         this.gramRate = in.readDouble();
         this.estimateProductGram = in.readDouble();
         this.estimateVaPercent = in.readDouble();

@@ -3,8 +3,6 @@ package com.zaptrapp.estimator2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -459,6 +457,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         createEstimate(
                 material,
                 printer,
+                modelName,
                 gramRate,
                 estimateProductGram,
                 estimateVaPercent,
@@ -493,10 +492,11 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     }
 
-    private void createEstimate(String material, String printer, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double sgst, double cgst, boolean buyingItem) {
+    private void createEstimate(String material, String printer, String modelName, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double sgst, double cgst, boolean buyingItem) {
 
         CreateEstimate createEstimate = new CreateEstimate(material,
                 printer,
+                modelName,
                 gramRate,
                 estimateProductGram,
                 estimateVaPercent,
@@ -521,30 +521,79 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     //TODO implement send to printer
     private void sendToPrinter(CreateEstimate createEstimate) {
 
+        StringBuilder stringBuilder = initiatedEstimateTemplate();
+
+//        stringBuilder.append(String.format("%-17s",String.valueOf(modelName))  + String.valueOf(weight) + "            " + String.valueOf(gramRate) + "     \n");
+        //TODO create a method to input the list of data inputs
+
+        insertProducts(createEstimate,stringBuilder);
+
+        insertHallmarkOrKDM(stringBuilder);
+
+        insertGramTimesWeight(createEstimate,stringBuilder);
+
+        insertVA(createEstimate,stringBuilder);
+
+        insertGSTValues(createEstimate,stringBuilder);
+
+        insertTotal(createEstimate,stringBuilder);
+
+        Log.d(TAG, "sendToPrinter: \n"+stringBuilder.toString());
+//        runPrintReceiptSequence(stringBuilder.toString());
+
+    }
+
+    private StringBuilder initiatedEstimateTemplate(CreateEstimate createEstimate) {
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("----Gram Rate--------------"+createEstimate.gramRate);
         stringBuilder.append("------------------------------------------\n");
         stringBuilder.append("Description      wt (g)  Gram Rate (Rs/g)\n");
         stringBuilder.append("------------------------------------------\n");
-//        stringBuilder.append(String.format("%-17s",String.valueOf(modelName))  + String.valueOf(weight) + "            " + String.valueOf(gramRate) + "     \n");
-        //TODO create a method to input the list of data inputs
-        stringBuilder.append(String.format("%-17s",String.valueOf(modelName))  + String.format("%-5s",String.valueOf(estimateProductGram)) + String.format("%15s",String.valueOf(gramRate))+"\n");
-        stringBuilder.append("\n");
-        stringBuilder.append(String.valueOf(hallmarkOrKDM)+"\n");
-        double gramTimesWeight = gramRate*estimateProductGram;
-        stringBuilder.append(String.format("%-22s",String.valueOf("")) +" "+String.format("%15s",String.valueOf(gramTimesWeight))+"\n" );
-        stringBuilder.append(String.format("%-22s",String.valueOf("VA")) +"-"+String.format("%15s",String.valueOf(estimateVaPercent))+"\n" );
-//        stringBuilder.append(String.format("%-22s",String.valueOf("Extra Charges (Rs)")) +"-"+String.format("%15s",String.valueOf(extraChargesDisplay))+"\n" );
-        double sgst_value = (sgst/100)*(gramTimesWeight+estimateVaNumber);
-        double cgst_value = (cgst/100)*(gramTimesWeight+estimateVaNumber);
-        stringBuilder.append(String.format("%-22s",String.valueOf("CGST     " + sgst + "%")) +"-"+String.format("%15s",String.valueOf(sgst_value))+"\n" );
-        stringBuilder.append(String.format("%-22s",String.valueOf("SGST     " + sgst + "%")) +"-"+String.format("%15s",String.valueOf(cgst_value))+"\n" );
+        return stringBuilder;
+    }
 
-        double total = gramTimesWeight+estimateVaNumber+sgst_value+cgst_value;
+    private void insertTotal(CreateEstimate createEstimate, StringBuilder stringBuilder) {
+        double total = round(calculateGramTimesWeight(createEstimate)+calculateVA(createEstimate)+calculateGSTValue(createEstimate)[0]+calculateGSTValue(createEstimate)[1],2);
         stringBuilder.append(String.format("%-22s",String.valueOf("Total")) +"-"+String.format("%15s",String.valueOf(total))+"\n" );
         stringBuilder.append("_" + String.valueOf(total));
+    }
 
-        runPrintReceiptSequence(stringBuilder.toString());
+    private double[] calculateGSTValue(CreateEstimate createEstimate){
+        double[] return_double = new double[2];
+        double sgst_value = (sgst/100)*(calculateGramTimesWeight(createEstimate));
+        return_double[0] = round(sgst_value,2);
+        double cgst_value = (cgst/100)*(calculateGramTimesWeight(createEstimate));
+        return_double[1] = round(cgst_value,2);
+        return return_double;
+    }
+    private void insertGSTValues(CreateEstimate createEstimate, StringBuilder stringBuilder) {
+        stringBuilder.append(String.format("%-22s",String.valueOf("CGST     " + sgst + "%")) +"-"+String.format("%15s",String.valueOf(calculateGSTValue(createEstimate)[0]))+"\n" );
+        stringBuilder.append(String.format("%-22s",String.valueOf("SGST     " + cgst + "%")) +"-"+String.format("%15s",String.valueOf(calculateGSTValue(createEstimate)[1]))+"\n" );
+    }
 
+    private double calculateVA(CreateEstimate createEstimate){
+        return round(calculateGramTimesWeight(createEstimate)*(createEstimate.estimateVaPercent/100),2);
+    }
+    private void insertVA(CreateEstimate createEstimate, StringBuilder stringBuilder) {
+        stringBuilder.append(String.format("%-22s","VA "+createEstimate.estimateVaPercent+"%") +"-"+String.format("%15s",calculateVA(createEstimate))+"\n" );
+
+    }
+    private double calculateGramTimesWeight(CreateEstimate createEstimate){
+        return round((createEstimate.gramRate*createEstimate.estimateProductGram),2);
+    }
+
+    private void insertGramTimesWeight(CreateEstimate createEstimate, StringBuilder stringBuilder) {
+        double gramTimesWeight = calculateGramTimesWeight(createEstimate);
+        stringBuilder.append(String.format("%-22s",String.valueOf("")) +" "+String.format("%15s",String.valueOf(gramTimesWeight))+"\n" );
+    }
+
+    private void insertHallmarkOrKDM(StringBuilder stringBuilder) {
+        stringBuilder.append(hallmarkOrKDM+"\n");
+    }
+
+    private void insertProducts(CreateEstimate createEstimate, StringBuilder stringBuilder) {
+        stringBuilder.append(String.format("%-17s",createEstimate.modelName)  + String.format("%-5s",createEstimate.estimateProductGram) + String.format("%15s",createEstimate.gramRate)+"\n");
+        stringBuilder.append("\n");
     }
 
 
