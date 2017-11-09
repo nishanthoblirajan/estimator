@@ -884,7 +884,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private boolean initializeObject() {
         Log.d(TAG, "initializeObject: ");
         try {
-            mPrinter = new Printer(Printer.TM_M30,
+            //TODO added shared preference here
+            mPrinter = new Printer(sharedPreferences.getInt("printerPref",0),
                     Printer.MODEL_ANK,
                     this);
             Log.d(TAG, "initializeObject: inside try");
