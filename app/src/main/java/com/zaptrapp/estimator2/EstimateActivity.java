@@ -491,9 +491,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             insertProducts(mCreateEstimateList.get(i),stringBuilder);
         }
         insertHallmarkOrKDM(stringBuilder);
-        insertGramTimesWeight(mCreateEstimateList,stringBuilder);
+//        insertGramTimesWeight(mCreateEstimateList,stringBuilder);
 
-        insertVA(mCreateEstimateList,stringBuilder);
+//        insertVA(mCreateEstimateList,stringBuilder);
         insertGSTValues(mCreateEstimateList,stringBuilder);
         insertTotal(mCreateEstimateList,stringBuilder);
         Log.d(TAG, "onClickEstimate: "+stringBuilder.toString());
@@ -641,6 +641,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private void insertProducts(CreateEstimate createEstimate, StringBuilder stringBuilder) {
         stringBuilder.append(String.format("%-17s",createEstimate.modelName)  + String.format("%-5s",createEstimate.estimateProductGram) + String.format("%15s",calculateWeightTimesGramRate(createEstimate))+"\n");
         stringBuilder.append("\n");
+        insertVA(createEstimate,stringBuilder);
     }
 
 
