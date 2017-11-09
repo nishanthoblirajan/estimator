@@ -526,6 +526,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append("Description      wt (g)  Gram Rate (Rs/g)\n");
         stringBuilder.append("------------------------------------------\n");
 //        stringBuilder.append(String.format("%-17s",String.valueOf(modelName))  + String.valueOf(weight) + "            " + String.valueOf(gramRate) + "     \n");
+        //TODO create a method to input the list of data inputs
         stringBuilder.append(String.format("%-17s",String.valueOf(modelName))  + String.format("%-5s",String.valueOf(estimateProductGram)) + String.format("%15s",String.valueOf(gramRate))+"\n");
         stringBuilder.append("\n");
         stringBuilder.append(String.valueOf(hallmarkOrKDM)+"\n");
