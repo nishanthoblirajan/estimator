@@ -468,7 +468,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         );
 
 
-        resetViews();
+//        resetViews();
     }
 
 
@@ -485,10 +485,15 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         onClickAddAnotherEstimate(view);
         for(int i =0;i<mCreateEstimateList.size();i++){
             Log.d(TAG, "Estimate List: "+mCreateEstimateList.get(i).toString());
+            addToEstimate(mCreateEstimateList.get(i));
         }
 
 
         //if all check out log the estimate copy to the logcat window
+
+    }
+
+    private void addToEstimate(CreateEstimate createEstimate) {
 
     }
 
@@ -515,13 +520,13 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         Log.d(TAG, "createEstimate: "+createEstimate.toString());
         mCreateEstimateList.add(createEstimate);
         Log.d(TAG, "createEstimate: "+mCreateEstimateList.size());
-        sendToPrinter(createEstimate);
+//        sendToPrinter(createEstimate);
     }
 
     //TODO implement send to printer
     private void sendToPrinter(CreateEstimate createEstimate) {
 
-        StringBuilder stringBuilder = initiatedEstimateTemplate();
+        StringBuilder stringBuilder = initiatedEstimateTemplate(createEstimate);
 
 //        stringBuilder.append(String.format("%-17s",String.valueOf(modelName))  + String.valueOf(weight) + "            " + String.valueOf(gramRate) + "     \n");
         //TODO create a method to input the list of data inputs
@@ -545,9 +550,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     private StringBuilder initiatedEstimateTemplate(CreateEstimate createEstimate) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("----Gram Rate--------------"+createEstimate.gramRate);
+        stringBuilder.append(String.format("%-22s",String.valueOf("Gram Rate")) +" "+String.format("%15s",createEstimate.gramRate+"\n"));
         stringBuilder.append("------------------------------------------\n");
-        stringBuilder.append("Description      wt (g)  Gram Rate (Rs/g)\n");
+        stringBuilder.append("Description      wt (g)  Total (wt*rate)\n");
         stringBuilder.append("------------------------------------------\n");
         return stringBuilder;
     }
@@ -591,8 +596,12 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append(hallmarkOrKDM+"\n");
     }
 
+    private double calculateWeightTimesGramRate(CreateEstimate createEstimate){
+        return round(createEstimate.estimateProductGram*createEstimate.gramRate,2);
+    }
+
     private void insertProducts(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-17s",createEstimate.modelName)  + String.format("%-5s",createEstimate.estimateProductGram) + String.format("%15s",createEstimate.gramRate)+"\n");
+        stringBuilder.append(String.format("%-17s",createEstimate.modelName)  + String.format("%-5s",createEstimate.estimateProductGram) + String.format("%15s",calculateWeightTimesGramRate(createEstimate))+"\n");
         stringBuilder.append("\n");
     }
 
