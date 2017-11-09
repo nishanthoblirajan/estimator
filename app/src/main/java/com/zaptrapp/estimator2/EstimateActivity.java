@@ -290,7 +290,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private double setVAPercent(double vaNumber) {
         if (etGramRate.getText() != null && etProductGram.getText() != null) {
             double gram_rate = Double.parseDouble(etGramRate.getText().toString());
-            return round((vaNumber / gram_rate) * 100,2);
+            double product_gram = Double.parseDouble(etProductGram.getText().toString());
+
+            return round((vaNumber / (gram_rate*product_gram)) * 100,2);
         } else {
             return 0;
         }
@@ -299,7 +301,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private double setVANumber(double vaPercent) {
         if (etGramRate.getText() != null && etProductGram.getText() != null) {
             double gram_rate = Double.parseDouble(etGramRate.getText().toString());
-            return round((vaPercent / 100) * gram_rate,2);
+            double product_gram = Double.parseDouble(etProductGram.getText().toString());
+            return round((vaPercent / 100) * (gram_rate*product_gram),2);
         } else {
             return 0;
         }
@@ -477,6 +480,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etProductGram.setText("");
         rgHOrK.clearCheck();
         cbBuying.setChecked(false);
+        etVaNumber.setText("");
+        etVaPercentage.setText("");
 
     }
 
@@ -487,13 +492,15 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         for(int i =0;i<mCreateEstimateList.size();i++){
             Log.d(TAG, "Estimate List: "+mCreateEstimateList.get(i).toString());
-            insertProducts(mCreateEstimateList.get(i),stringBuilder);
             insertHallmarkOrKDM(mCreateEstimateList.get(i),stringBuilder);
+            insertProducts(mCreateEstimateList.get(i),stringBuilder);
         }
 
         insertGSTValues(mCreateEstimateList,stringBuilder);
         insertTotal(mCreateEstimateList,stringBuilder);
         Log.d(TAG, "onClickEstimate: \n"+stringBuilder.toString());
+
+        runPrintReceiptSequence(stringBuilder.toString());
 
         mCreateEstimateList.clear();
 
@@ -532,23 +539,19 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(String.format("%-22s",String.valueOf("Gram Rate")) +" "+String.format("%15s",gramRate+"\n"));
         stringBuilder.append("------------------------------------------\n");
-        stringBuilder.append("Description      wt (g)  Total (wt*rate)\n");
+        stringBuilder.append("Description      wt (g)           Total   \n");
         stringBuilder.append("------------------------------------------\n");
         return stringBuilder;
     }
 
-    private void insertTotal(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        double total = round(calculateGramTimesWeight(createEstimate)+calculateVA(createEstimate)+calculateGSTValue(createEstimate)[0]+calculateGSTValue(createEstimate)[1],2);
-        stringBuilder.append(String.format("%-22s",String.valueOf("Total")) +"-"+String.format("%15s",String.valueOf(total))+"\n" );
-        stringBuilder.append("_" + String.valueOf(total));
-    }
 
     private void insertTotal(List<CreateEstimate> createEstimate, StringBuilder stringBuilder) {
         double total =0;
         for(int i=0;i<createEstimate.size();i++) {
             total += round(calculateGramTimesWeight(createEstimate.get(i)) + calculateVA(createEstimate.get(i)) + calculateGSTValue(createEstimate.get(i))[0] + calculateGSTValue(createEstimate.get(i))[1], 2);
         }
-        stringBuilder.append(String.format("%-22s",String.valueOf("Total")) +"-"+String.format("%15s",String.valueOf(total))+"\n" );
+        total = round(total,2);
+        stringBuilder.append(String.format("%-22s",String.valueOf("Total")) +"-"+String.format("%15s",total)+"\n" );
         stringBuilder.append("_" + String.valueOf(total));
     }
 
@@ -560,10 +563,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         return_double[1] = round(cgst_value,2);
         return return_double;
     }
-    private void insertGSTValues(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-22s",String.valueOf("CGST     " + sgst + "%")) +"-"+String.format("%15s",String.valueOf(calculateGSTValue(createEstimate)[0]))+"\n" );
-        stringBuilder.append(String.format("%-22s",String.valueOf("SGST     " + cgst + "%")) +"-"+String.format("%15s",String.valueOf(calculateGSTValue(createEstimate)[1]))+"\n" );
-    }
     private void insertGSTValues(List<CreateEstimate> createEstimate, StringBuilder stringBuilder) {
         double cgstValue=0;
         double sgstValue =0;
@@ -571,6 +570,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             cgstValue+=calculateGSTValue(createEstimate.get(i))[0];
             sgstValue+=calculateGSTValue(createEstimate.get(i))[1];
         }
+        cgstValue = round(cgstValue,2);
+        sgstValue = round(sgstValue,2);
         stringBuilder.append(String.format("%-22s",String.valueOf("CGST     " + sgst + "%")) +"-"+String.format("%15s",String.valueOf(cgstValue))+"\n" );
         stringBuilder.append(String.format("%-22s",String.valueOf("SGST     " + cgst + "%")) +"-"+String.format("%15s",String.valueOf(sgstValue))+"\n" );
     }
@@ -582,29 +583,14 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append(String.format("%-22s","VA "+createEstimate.estimateVaPercent+"%") +"-"+String.format("%15s",calculateVA(createEstimate))+"\n" );
 
     }
-    private void insertVA(List<CreateEstimate> createEstimate, StringBuilder stringBuilder) {
-        for(int i =0;i<createEstimate.size();i++) {
-            stringBuilder.append(String.format("%-22s", "VA " + createEstimate.get(i).estimateVaPercent + "%") + "-" + String.format("%15s", calculateVA(createEstimate.get(i))) + "\n");
-        }
-    }
     private double calculateGramTimesWeight(CreateEstimate createEstimate){
         return round((createEstimate.gramRate*createEstimate.estimateProductGram),2);
     }
 
-    private void insertGramTimesWeight(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        double gramTimesWeight = calculateGramTimesWeight(createEstimate);
-        stringBuilder.append(String.format("%-22s",String.valueOf("")) +" "+String.format("%15s",String.valueOf(gramTimesWeight))+"\n" );
-    }
-    private void insertGramTimesWeight(List<CreateEstimate> createEstimate, StringBuilder stringBuilder) {
-        double gramTimesWeight=0;
-        for(int i =0;i<createEstimate.size();i++) {
-            gramTimesWeight+=calculateGramTimesWeight(createEstimate.get(i));
-        }
-        stringBuilder.append(String.format("%-22s",String.valueOf("")) +" "+String.format("%15s",String.valueOf(gramTimesWeight))+"\n" );
-    }
-
     private void insertHallmarkOrKDM(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        stringBuilder.append(createEstimate.hallmarkOrKDM+"\n\n");
+        if(createEstimate.hallmarkOrKDM!="") {
+            stringBuilder.append(createEstimate.hallmarkOrKDM + "\n");
+        }
     }
 
     private double calculateWeightTimesGramRate(CreateEstimate createEstimate){
