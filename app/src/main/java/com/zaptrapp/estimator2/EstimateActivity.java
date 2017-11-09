@@ -458,6 +458,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 material,
                 printer,
                 modelName,
+                hallmarkOrKDM,
                 gramRate,
                 estimateProductGram,
                 estimateVaPercent,
@@ -467,8 +468,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 buyingItem
         );
 
-
-//        resetViews();
+        resetViews();
     }
 
 
@@ -487,13 +487,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         for(int i =0;i<mCreateEstimateList.size();i++){
             Log.d(TAG, "Estimate List: "+mCreateEstimateList.get(i).toString());
-            addToEstimate(mCreateEstimateList.get(i));
             insertProducts(mCreateEstimateList.get(i),stringBuilder);
+            insertHallmarkOrKDM(mCreateEstimateList.get(i),stringBuilder);
         }
-        insertHallmarkOrKDM(stringBuilder);
-//        insertGramTimesWeight(mCreateEstimateList,stringBuilder);
 
-//        insertVA(mCreateEstimateList,stringBuilder);
         insertGSTValues(mCreateEstimateList,stringBuilder);
         insertTotal(mCreateEstimateList,stringBuilder);
         Log.d(TAG, "onClickEstimate: \n"+stringBuilder.toString());
@@ -502,14 +499,13 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     }
 
-    private void addToEstimate(CreateEstimate createEstimate) {
-    }
 
-    private void createEstimate(String material, String printer, String modelName, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double sgst, double cgst, boolean buyingItem) {
+    private void createEstimate(String material, String printer, String modelName, String hallmarkOrKDM,double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double sgst, double cgst, boolean buyingItem) {
 
         CreateEstimate createEstimate = new CreateEstimate(material,
                 printer,
                 modelName,
+                hallmarkOrKDM,
                 gramRate,
                 estimateProductGram,
                 estimateVaPercent,
@@ -531,30 +527,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 //        sendToPrinter(createEstimate);
     }
 
-    //TODO implement send to printer
-    private void sendToPrinter(CreateEstimate createEstimate) {
-
-        StringBuilder stringBuilder = initiatedEstimateTemplate();
-
-//        stringBuilder.append(String.format("%-17s",String.valueOf(modelName))  + String.valueOf(weight) + "            " + String.valueOf(gramRate) + "     \n");
-        //TODO create a method to input the list of data inputs
-
-        insertProducts(createEstimate,stringBuilder);
-
-        insertHallmarkOrKDM(stringBuilder);
-
-        insertGramTimesWeight(createEstimate,stringBuilder);
-
-        insertVA(createEstimate,stringBuilder);
-
-        insertGSTValues(createEstimate,stringBuilder);
-
-        insertTotal(createEstimate,stringBuilder);
-
-        Log.d(TAG, "sendToPrinter: \n"+stringBuilder.toString());
-//        runPrintReceiptSequence(stringBuilder.toString());
-
-    }
 
     private StringBuilder initiatedEstimateTemplate() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -631,8 +603,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append(String.format("%-22s",String.valueOf("")) +" "+String.format("%15s",String.valueOf(gramTimesWeight))+"\n" );
     }
 
-    private void insertHallmarkOrKDM(StringBuilder stringBuilder) {
-        stringBuilder.append(hallmarkOrKDM+"\n");
+    private void insertHallmarkOrKDM(CreateEstimate createEstimate, StringBuilder stringBuilder) {
+        stringBuilder.append(createEstimate.hallmarkOrKDM+"\n\n");
     }
 
     private double calculateWeightTimesGramRate(CreateEstimate createEstimate){
@@ -641,7 +613,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     private void insertProducts(CreateEstimate createEstimate, StringBuilder stringBuilder) {
         stringBuilder.append(String.format("%-17s",createEstimate.modelName)  + String.format("%-5s",createEstimate.estimateProductGram) + String.format("%15s",calculateWeightTimesGramRate(createEstimate))+"\n");
-        stringBuilder.append("\n");
         insertVA(createEstimate,stringBuilder);
     }
 
