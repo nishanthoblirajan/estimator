@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.Crashlytics;
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
@@ -52,6 +54,7 @@ import com.zaptrapp.estimator2.Models.ProductHolder;
 import com.zaptrapp.estimator2.Models.VA;
 import com.zaptrapp.estimator2.Printer.ShowMsg;
 
+import io.fabric.sdk.android.Fabric;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -161,6 +164,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_estimate);
 
         mContext = this;
@@ -200,10 +204,15 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                                 double productGram = Double.parseDouble(charSequence.toString());
                                 estimateProductGram = productGram;
                                 setDefaultVA(productGram);
+                                etExtraInput.setVisibility(View.VISIBLE);
                             } else {
+                                etExtraInput.setVisibility(View.GONE);
+
                                 unshowVAs();
                             }
                         } else {
+                            etExtraInput.setVisibility(View.GONE);
+
                             unshowVAs();
                         }
                         viewLog();
@@ -530,6 +539,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etVaNumber.setText("");
         etVaPercentage.setText("");
         etExtraInput.setText("");
+        etProductGram.requestFocus();
 
     }
 
@@ -564,7 +574,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 //        runPrintReceiptSequence(stringBuilder.toString());
 
 
-        mCreateEstimateList.clear();
+
 
     }
 
@@ -578,6 +588,14 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         runPrintReceiptSequence(stringBuilder.toString());
+                        mCreateEstimateList.clear();
+                    }
+                })
+                .setNegativeText("Clear")
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        clearData();
                     }
                 })
                 .setCancelable(true)
@@ -1218,4 +1236,16 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     }
 
 
+    public void clearData(){
+        if(mCreateEstimateList.size()>0){
+            mCreateEstimateList.clear();
+            Toast.makeText(mContext, "Data Cleared", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(mContext, "No Data to Clear", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void onClickClearEstimate(View view) {
+        clearData();
+
+    }
 }

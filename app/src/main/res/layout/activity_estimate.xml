@@ -194,6 +194,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="createBuyingEstimate"
+                    android:layout_gravity="center_horizontal"
                     android:text="Create Buying" />
             </LinearLayout>
 
@@ -232,6 +233,12 @@
                 android:onClick="onClickAddAnotherEstimate"
                 android:text="Add Another" />
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Clear Data"
+                android:layout_gravity="center_horizontal"
+                android:onClick="onClickClearEstimate"/>
             <Button
                 android:id="@+id/bt_estimate"
                 android:layout_width="wrap_content"
