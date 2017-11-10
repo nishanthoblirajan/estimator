@@ -451,11 +451,14 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                     case R.id.rb_gold:
                         product = "gold";
                         Log.d(TAG, "onCheckedChanged: " + product);
+                        rgHOrK.setVisibility(View.VISIBLE);
                         toolbar.setBackgroundColor(Color.parseColor("#FFDF00"));
                         break;
                     case R.id.rb_silver:
                         product = "silver";
                         Log.d(TAG, "onCheckedChanged: " + product);
+                        rgHOrK.clearCheck();
+                        rgHOrK.setVisibility(View.INVISIBLE);
                         toolbar.setBackgroundColor(Color.parseColor("#D3D3D3"));
                         break;
                     default:
@@ -712,6 +715,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append(String.format("%-17s", createEstimate.modelName) + String.format("%-5s", createEstimate.estimateProductGram) + String.format("%15s", calculateWeightTimesGramRate(createEstimate)) + "\n");
         insertVA(createEstimate, stringBuilder);
         insertExtraInput(createEstimate,stringBuilder);
+        stringBuilder.append("\n");
     }
 
 
