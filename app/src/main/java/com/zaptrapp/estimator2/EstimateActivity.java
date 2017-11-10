@@ -634,9 +634,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     private double[] calculateGSTValue(CreateEstimate createEstimate) {
         double[] return_double = new double[2];
-        double sgst_value = (sgst / 100) * ((calculateGramTimesWeight(createEstimate)) + calculateVA(createEstimate));
+        double sgst_value = (sgst / 100) * ((calculateGramTimesWeight(createEstimate)) + calculateVA(createEstimate)+calculateExtraInput(createEstimate));
         return_double[0] = round(sgst_value, 2);
-        double cgst_value = (cgst / 100) * ((calculateGramTimesWeight(createEstimate)) + calculateVA(createEstimate));
+        double cgst_value = (cgst / 100) * ((calculateGramTimesWeight(createEstimate)) + calculateVA(createEstimate)+calculateExtraInput(createEstimate));
         return_double[1] = round(cgst_value, 2);
         return return_double;
     }
