@@ -189,7 +189,12 @@
         android:layout_height="wrap_content"
         android:hint="VA Amount"
         android:inputType="numberDecimal" />
-
+    <EditText
+        android:id="@+id/et_extra_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Extra Input"
+        android:inputType="numberDecimal" />
     <TextView
         android:id="@+id/testing_tv"
         android:layout_width="wrap_content"

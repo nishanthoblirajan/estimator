@@ -105,6 +105,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private TextView tvPrinter;
     private RecyclerView searchRecyclerView;
     private Button btAddAnotherEstimate;
+    private EditText etExtraInput;
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -147,6 +148,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         btAddAnotherEstimate = (Button) findViewById(R.id.bt_add_another_estimate);
 
 
+        etExtraInput = (EditText) findViewById(R.id.et_extra_input);
     }
 
     int selected_printer = 1;
@@ -269,14 +271,12 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                             etVaPercentage.setHint(String.valueOf(estimateVaPercent));
                         } else {
 
-                            //not working
                             setDefaultVA(estimateProductGram);
-//                            estimateVaNumber = Double.parseDouble(etVaNumber.getHint().toString());
-//                            estimateVaPercent = Double.parseDouble(etVaPercentage.getHint().toString());
                         }
                         viewLog();
                     }
                 });
+
     }
 
     private void setDefaultVA(double productGram) {
@@ -330,10 +330,13 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     double estimateBuyingGrossWeight = 0;
     double estimateBuyingNetWeight = 0;
 
+    double estimateExtraInput = 0;
+
     private void viewLog() {
         Log.d(TAG, "viewLog: buying Item " + buyingItem + "\nvaPercent " + estimateVaPercent + "\nvaNumber " + estimateVaNumber
                 + "\nhallmarkOrKDM " + hallmarkOrKDM
-                + "\nproductGram " + estimateProductGram);
+                + "\nproductGram " + estimateProductGram
+                + "\nExtra Input " + estimateExtraInput);
     }
 
     private void vaPercentShow(double input, String gramRateString) {
@@ -373,13 +376,13 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         material = choice;
         Toast.makeText(this, choice, Toast.LENGTH_SHORT).show();
 
-        ipAddressM30 = sharedPreferences.getString("ipPref","");
+        ipAddressM30 = sharedPreferences.getString("ipPref", "");
         //retrieve printer
         printer = sharedPreferences.getString("printerPref", "1");
         selected_printer = Integer.parseInt(printer);
         switch (selected_printer) {
             case 1:
-                PRINTER = "TCP:"+ipAddressM30;
+                PRINTER = "TCP:" + ipAddressM30;
                 tvPrinter.setText("Epson m30 " + PRINTER);
                 break;
             case 2:
@@ -484,6 +487,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         //TODOcompleted implement the Add Another Button Click
         //retrieve all datas from the preference.xml file
         //check if all inputs are available
+        estimateExtraInput = Double.parseDouble(etExtraInput.getText().toString());
         createEstimate(
                 material,
                 printer,
@@ -493,6 +497,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 estimateProductGram,
                 estimateVaPercent,
                 estimateVaNumber,
+                estimateExtraInput,
                 sgst,
                 cgst,
                 buyingItem
@@ -508,6 +513,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         cbBuying.setChecked(false);
         etVaNumber.setText("");
         etVaPercentage.setText("");
+        etExtraInput.setText("");
 
     }
 
@@ -532,15 +538,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         insertTotal(mCreateEstimateList, stringBuilder);
         Log.d(TAG, "onClickEstimate: \n" + stringBuilder.toString());
 
-//        for (int i = 0; i < mCreateEstimateList.size(); i++) {
-//            if (mCreateEstimateList.get(i).isBuyingItem()) {
-//                buyingEstimateCreator(stringBuilder, "old item",
-//                        mCreateEstimateList.get(i).estimateBuyingPrice,
-//                        mCreateEstimateList.get(i).estimateBuyingNetWeight,
-//                        mCreateEstimateList.get(i).estimateBuyingGrossWeight);
-//
-//            }
-//        }
+
         runPrintReceiptSequence(stringBuilder.toString());
 
 
@@ -576,7 +574,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         return stringBuilder.toString();
     }
 
-    private void createEstimate(String material, String printer, String modelName, String hallmarkOrKDM, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double sgst, double cgst, boolean buyingItem) {
+    private void createEstimate(String material, String printer, String modelName, String hallmarkOrKDM, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double estimateExtraInput,double sgst, double cgst, boolean buyingItem) {
 
         CreateEstimate createEstimate = new CreateEstimate(material,
                 printer,
@@ -586,6 +584,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 estimateProductGram,
                 estimateVaPercent,
                 estimateVaNumber,
+                estimateExtraInput,
                 sgst,
                 cgst,
                 buyingItem, 0, 0, 0);
@@ -616,7 +615,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private void insertTotal(List<CreateEstimate> createEstimate, StringBuilder stringBuilder) {
         double total = 0;
         for (int i = 0; i < createEstimate.size(); i++) {
-            total += round(calculateGramTimesWeight(createEstimate.get(i)) + calculateVA(createEstimate.get(i)) + calculateGSTValue(createEstimate.get(i))[0] + calculateGSTValue(createEstimate.get(i))[1], 2);
+            total += round(calculateGramTimesWeight(createEstimate.get(i)) + calculateVA(createEstimate.get(i))+calculateExtraInput(createEstimate.get(i)) + calculateGSTValue(createEstimate.get(i))[0] + calculateGSTValue(createEstimate.get(i))[1], 2);
         }
         total = round(total, 2);
         stringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", total) + "\n");
@@ -648,9 +647,16 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private double calculateVA(CreateEstimate createEstimate) {
         return round(calculateGramTimesWeight(createEstimate) * (createEstimate.estimateVaPercent / 100), 2);
     }
-
+    private double calculateExtraInput(CreateEstimate createEstimate) {
+        return round(createEstimate.extraInput, 2);
+    }
     private void insertVA(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-22s", "VA " + createEstimate.estimateVaPercent + "%") + "-" + String.format("%15s", calculateVA(createEstimate)) + "\n");
+        stringBuilder.append(String.format("%-22s", "VA " + createEstimate.estimateVaPercent + "%") + "-" + String.format("%15s", calculateExtraInput(createEstimate)) + "\n");
+
+    }
+
+    private void insertExtraInput(CreateEstimate createEstimate, StringBuilder stringBuilder) {
+        stringBuilder.append(String.format("%-22s", "Extra ") + "-" + String.format("%15s", calculateVA(createEstimate)) + "\n");
 
     }
 
@@ -671,6 +677,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private void insertProducts(CreateEstimate createEstimate, StringBuilder stringBuilder) {
         stringBuilder.append(String.format("%-17s", createEstimate.modelName) + String.format("%-5s", createEstimate.estimateProductGram) + String.format("%15s", calculateWeightTimesGramRate(createEstimate)) + "\n");
         insertVA(createEstimate, stringBuilder);
+        insertExtraInput(createEstimate,stringBuilder);
     }
 
 
