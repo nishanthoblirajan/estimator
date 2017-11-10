@@ -54,6 +54,7 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.zaptrapp.estimator2.Models.CreateEstimate;
+import com.zaptrapp.estimator2.Models.EstimateLog;
 import com.zaptrapp.estimator2.Models.Product;
 import com.zaptrapp.estimator2.Models.ProductHolder;
 import com.zaptrapp.estimator2.Models.VA;
@@ -998,10 +999,13 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
      */
 
     String dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
-    String timeStamp = new SimpleDateFormat("HH:mm:ss").format(new Date());
+    String timeStamp = new SimpleDateFormat("HH-mm-ss").format(new Date());
 
     private boolean runPrintReceiptSequence(String printString) {
-        databaseReference.child("Estimates").child(product).child(dateStamp).child(timeStamp).setValue(printString);
+        EstimateLog estimateLog = new EstimateLog(timeStamp,printString);
+        Log.d(TAG, "runPrintReceiptSequence: ");
+        Log.d(TAG, "runPrintReceiptSequence: "+estimateLog.toString());
+        databaseReference.child("Estimates").child(product).child(dateStamp).child(estimateLog.getTimeStamp()).setValue(estimateLog);
         Log.d(TAG, "runPrintReceiptSequence: ");
         try {
 
