@@ -224,20 +224,27 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
-            <Button
-                android:id="@+id/bt_add_another_estimate"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:onClick="onClickAddAnotherEstimate"
-                android:text="Add Another" />
+                android:orientation="horizontal">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:onClick="onClickClearEstimate"
-                android:text="Clear Data" />
+                <Button
+                    android:id="@+id/bt_add_another_estimate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:onClick="onClickAddAnotherEstimate"
+                    android:text="Add" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:onClick="onClickClearEstimate"
+                    android:text="Clear" />
+
+            </LinearLayout>
             <Button
                 android:id="@+id/bt_estimate"
                 android:layout_width="wrap_content"
@@ -245,7 +252,6 @@
                 android:layout_gravity="center_horizontal"
                 android:onClick="onClickEstimate"
                 android:text="Estimate" />
-
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -301,13 +301,16 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                                 estimateProductGram = productGram;
                                 setDefaultVA(productGram);
                                 etExtraInput.setVisibility(View.VISIBLE);
+                                btEstimate.setVisibility(View.VISIBLE);
                             } else {
                                 etExtraInput.setVisibility(View.GONE);
+                                btEstimate.setVisibility(View.GONE);
 
                                 unshowVAs();
                             }
                         } else {
                             etExtraInput.setVisibility(View.GONE);
+                            btEstimate.setVisibility(View.GONE);
 
                             unshowVAs();
                         }
@@ -423,9 +426,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private double setVAPercent(double vaNumber) {
         if (etGramRate.getText() != null && etProductGram.getText() != null) {
             double gram_rate = Double.parseDouble(etGramRate.getText().toString());
-            double product_gram = Double.parseDouble(etProductGram.getText().toString());
 
-            return round((vaNumber / (gram_rate * product_gram)) * 100, 2);
+            return round((vaNumber / (gram_rate * estimateProductGram)) * 100, 2);
         } else {
             return 0;
         }
@@ -434,8 +436,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private double setVANumber(double vaPercent) {
         if (etGramRate.getText() != null && etProductGram.getText() != null) {
             double gram_rate = Double.parseDouble(etGramRate.getText().toString());
-            double product_gram = Double.parseDouble(etProductGram.getText().toString());
-            return round((vaPercent / 100) * (gram_rate * product_gram), 2);
+            return round((vaPercent / 100) * (gram_rate * estimateProductGram), 2);
         } else {
             return 0;
         }
