@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+
     tools:context="com.zaptrapp.estimator2.EstimateActivity">
+
 
     <FrameLayout
         android:id="@+id/toolbar_container"
@@ -21,6 +23,13 @@
 
 
     </FrameLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="vertical"
+        android:layout_margin="8dp">
+
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
     android:text="Printer Selected"
     android:id="@+id/tv_printer"/>
@@ -47,19 +56,22 @@
 
         <RadioGroup
             android:id="@+id/rg_product"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
             <RadioButton
                 android:id="@+id/rb_gold"
-                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Gold" />
 
             <RadioButton
                 android:id="@+id/rb_silver"
-                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Silver" />
         </RadioGroup>
@@ -104,18 +116,21 @@
         <RadioGroup
             android:id="@+id/rg_h_or_k"
             android:layout_width="wrap_content"
+            android:orientation="horizontal"
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
             <RadioButton
                 android:id="@+id/rb_hallmark"
-                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Hallmark" />
 
             <RadioButton
                 android:id="@+id/rb_kdm"
-                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="KDM" />
         </RadioGroup>
@@ -197,6 +212,7 @@
         android:inputType="numberDecimal" />
     <TextView
         android:id="@+id/testing_tv"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -220,12 +236,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="testPrinter"
-        android:text="Test Printer" />
+        android:text="Test Printer"
+    android:visibility="gone"/>
 
     <TextView
         android:id="@+id/tv_estimate_out"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+        </LinearLayout>
 
-
+    </ScrollView>
 </LinearLayout>
