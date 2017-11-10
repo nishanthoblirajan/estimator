@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,12 +29,16 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 import com.epson.epos2.printer.ReceiveListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -385,7 +390,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         //retrieve gold/silver
         String choice = sharedPreferences.getString("materialPref", "1");
         material = choice;
-        Toast.makeText(this, choice, Toast.LENGTH_SHORT).show();
 
         ipAddressM30 = sharedPreferences.getString("ipPref", "");
         //retrieve printer
@@ -492,7 +496,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     public void onClickAddAnotherEstimate(View view) {
 
         String product_estimate = product;
-        Toast.makeText(this, product_estimate, Toast.LENGTH_SHORT).show();
         retrieveDataFromFirebase(product_estimate);
 
         //TODOcompleted implement the Add Another Button Click
@@ -531,13 +534,15 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         StringBuilder stringBuilder = new StringBuilder();
         buyingEstimateCreator(stringBuilder, "Old Item", Double.parseDouble(etBuyingPrice.getText().toString()), Double.parseDouble(etNetWeight.getText().toString()), Double.parseDouble(etGrossWeight.getText().toString()));
         Log.d(TAG, "createBuyingEstimate: "+stringBuilder.toString());
-        runPrintReceiptSequence(stringBuilder.toString());
+
+        showDialog(stringBuilder);
+//        runPrintReceiptSequence(stringBuilder.toString());
     }
 
     //On Estimate Button Click
     public void onClickEstimate(View view) {
         onClickAddAnotherEstimate(view);
-        StringBuilder stringBuilder = initiatedEstimateTemplate();
+        final StringBuilder stringBuilder = initiatedEstimateTemplate();
 
         for (int i = 0; i < mCreateEstimateList.size(); i++) {
             Log.d(TAG, "Estimate List: " + mCreateEstimateList.get(i).toString());
@@ -550,11 +555,30 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         Log.d(TAG, "onClickEstimate: \n" + stringBuilder.toString());
 
 
-        runPrintReceiptSequence(stringBuilder.toString());
+        //show Material Dialog
+        showDialog(stringBuilder);
+
+//        runPrintReceiptSequence(stringBuilder.toString());
 
 
         mCreateEstimateList.clear();
 
+    }
+
+    public void showDialog(final StringBuilder stringBuilder){
+        new MaterialStyledDialog.Builder(this)
+                .setStyle(Style.HEADER_WITH_TITLE)
+                .setTitle("Estimate")
+                .setDescription(stringBuilder)
+                .setPositiveText("Print")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        runPrintReceiptSequence(stringBuilder.toString());
+                    }
+                })
+                .setCancelable(true)
+                .show();
     }
 
     public static String buyingEstimateCreator(StringBuilder stringBuilder, String modelName, double price, double netWeight, double grossWeight) {
