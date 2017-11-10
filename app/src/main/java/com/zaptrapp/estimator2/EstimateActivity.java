@@ -3,6 +3,7 @@ package com.zaptrapp.estimator2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -101,6 +102,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private EditText etBuyingPrice;
     private EditText etGrossWeight;
     private EditText etNetWeight;
+    private TextView tvPrinter;
+    private RecyclerView searchRecyclerView;
+    private Button btAddAnotherEstimate;
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -138,7 +142,14 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etBuyingPrice = (EditText) findViewById(R.id.et_buying_price);
         etGrossWeight = (EditText) findViewById(R.id.et_gross_weight);
         etNetWeight = (EditText) findViewById(R.id.et_net_weight);
+        tvPrinter = (TextView) findViewById(R.id.tv_printer);
+        searchRecyclerView = (RecyclerView) findViewById(R.id.search_recyclerView);
+        btAddAnotherEstimate = (Button) findViewById(R.id.bt_add_another_estimate);
+
+
     }
+
+    int selected_printer = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,9 +161,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         initVAs();
         initDatabase();
         initView();
-        initToolbar();
+
 
         initRadioButtons();
+        initToolbar();
         initGoldRecycler("gold");
         initSilverRecycler("silver");
         initSharedPreference();
@@ -351,6 +363,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     double sgst;
     double cgst;
     String modelName;
+    String ipAddressM30;
 
     private void initSharedPreference() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -360,9 +373,20 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         material = choice;
         Toast.makeText(this, choice, Toast.LENGTH_SHORT).show();
 
+        ipAddressM30 = sharedPreferences.getString("ipPref","");
         //retrieve printer
-        printer = sharedPreferences.getString("printerPrf", "1");
-
+        printer = sharedPreferences.getString("printerPref", "1");
+        selected_printer = Integer.parseInt(printer);
+        switch (selected_printer) {
+            case 1:
+                PRINTER = "TCP:"+ipAddressM30;
+                tvPrinter.setText("Epson m30 " + PRINTER);
+                break;
+            case 2:
+                PRINTER = "BT:00:01:90:C2:AE:35";
+                tvPrinter.setText("Epson p20 " + PRINTER);
+                break;
+        }
         //retrieve gramrate
         gramRate = Double.parseDouble(sharedPreferences.getString("gramRatePref", "0"));
         etGramRate.setText(String.valueOf(gramRate));
@@ -409,11 +433,12 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                     case R.id.rb_gold:
                         product = "gold";
                         Log.d(TAG, "onCheckedChanged: " + product);
-
+                        toolbar.setBackgroundColor(Color.parseColor("#FFDF00"));
                         break;
                     case R.id.rb_silver:
                         product = "silver";
                         Log.d(TAG, "onCheckedChanged: " + product);
+                        toolbar.setBackgroundColor(Color.parseColor("#D3D3D3"));
                         break;
                     default:
                         product = "silver";
@@ -485,11 +510,13 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etVaPercentage.setText("");
 
     }
+
     public void createBuyingEstimate(View view) {
         StringBuilder stringBuilder = new StringBuilder();
-        buyingEstimateCreator(stringBuilder,"Old Item",Double.parseDouble(etBuyingPrice.getText().toString()),Double.parseDouble(etNetWeight.getText().toString()),Double.parseDouble(etGrossWeight.getText().toString()));
+        buyingEstimateCreator(stringBuilder, "Old Item", Double.parseDouble(etBuyingPrice.getText().toString()), Double.parseDouble(etNetWeight.getText().toString()), Double.parseDouble(etGrossWeight.getText().toString()));
         runPrintReceiptSequence(stringBuilder.toString());
     }
+
     //On Estimate Button Click
     public void onClickEstimate(View view) {
         onClickAddAnotherEstimate(view);
@@ -885,7 +912,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         Log.d(TAG, "initializeObject: ");
         try {
             //TODO added shared preference here
-            mPrinter = new Printer(sharedPreferences.getInt("printerPref",0),
+            mPrinter = new Printer(selected_printer,
                     Printer.MODEL_ANK,
                     this);
             Log.d(TAG, "initializeObject: inside try");

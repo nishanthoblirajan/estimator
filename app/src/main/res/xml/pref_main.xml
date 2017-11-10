@@ -16,6 +16,13 @@
             android:key="printerPref"
             android:title="Printer Selector" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="Network">
+        <EditTextPreference
+            android:dialogTitle="IP address of Epson M30"
+            android:key="ipPref"
+            android:summary="Set the IP address of the Epson m30 Printer"
+            android:title="IP Address" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="Price">
         <EditTextPreference
             android:dialogTitle="Gram Rate"

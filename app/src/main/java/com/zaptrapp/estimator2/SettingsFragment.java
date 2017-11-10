@@ -31,12 +31,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         EditTextPreference cgstRatePreference = (EditTextPreference) findPreference("cgstRatePref");
         cgstRatePreference.setSummary(sharedPreferences.getString("cgstRatePref",""));
 
-        //TODO modify the if clauses for the list preferences
-        ListPreference materialPreference = (ListPreference) findPreference("materialPref");
-        materialPreference.setSummary(sharedPreferences.getString("materialPref","")=="1"?"Gold":"Silver");
 
-        ListPreference printerPreference = (ListPreference) findPreference("printerPref");
-        printerPreference.setSummary(sharedPreferences.getString("printerPref","")=="1"?"Epson m30":"Epson p20");
+        EditTextPreference ipPreference = (EditTextPreference) findPreference("ipPref");
+        ipPreference.setSummary(sharedPreferences.getString("ipPref",""));
 
 
     }
