@@ -72,8 +72,8 @@ import io.reactivex.functions.Consumer;
 
 public class EstimateActivity extends AppCompatActivity implements ReceiveListener {
 
-    public String PRINTER = "BT:00:01:90:C2:AE:35";
     public static final String TAG = EstimateActivity.class.getSimpleName();
+    public String PRINTER = "BT:00:01:90:C2:AE:35";
     SharedPreferences sharedPreferences;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -93,6 +93,29 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     double five;
     double six;
     double aboveSix;
+    int selected_printer = 1;
+    Drawer result;
+    String hallmarkOrKDM = "";
+    boolean buyingItem;
+    double estimateVaPercent = 0;
+    double estimateVaNumber = 0;
+    double estimateProductGram = 0;
+    double estimateBuyingPrice = 0;
+    double estimateBuyingGrossWeight = 0;
+    double estimateBuyingNetWeight = 0;
+    double estimateExtraInput = 0;
+    String material;
+    String printer;
+    double gramRate;
+    double sgst;
+    double cgst;
+    String modelName;
+    String ipAddressM30;
+    List<CreateEstimate> mCreateEstimateList = new ArrayList<CreateEstimate>();
+    Printer mPrinter;
+    Context mContext = null;
+    String dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
+    String timeStamp = new SimpleDateFormat("HH-mm-ss").format(new Date());
     private EditText etGramRate;
     private EditText etProductGram;
     private RadioGroup rgProduct;
@@ -104,6 +127,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private Button btEstimate;
     private TextView tvEstimateOut;
     private RecyclerView goldRecyclerView;
+    //onOptionsItemSelected
     private RecyclerView silverRecyclerView;
     private TextView testingTv;
     private EditText etVaPercentage;
@@ -129,6 +153,33 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         return bd.doubleValue();
     }
 
+    public static String buyingEstimateCreator(StringBuilder stringBuilder, String modelName, double price, double netWeight, double grossWeight) {
+
+        double value = round(price * netWeight, 2);
+
+        //TODO Do estimate calculator for buying old
+        stringBuilder.append("-------------------OLD ITEM---------------\n");
+        stringBuilder.append("------------------------------------------\n");
+        stringBuilder.append("Desc   gross wt(g)  net wt(g)  Price(Rs/g)\n");
+        stringBuilder.append("------------------------------------------\n");
+        stringBuilder.append(modelName + "    " + grossWeight + "     " + netWeight + "       " + price + "\n");
+        stringBuilder.append("\n");
+        stringBuilder.append(String.format("%-22s", String.valueOf("")) + " " + String.format("%15s", String.valueOf(value)) + "\n");
+        double vaPercentDisplay = 0;
+        double extraChargesDisplay = 0;
+        stringBuilder.append(String.format("%-22s", String.valueOf("VA")) + "-" + String.format("%15s", String.valueOf(vaPercentDisplay)) + "\n");
+        stringBuilder.append(String.format("%-22s", String.valueOf("Extra Charges (Rs)")) + "-" + String.format("%15s", String.valueOf(extraChargesDisplay)) + "\n");
+        stringBuilder.append(String.format("%-22s", String.valueOf("Value")) + "-" + String.format("%15s", String.valueOf(value)) + "\n");
+        double total = value + vaPercentDisplay + extraChargesDisplay;
+        stringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", String.valueOf(total)) + "\n");
+
+
+        double totalTimesGST = total;
+        stringBuilder.append("_" + String.valueOf(totalTimesGST));
+
+        return stringBuilder.toString();
+    }
+
     //View initalization
     private void initView() {
         etGramRate = findViewById(R.id.et_gram_rate);
@@ -152,20 +203,18 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etVaNumber.setVisibility(View.GONE);
         toolbarContainer = findViewById(R.id.toolbar_container);
         toolbar = findViewById(R.id.toolbar);
-        cbBuying = (CheckBox) findViewById(R.id.cb_buying);
-        llBuying = (LinearLayout) findViewById(R.id.ll_buying);
-        etBuyingPrice = (EditText) findViewById(R.id.et_buying_price);
-        etGrossWeight = (EditText) findViewById(R.id.et_gross_weight);
-        etNetWeight = (EditText) findViewById(R.id.et_net_weight);
-        tvPrinter = (TextView) findViewById(R.id.tv_printer);
-        searchRecyclerView = (RecyclerView) findViewById(R.id.search_recyclerView);
-        btAddAnotherEstimate = (Button) findViewById(R.id.bt_add_another_estimate);
+        cbBuying = findViewById(R.id.cb_buying);
+        llBuying = findViewById(R.id.ll_buying);
+        etBuyingPrice = findViewById(R.id.et_buying_price);
+        etGrossWeight = findViewById(R.id.et_gross_weight);
+        etNetWeight = findViewById(R.id.et_net_weight);
+        tvPrinter = findViewById(R.id.tv_printer);
+        searchRecyclerView = findViewById(R.id.search_recyclerView);
+        btAddAnotherEstimate = findViewById(R.id.bt_add_another_estimate);
 
 
-        etExtraInput = (EditText) findViewById(R.id.et_extra_input);
+        etExtraInput = findViewById(R.id.et_extra_input);
     }
-
-    int selected_printer = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,8 +238,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         setupListeners();
     }
-
-    Drawer result;
 
     private void initDrawer() {
 
@@ -226,7 +273,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 .build();
     }
 
-
     private void initToolbar() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -239,7 +285,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         });
 
     }
-    //onOptionsItemSelected
 
     //Listeners to know whether the program gram has been inputed
     private void setupListeners() {
@@ -396,18 +441,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         }
     }
 
-    String hallmarkOrKDM = "";
-    boolean buyingItem;
-    double estimateVaPercent = 0;
-    double estimateVaNumber = 0;
-    double estimateProductGram = 0;
-
-    double estimateBuyingPrice = 0;
-    double estimateBuyingGrossWeight = 0;
-    double estimateBuyingNetWeight = 0;
-
-    double estimateExtraInput = 0;
-
     private void viewLog() {
         Log.d(TAG, "viewLog: buying Item " + buyingItem + "\nvaPercent " + estimateVaPercent + "\nvaNumber " + estimateVaNumber
                 + "\nhallmarkOrKDM " + hallmarkOrKDM
@@ -435,14 +468,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etVaPercentage.setVisibility(View.VISIBLE);
         etVaNumber.setVisibility(View.VISIBLE);
     }
-
-    String material;
-    String printer;
-    double gramRate;
-    double sgst;
-    double cgst;
-    String modelName;
-    String ipAddressM30;
 
     private void initSharedPreference() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -512,14 +537,14 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                         product = "gold";
                         Log.d(TAG, "onCheckedChanged: " + product);
                         rgHOrK.setVisibility(View.VISIBLE);
-                        toolbar.setBackgroundColor(Color.parseColor("#FFDF00"));
+                        toolbar.setBackgroundColor(Color.parseColor("#D4AF37"));
                         break;
                     case R.id.rb_silver:
                         product = "silver";
                         Log.d(TAG, "onCheckedChanged: " + product);
                         rgHOrK.clearCheck();
                         rgHOrK.setVisibility(View.INVISIBLE);
-                        toolbar.setBackgroundColor(Color.parseColor("#D3D3D3"));
+                        toolbar.setBackgroundColor(Color.parseColor("#C0C0C0"));
                         break;
                     default:
                         product = "silver";
@@ -553,8 +578,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         databaseReference = firebaseDatabase.getReference("estimator2");
     }
 
-    List<CreateEstimate> mCreateEstimateList = new ArrayList<CreateEstimate>();
-
     //onClickAddAnother
     public void onClickAddAnotherEstimate(View view) {
 
@@ -581,7 +604,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         resetViews();
     }
-
 
     private void resetViews() {
         etProductGram.setText("");
@@ -655,33 +677,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 .show();
     }
 
-    public static String buyingEstimateCreator(StringBuilder stringBuilder, String modelName, double price, double netWeight, double grossWeight) {
-
-        double value = round(price * netWeight, 2);
-
-        //TODO Do estimate calculator for buying old
-        stringBuilder.append("-------------------OLD ITEM---------------\n");
-        stringBuilder.append("------------------------------------------\n");
-        stringBuilder.append("Desc   gross wt(g)  net wt(g)  Price(Rs/g)\n");
-        stringBuilder.append("------------------------------------------\n");
-        stringBuilder.append(modelName + "    " + grossWeight + "     " + netWeight + "       " + price + "\n");
-        stringBuilder.append("\n");
-        stringBuilder.append(String.format("%-22s", String.valueOf("")) + " " + String.format("%15s", String.valueOf(value)) + "\n");
-        double vaPercentDisplay = 0;
-        double extraChargesDisplay = 0;
-        stringBuilder.append(String.format("%-22s", String.valueOf("VA")) + "-" + String.format("%15s", String.valueOf(vaPercentDisplay)) + "\n");
-        stringBuilder.append(String.format("%-22s", String.valueOf("Extra Charges (Rs)")) + "-" + String.format("%15s", String.valueOf(extraChargesDisplay)) + "\n");
-        stringBuilder.append(String.format("%-22s", String.valueOf("Value")) + "-" + String.format("%15s", String.valueOf(value)) + "\n");
-        double total = value + vaPercentDisplay + extraChargesDisplay;
-        stringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", String.valueOf(total)) + "\n");
-
-
-        double totalTimesGST = total;
-        stringBuilder.append("_" + String.valueOf(totalTimesGST));
-
-        return stringBuilder.toString();
-    }
-
     private void createEstimate(String material, String printer, String modelName, String hallmarkOrKDM, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double estimateExtraInput, double sgst, double cgst, boolean buyingItem) {
 
         CreateEstimate createEstimate = new CreateEstimate(material,
@@ -709,7 +704,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         Log.d(TAG, "createEstimate: " + mCreateEstimateList.size());
     }
 
-
     private StringBuilder initiatedEstimateTemplate() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(String.format("%-22s", String.valueOf("Gram Rate")) + " " + String.format("%15s", gramRate + "\n"));
@@ -718,7 +712,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append("------------------------------------------\n");
         return stringBuilder;
     }
-
 
     private void insertTotal(List<CreateEstimate> createEstimate, StringBuilder stringBuilder) {
         double total = 0;
@@ -791,7 +784,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append("\n");
     }
 
-
     //onOptionsmenuCreated
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -799,7 +791,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         menuInflater.inflate(R.menu.main_menu, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -814,7 +805,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 return false;
         }
     }
-
 
     private void initGoldRecycler(String product) {
         Log.d(TAG, "initGoldRecycler: ");
@@ -966,6 +956,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         aboveSix = 0;
     }
 
+    /*
+    CAUTION: PROCEED WITH CARE
+     */
+
     //on receiving the value from the Firebase Database
     private void initVAs(VA valueAdded) {
         belowOne = valueAdded.getLessThanOne();
@@ -990,17 +984,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         aboveSix = product.getGreaterThanSix();
         Log.d(TAG, "VALUES: " + product.toString());
     }
-
-
-    Printer mPrinter;
-    Context mContext = null;
-
-    /*
-    CAUTION: PROCEED WITH CARE
-     */
-
-    String dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
-    String timeStamp = new SimpleDateFormat("HH-mm-ss").format(new Date());
 
     private boolean runPrintReceiptSequence(String printString) {
         EstimateLog estimateLog = new EstimateLog(timeStamp, printString);
@@ -1106,7 +1089,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         } else if (status.getOnline() == Printer.FALSE) {
             return false;
         } else {
-            ;//print available
+            //print available
         }
 
         return true;
