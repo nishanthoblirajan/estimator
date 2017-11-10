@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -48,13 +47,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.zaptrapp.estimator2.Models.CreateEstimate;
 import com.zaptrapp.estimator2.Models.Product;
 import com.zaptrapp.estimator2.Models.ProductHolder;
 import com.zaptrapp.estimator2.Models.VA;
 import com.zaptrapp.estimator2.Printer.ShowMsg;
 
-import io.fabric.sdk.android.Fabric;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -62,6 +66,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.fabric.sdk.android.Fabric;
 import io.reactivex.functions.Consumer;
 
 public class EstimateActivity extends AppCompatActivity implements ReceiveListener {
@@ -169,12 +174,13 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         mContext = this;
         buyingItem = false;
+
+
         initVAs();
         initDatabase();
         initView();
-
-
         initRadioButtons();
+        initDrawer();
         initToolbar();
         initGoldRecycler("gold");
         initSilverRecycler("silver");
@@ -183,9 +189,52 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         setupListeners();
     }
 
+        Drawer result;
+    private void initDrawer() {
+
+//if you want to update the items at a later time it is recommended to keep it in a variable
+        PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Estimate");
+        SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName("Add Product");
+
+//create the drawer and remember the `Drawer` result object
+        result = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .addDrawerItems(
+                        item1,
+                        new DividerDrawerItem(),
+                        item2,
+                        new SecondaryDrawerItem().withIdentifier(3).withName("Log")
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        // do something with the clicked item :D
+                        switch (position) {
+                            case 2:
+                                startActivity(new Intent(mContext, AddProductActivity.class));
+                                break;
+                            case 3:
+                                startActivity(new Intent(mContext, LogActivity.class));
+                                break;
+                        }
+                        return true;
+                    }
+                })
+                .build();
+    }
+
 
     private void initToolbar() {
         setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                result.openDrawer();
+            }
+        });
 
     }
     //onOptionsItemSelected
@@ -540,15 +589,18 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etVaPercentage.setText("");
         etExtraInput.setText("");
         etProductGram.requestFocus();
+        etBuyingPrice.setText("");
+        etGrossWeight.setText("");
+        etNetWeight.setText("");
 
     }
 
     public void createBuyingEstimate(View view) {
         StringBuilder stringBuilder = new StringBuilder();
         buyingEstimateCreator(stringBuilder, "Old Item", Double.parseDouble(etBuyingPrice.getText().toString()), Double.parseDouble(etNetWeight.getText().toString()), Double.parseDouble(etGrossWeight.getText().toString()));
-        Log.d(TAG, "createBuyingEstimate: "+stringBuilder.toString());
+        Log.d(TAG, "createBuyingEstimate: " + stringBuilder.toString());
 
-        showDialog(stringBuilder);
+        showDialog(stringBuilder.toString());
 //        runPrintReceiptSequence(stringBuilder.toString());
     }
 
@@ -569,26 +621,25 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
 
         //show Material Dialog
-        showDialog(stringBuilder);
+        showDialog(stringBuilder.toString());
 
 //        runPrintReceiptSequence(stringBuilder.toString());
 
 
-
-
     }
 
-    public void showDialog(final StringBuilder stringBuilder){
+    public void showDialog(final String string) {
         new MaterialStyledDialog.Builder(this)
                 .setStyle(Style.HEADER_WITH_TITLE)
-                .setTitle("Estimate")
-                .setDescription(stringBuilder)
+                .setTitle("\u20B9 " + string.split("_")[1])
+                .setDescription(string.split("_")[0])
                 .setPositiveText("Print")
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        runPrintReceiptSequence(stringBuilder.toString());
+                        runPrintReceiptSequence(string);
                         mCreateEstimateList.clear();
+                        resetViews();
                     }
                 })
                 .setNegativeText("Clear")
@@ -629,7 +680,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         return stringBuilder.toString();
     }
 
-    private void createEstimate(String material, String printer, String modelName, String hallmarkOrKDM, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double estimateExtraInput,double sgst, double cgst, boolean buyingItem) {
+    private void createEstimate(String material, String printer, String modelName, String hallmarkOrKDM, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double estimateExtraInput, double sgst, double cgst, boolean buyingItem) {
 
         CreateEstimate createEstimate = new CreateEstimate(material,
                 printer,
@@ -670,7 +721,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private void insertTotal(List<CreateEstimate> createEstimate, StringBuilder stringBuilder) {
         double total = 0;
         for (int i = 0; i < createEstimate.size(); i++) {
-            total += round(calculateGramTimesWeight(createEstimate.get(i)) + calculateVA(createEstimate.get(i))+calculateExtraInput(createEstimate.get(i)) + calculateGSTValue(createEstimate.get(i))[0] + calculateGSTValue(createEstimate.get(i))[1], 2);
+            total += round(calculateGramTimesWeight(createEstimate.get(i)) + calculateVA(createEstimate.get(i)) + calculateExtraInput(createEstimate.get(i)) + calculateGSTValue(createEstimate.get(i))[0] + calculateGSTValue(createEstimate.get(i))[1], 2);
         }
         total = round(total, 2);
         stringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", total) + "\n");
@@ -679,9 +730,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     private double[] calculateGSTValue(CreateEstimate createEstimate) {
         double[] return_double = new double[2];
-        double sgst_value = (sgst / 100) * ((calculateGramTimesWeight(createEstimate)) + calculateVA(createEstimate)+calculateExtraInput(createEstimate));
+        double sgst_value = (sgst / 100) * ((calculateGramTimesWeight(createEstimate)) + calculateVA(createEstimate) + calculateExtraInput(createEstimate));
         return_double[0] = round(sgst_value, 2);
-        double cgst_value = (cgst / 100) * ((calculateGramTimesWeight(createEstimate)) + calculateVA(createEstimate)+calculateExtraInput(createEstimate));
+        double cgst_value = (cgst / 100) * ((calculateGramTimesWeight(createEstimate)) + calculateVA(createEstimate) + calculateExtraInput(createEstimate));
         return_double[1] = round(cgst_value, 2);
         return return_double;
     }
@@ -702,9 +753,11 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private double calculateVA(CreateEstimate createEstimate) {
         return round(calculateGramTimesWeight(createEstimate) * (createEstimate.estimateVaPercent / 100), 2);
     }
+
     private double calculateExtraInput(CreateEstimate createEstimate) {
         return round(createEstimate.extraInput, 2);
     }
+
     private void insertVA(CreateEstimate createEstimate, StringBuilder stringBuilder) {
         stringBuilder.append(String.format("%-22s", "VA " + createEstimate.estimateVaPercent + "%") + "-" + String.format("%15s", calculateVA(createEstimate)) + "\n");
 
@@ -732,7 +785,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private void insertProducts(CreateEstimate createEstimate, StringBuilder stringBuilder) {
         stringBuilder.append(String.format("%-17s", createEstimate.modelName) + String.format("%-5s", createEstimate.estimateProductGram) + String.format("%15s", calculateWeightTimesGramRate(createEstimate)) + "\n");
         insertVA(createEstimate, stringBuilder);
-        insertExtraInput(createEstimate,stringBuilder);
+        insertExtraInput(createEstimate, stringBuilder);
         stringBuilder.append("\n");
     }
 
@@ -944,7 +997,11 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     CAUTION: PROCEED WITH CARE
      */
 
+    String dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
+    String timeStamp = new SimpleDateFormat("HH:mm:ss").format(new Date());
+
     private boolean runPrintReceiptSequence(String printString) {
+        databaseReference.child("Estimates").child(product).child(dateStamp).child(timeStamp).setValue(printString);
         Log.d(TAG, "runPrintReceiptSequence: ");
         try {
 
@@ -954,7 +1011,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             }
 
             if (!createReceiptData(printString)) {
-                Log.d(TAG, "runPrintReceiptSequence: createre");
+                Log.d(TAG, "runPrintReceiptSequence: create");
                 finalizeObject();
                 return false;
             }
@@ -1236,14 +1293,15 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     }
 
 
-    public void clearData(){
-        if(mCreateEstimateList.size()>0){
+    public void clearData() {
+        if (mCreateEstimateList.size() > 0) {
             mCreateEstimateList.clear();
             Toast.makeText(mContext, "Data Cleared", Toast.LENGTH_SHORT).show();
-        }else{
+        } else {
             Toast.makeText(mContext, "No Data to Clear", Toast.LENGTH_SHORT).show();
         }
     }
+
     public void onClickClearEstimate(View view) {
         clearData();
 
