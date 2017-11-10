@@ -276,7 +276,18 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                         viewLog();
                     }
                 });
-
+        RxTextView.textChanges(etExtraInput)
+                .subscribe(new Consumer<CharSequence>() {
+                    @Override
+                    public void accept(CharSequence charSequence) throws Exception {
+                        if (charSequence.length() > 0) {
+                            estimateExtraInput = Double.parseDouble(charSequence.toString());
+                        } else {
+                            estimateExtraInput = 0;
+                        }
+                        viewLog();
+                    }
+                });
     }
 
     private void setDefaultVA(double productGram) {
@@ -487,7 +498,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         //TODOcompleted implement the Add Another Button Click
         //retrieve all datas from the preference.xml file
         //check if all inputs are available
-        estimateExtraInput = Double.parseDouble(etExtraInput.getText().toString());
         createEstimate(
                 material,
                 printer,
@@ -520,6 +530,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     public void createBuyingEstimate(View view) {
         StringBuilder stringBuilder = new StringBuilder();
         buyingEstimateCreator(stringBuilder, "Old Item", Double.parseDouble(etBuyingPrice.getText().toString()), Double.parseDouble(etNetWeight.getText().toString()), Double.parseDouble(etGrossWeight.getText().toString()));
+        Log.d(TAG, "createBuyingEstimate: "+stringBuilder.toString());
         runPrintReceiptSequence(stringBuilder.toString());
     }
 
@@ -651,12 +662,12 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         return round(createEstimate.extraInput, 2);
     }
     private void insertVA(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-22s", "VA " + createEstimate.estimateVaPercent + "%") + "-" + String.format("%15s", calculateExtraInput(createEstimate)) + "\n");
+        stringBuilder.append(String.format("%-22s", "VA " + createEstimate.estimateVaPercent + "%") + "-" + String.format("%15s", calculateVA(createEstimate)) + "\n");
 
     }
 
     private void insertExtraInput(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-22s", "Extra ") + "-" + String.format("%15s", calculateVA(createEstimate)) + "\n");
+        stringBuilder.append(String.format("%-22s", "Extra ") + "-" + String.format("%15s", calculateExtraInput(createEstimate)) + "\n");
 
     }
 
