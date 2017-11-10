@@ -562,7 +562,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         double value = round(price * netWeight, 2);
 
         //TODO Do estimate calculator for buying old
-        stringBuilder.append("_\n\n");
         stringBuilder.append("-------------------OLD ITEM---------------\n");
         stringBuilder.append("------------------------------------------\n");
         stringBuilder.append("Desc   gross wt(g)  net wt(g)  Price(Rs/g)\n");
@@ -973,19 +972,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             mPrinter.addFeedLine(3);
             mPrinter.addTextSize(1, 1);
             mPrinter.addText("------------------------------------------\n");
-
-            if (!printString.split("_")[2].isEmpty()) {
-                mPrinter.addFeedLine(2);
-                mPrinter.addTextSize(1, 1);
-                mPrinter.addText(printString.split("_")[2]);
-                mPrinter.addText("------------------------------------------\n");
-                mPrinter.addFeedLine(1);
-                mPrinter.addTextSize(2, 2);
-                mPrinter.addText("Rs " + printString.split("_")[3]);
-                mPrinter.addFeedLine(3);
-                mPrinter.addTextSize(1, 1);
-                mPrinter.addText("------------------------------------------\n");
-            }
             mPrinter.addText("Thank You\n");
             mPrinter.addTextAlign(Printer.ALIGN_RIGHT);
             mPrinter.addFeedLine(4);
