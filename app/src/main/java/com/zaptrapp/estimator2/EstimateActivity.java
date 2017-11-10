@@ -190,7 +190,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         setupListeners();
     }
 
-        Drawer result;
+    Drawer result;
+
     private void initDrawer() {
 
 //if you want to update the items at a later time it is recommended to keep it in a variable
@@ -1002,9 +1003,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     String timeStamp = new SimpleDateFormat("HH-mm-ss").format(new Date());
 
     private boolean runPrintReceiptSequence(String printString) {
-        EstimateLog estimateLog = new EstimateLog(timeStamp,printString);
+        EstimateLog estimateLog = new EstimateLog(timeStamp, printString);
         Log.d(TAG, "runPrintReceiptSequence: ");
-        Log.d(TAG, "runPrintReceiptSequence: "+estimateLog.toString());
+        Log.d(TAG, "runPrintReceiptSequence: " + estimateLog.toString());
         databaseReference.child("Estimates").child(product).child(dateStamp).child(estimateLog.getTimeStamp()).setValue(estimateLog);
         Log.d(TAG, "runPrintReceiptSequence: ");
         try {

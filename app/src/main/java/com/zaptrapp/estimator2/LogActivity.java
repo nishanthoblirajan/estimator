@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -67,6 +68,8 @@ public class LogActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d(TAG, "onDataChange:\n" + dataSnapshot.getValue().toString());
+
+//                Log.d(TAG, "onDataChange: "+dataSnapshot.getValue(EstimateLog.class));
             }
 
             @Override
@@ -74,7 +77,34 @@ public class LogActivity extends AppCompatActivity {
 
             }
         });
+        query.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                EstimateLog estimateLog = dataSnapshot.getValue(EstimateLog.class);
+                Log.d(TAG, "onChildAdded: "+estimateLog.getEstimate());
+//                Log.d(TAG, "onDataChange: Estimate Log"+estimateLog.getEstimate());
+            }
 
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         FirebaseRecyclerOptions<EstimateLog> estimateLogFirebaseRecyclerOptions =
                 new FirebaseRecyclerOptions.Builder<EstimateLog>()
                         .setQuery(query, EstimateLog.class)
@@ -96,10 +126,23 @@ public class LogActivity extends AppCompatActivity {
                 return new ProductHolder(view);
             }
         };
+
         logRecyclerView.setAdapter(logAdapter);
     }
 
     private void initView() {
         logRecyclerView = (RecyclerView) findViewById(R.id.log_recyclerView);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        logAdapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        logAdapter.stopListening();
     }
 }
