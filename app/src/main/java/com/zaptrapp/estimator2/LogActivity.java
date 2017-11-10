@@ -3,6 +3,7 @@ package com.zaptrapp.estimator2;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -63,40 +68,11 @@ public class LogActivity extends AppCompatActivity {
         }
         Query query = FirebaseDatabase.getInstance().getReference("estimator2").child("Estimates").child(materialChoice).child(dateStamp);
         Log.d(TAG, "initRecycler: " + query);
-        logRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        logRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d(TAG, "onDataChange:\n" + dataSnapshot.getValue().toString());
-
-//                Log.d(TAG, "onDataChange: "+dataSnapshot.getValue(EstimateLog.class));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        query.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                EstimateLog estimateLog = dataSnapshot.getValue(EstimateLog.class);
-                Log.d(TAG, "onChildAdded: "+estimateLog.getEstimate());
-//                Log.d(TAG, "onDataChange: Estimate Log"+estimateLog.getEstimate());
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
             }
 
@@ -113,16 +89,22 @@ public class LogActivity extends AppCompatActivity {
 
         logAdapter = new FirebaseRecyclerAdapter<EstimateLog, ProductHolder>(estimateLogFirebaseRecyclerOptions) {
             @Override
-            protected void onBindViewHolder(ProductHolder holder, int position, EstimateLog model) {
+            protected void onBindViewHolder(ProductHolder holder, int position, final EstimateLog model) {
                 Log.d(TAG, "onBindViewHolder: ");
-                holder.product.setText(model.getEstimate());
+                holder.product.setText(model.getTimeStamp().replaceAll("-",":")+" - \u20B9 "+model.getEstimate().split("_")[1]);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showDialog(model.getEstimate());
+                    }
+                });
             }
 
             @Override
             public ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 Log.d(TAG, "onCreateViewHolder: ");
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.recycler_items, parent, false);
+                        .inflate(R.layout.log_recycler_item, parent, false);
                 return new ProductHolder(view);
             }
         };
@@ -133,7 +115,26 @@ public class LogActivity extends AppCompatActivity {
     private void initView() {
         logRecyclerView = (RecyclerView) findViewById(R.id.log_recyclerView);
     }
-
+    public void showDialog(final String string) {
+        new MaterialStyledDialog.Builder(this)
+                .setStyle(Style.HEADER_WITH_TITLE)
+                .setTitle("\u20B9 " + string.split("_")[1])
+                .setDescription(string.split("_")[0])
+                .setPositiveText("OK")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    }
+                })
+                .setNegativeText("Clear")
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    }
+                })
+                .setCancelable(true)
+                .show();
+    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -145,4 +146,7 @@ public class LogActivity extends AppCompatActivity {
         super.onStop();
         logAdapter.stopListening();
     }
+
+
+
 }
