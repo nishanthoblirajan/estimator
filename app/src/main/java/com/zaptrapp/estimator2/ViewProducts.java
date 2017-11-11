@@ -1,6 +1,8 @@
 package com.zaptrapp.estimator2;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,8 @@ import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,6 +29,11 @@ import com.zaptrapp.estimator2.Models.ProductHolder;
 
 public class ViewProducts extends AppCompatActivity {
 
+    public static final String TAG = ViewProducts.class.getSimpleName();
+    FirebaseDatabase mFirebaseDatabase;
+    DatabaseReference mDatabaseReference;
+    FirebaseRecyclerAdapter<Product, ProductHolder> mProductListAdapter;
+    SharedPreferences mSharedPreferences;
     private Toolbar toolbar;
     private RecyclerView productListRecyclerView;
     private FloatingActionButton fab;
@@ -37,7 +46,7 @@ public class ViewProducts extends AppCompatActivity {
         initFirebase();
         setSupportActionBar(toolbar);
 
-        
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -45,29 +54,44 @@ public class ViewProducts extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        initproductListRecycler();
+
+
     }
 
-    FirebaseDatabase mFirebaseDatabase;
-    DatabaseReference mDatabaseReference;
-    FirebaseRecyclerAdapter<Product,ProductHolder> mProductListAdapter;
     private void initFirebase() {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseDatabase.getReference("estimator2");
     }
 
     private void initView() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        productListRecyclerView = (RecyclerView) findViewById(R.id.product_list_recycler_view);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        toolbar = findViewById(R.id.toolbar);
+        productListRecyclerView = findViewById(R.id.product_list_recycler_view);
+        fab = findViewById(R.id.fab);
     }
 
-    public static final String TAG = ViewProducts.class.getSimpleName();
+    private void initproductListRecycler() {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String choice = mSharedPreferences.getString("materialPref", "1");
+        String materialChoice = "gold";
+        switch (choice) {
+            case "1":
+                //This is gold
+                materialChoice = "gold";
 
-    private void initproductListRecycler(String product) {
+                break;
+            case "2":
+                //This is silver
+                materialChoice = "silver";
+                break;
+            default:
+                //This is default
+                break;
+        }
         Log.d(TAG, "initproductListRecycler: ");
-        Query productListQuery = mDatabaseReference.child(product);
+        Query productListQuery = mDatabaseReference.child(materialChoice);
         Log.d(TAG, "initproductListRecycler: " + productListQuery.getRef());
-        productListRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        productListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         productListQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -93,6 +117,7 @@ public class ViewProducts extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         //set the values for the VAs
+                        showDialog(model);
 
                     }
                 });
@@ -102,7 +127,7 @@ public class ViewProducts extends AppCompatActivity {
             public ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 Log.d(TAG, "initproductListRecycler onCreateViewHolder: ");
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.log_recycler_items, parent, false);
+                        .inflate(R.layout.log_recycler_item, parent, false);
                 return new ProductHolder(view);
             }
 
@@ -111,4 +136,34 @@ public class ViewProducts extends AppCompatActivity {
         productListRecyclerView.setAdapter(mProductListAdapter);
     }
 
+    public void showDialog(Product product) {
+
+        String description =
+                "<1g  : " + product.getLessThanOne() +
+                        "%\n1-2g : " + product.getOne() +
+                        "%\n2-3g : " + product.getTwo() +
+                        "%\n3-4g : " + product.getThree() +
+                        "%\n4-5g : " + product.getFour() +
+                        "%\n5-6g : " + product.getFive() +
+                        "%\n6-7g : " + product.getSix() +
+                        "%\n>7g  : " + product.getGreaterThanSix() + "%\n\n";
+        new MaterialStyledDialog.Builder(this)
+                .setStyle(Style.HEADER_WITH_TITLE)
+                .setTitle(product.getProductName())
+                .setDescription(description)
+                .setCancelable(true)
+                .show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mProductListAdapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mProductListAdapter.stopListening();
+    }
 }

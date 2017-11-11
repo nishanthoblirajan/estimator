@@ -266,13 +266,13 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
             public void onSearchViewShown() {
-                Toast.makeText(mContext, "showing", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "showing", Toast.LENGTH_SHORT).show();
                 //Do some magic
             }
 
             @Override
             public void onSearchViewClosed() {
-                Toast.makeText(mContext, "closed", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "closed", Toast.LENGTH_SHORT).show();
                 switch (product) {
                     case "gold":
                         goldRecyclerView.invalidate();
