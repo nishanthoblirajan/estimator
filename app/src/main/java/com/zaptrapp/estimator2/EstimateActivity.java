@@ -240,6 +240,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         setupListeners();
 
+        //TODO  change all adapters to searchAdapter
+        initSearchRecycler("*");
         initSearchListener();
     }
 
@@ -1136,7 +1138,14 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         return true;
     }
 
-
+    @Override
+    public void onBackPressed() {
+        if (searchView.isSearchOpen()) {
+            searchView.closeSearch();
+        } else {
+            super.onBackPressed();
+        }
+    }
     private boolean createReceiptData(String printString) {
         Log.d(TAG, "createReceiptData: ");
 
