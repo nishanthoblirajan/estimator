@@ -47,6 +47,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
@@ -127,7 +128,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private Button btEstimate;
     private TextView tvEstimateOut;
     private RecyclerView goldRecyclerView;
-    //onOptionsItemSelected
     private RecyclerView silverRecyclerView;
     private TextView testingTv;
     private EditText etVaPercentage;
@@ -141,9 +141,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private EditText etGrossWeight;
     private EditText etNetWeight;
     private TextView tvPrinter;
-    private RecyclerView searchRecyclerView;
+
     private Button btAddAnotherEstimate;
     private EditText etExtraInput;
+    private MaterialSearchView searchView;
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -209,11 +210,12 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etGrossWeight = findViewById(R.id.et_gross_weight);
         etNetWeight = findViewById(R.id.et_net_weight);
         tvPrinter = findViewById(R.id.tv_printer);
-        searchRecyclerView = findViewById(R.id.search_recyclerView);
+
         btAddAnotherEstimate = findViewById(R.id.bt_add_another_estimate);
 
 
         etExtraInput = findViewById(R.id.et_extra_input);
+        searchView = findViewById(R.id.search_view);
     }
 
     @Override
@@ -237,6 +239,98 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         initSharedPreference();
 
         setupListeners();
+
+        initSearchListener();
+    }
+
+    //TODO implementation of search view
+    private void initSearchListener() {
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                initSearchRecycler(query);
+                //Do some magic
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                initSearchRecycler(newText);
+                //Do some magic
+                return false;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                Toast.makeText(mContext, "showing", Toast.LENGTH_SHORT).show();
+                //Do some magic
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                Toast.makeText(mContext, "closed", Toast.LENGTH_SHORT).show();
+                searchAdapter.stopListening();
+                //Do some magic
+            }
+        });
+    }
+
+    private void initSearchRecycler(String query) {
+        Log.d(TAG, "initSearchRecycler: ");
+        Query searchQuery = databaseReference.child(product).orderByChild("productName").startAt(query).endAt(query + "\uf8ff");
+        Log.d(TAG, "initSearchRecycler: " + searchQuery.getRef());
+
+        FirebaseRecyclerOptions<Product> productOptions =
+                new FirebaseRecyclerOptions.Builder<Product>()
+                        .setQuery(searchQuery, Product.class)
+                        .build();
+        searchAdapter = new FirebaseRecyclerAdapter<Product, ProductHolder>(productOptions) {
+            @Override
+            protected void onBindViewHolder(ProductHolder holder, int position, final Product model) {
+                Log.d(TAG, "initSearchRecycler onBindViewHolder: ");
+                holder.product.setText(model.getProductName());
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //set the values for the VAs
+                        initVAFromProduct(model);
+                        //testing
+                        testingTv.setText(model.toString());
+                        tvChoiceClicked.setText(model.getProductName());
+                        modelName = model.getProductName();
+                        setupListeners();
+
+                    }
+                });
+            }
+
+            @Override
+            public ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                Log.d(TAG, "initSearchRecycler onCreateViewHolder: ");
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.recycler_items, parent, false);
+                return new ProductHolder(view);
+            }
+
+
+        };
+
+        searchAdapter.startListening();
+        switch (product) {
+            case "gold":
+                goldRecyclerView.invalidate();
+                goldRecyclerView.setAdapter(searchAdapter);
+                break;
+            case "silver":
+                silverRecyclerView.invalidate();
+                silverRecyclerView.setAdapter(searchAdapter);
+                break;
+        }
+
+
     }
 
     private void initDrawer() {
@@ -790,6 +884,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main_menu, menu);
+        MenuItem item = menu.findItem(R.id.menu_search);
+        searchView.setMenuItem(item);
         return true;
     }
 
@@ -810,7 +906,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private void initGoldRecycler(String product) {
         Log.d(TAG, "initGoldRecycler: ");
         goldQuery = databaseReference.child(product);
-        Log.d(TAG, "initGoldRecycler: " + goldQuery.getRef());
+        Log.d(TAG, "initGoldRecycler: " + goldQuery.toString());
         goldRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         goldQuery.addValueEventListener(new ValueEventListener() {
             @Override
@@ -917,6 +1013,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         super.onStart();
         goldAdapter.startListening();
         silverAdapter.startListening();
+
     }
 
     @Override
@@ -924,6 +1021,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         super.onStop();
         goldAdapter.stopListening();
         silverAdapter.stopListening();
+
     }
 
     /////////////////////////////////////Retrival of Default VAs from Firebase Database////////////////////////////////
