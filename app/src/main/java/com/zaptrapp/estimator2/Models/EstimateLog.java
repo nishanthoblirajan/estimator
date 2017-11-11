@@ -1,15 +1,19 @@
 package com.zaptrapp.estimator2.Models;
 
 /**
- * Created by Nishanth on 10-Nov-17.
+ * Created by nishanth on 10/11/17.
  */
 
 public class EstimateLog {
-    String timeStamp;
-    String estimate;
-
-    public EstimateLog() {
+    @Override
+    public String toString() {
+        return "EstimateLog{" +
+                "timeStamp='" + timeStamp + '\'' +
+                ", estimate='" + estimate + '\'' +
+                '}';
     }
+
+    String timeStamp;
 
     public EstimateLog(String timeStamp, String estimate) {
         this.timeStamp = timeStamp;
@@ -22,6 +26,11 @@ public class EstimateLog {
 
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    String estimate;
+
+    public EstimateLog() {
     }
 
     public String getEstimate() {

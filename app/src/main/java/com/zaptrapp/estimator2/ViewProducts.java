@@ -1,0 +1,114 @@
+package com.zaptrapp.estimator2;
+
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.zaptrapp.estimator2.Models.Product;
+import com.zaptrapp.estimator2.Models.ProductHolder;
+
+public class ViewProducts extends AppCompatActivity {
+
+    private Toolbar toolbar;
+    private RecyclerView productListRecyclerView;
+    private FloatingActionButton fab;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_products);
+        initView();
+        initFirebase();
+        setSupportActionBar(toolbar);
+
+        
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+    }
+
+    FirebaseDatabase mFirebaseDatabase;
+    DatabaseReference mDatabaseReference;
+    FirebaseRecyclerAdapter<Product,ProductHolder> mProductListAdapter;
+    private void initFirebase() {
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mDatabaseReference = mFirebaseDatabase.getReference("estimator2");
+    }
+
+    private void initView() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        productListRecyclerView = (RecyclerView) findViewById(R.id.product_list_recycler_view);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+    }
+
+    public static final String TAG = ViewProducts.class.getSimpleName();
+
+    private void initproductListRecycler(String product) {
+        Log.d(TAG, "initproductListRecycler: ");
+        Query productListQuery = mDatabaseReference.child(product);
+        Log.d(TAG, "initproductListRecycler: " + productListQuery.getRef());
+        productListRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        productListQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange: " + dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        FirebaseRecyclerOptions<Product> productOptions =
+                new FirebaseRecyclerOptions.Builder<Product>()
+                        .setQuery(productListQuery, Product.class)
+                        .build();
+        mProductListAdapter = new FirebaseRecyclerAdapter<Product, ProductHolder>(productOptions) {
+            @Override
+            protected void onBindViewHolder(ProductHolder holder, int position, final Product model) {
+                Log.d(TAG, "initproductListRecycler onBindViewHolder: ");
+                holder.product.setText(model.getProductName());
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //set the values for the VAs
+
+                    }
+                });
+            }
+
+            @Override
+            public ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                Log.d(TAG, "initproductListRecycler onCreateViewHolder: ");
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.log_recycler_items, parent, false);
+                return new ProductHolder(view);
+            }
+
+
+        };
+        productListRecyclerView.setAdapter(mProductListAdapter);
+    }
+
+}
