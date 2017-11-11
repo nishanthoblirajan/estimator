@@ -18,7 +18,6 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -32,6 +31,10 @@ import java.util.Date;
 
 public class LogActivity extends AppCompatActivity {
 
+    public static final String TAG = LogActivity.class.getSimpleName();
+    SharedPreferences mSharedPreferences;
+    FirebaseRecyclerAdapter<EstimateLog, ProductHolder> logAdapter;
+    String dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
     private RecyclerView logRecyclerView;
 
     @Override
@@ -41,11 +44,6 @@ public class LogActivity extends AppCompatActivity {
         initView();
         initRecycler();
     }
-
-    SharedPreferences mSharedPreferences;
-    FirebaseRecyclerAdapter<EstimateLog, ProductHolder> logAdapter;
-    String dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
-    public static final String TAG = LogActivity.class.getSimpleName();
 
     private void initRecycler() {
 
@@ -66,7 +64,7 @@ public class LogActivity extends AppCompatActivity {
                 //This is default
                 break;
         }
-        Query query = FirebaseDatabase.getInstance().getReference("estimator2").child("Estimates").child(materialChoice).child(dateStamp);
+        Query query = FirebaseDatabase.getInstance().getReference("estimator2").child("Estimates").child(materialChoice).child(dateStamp).orderByChild("timeStamp");
         Log.d(TAG, "initRecycler: " + query);
         logRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         query.addValueEventListener(new ValueEventListener() {
@@ -113,7 +111,7 @@ public class LogActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        logRecyclerView = (RecyclerView) findViewById(R.id.log_recyclerView);
+        logRecyclerView = findViewById(R.id.log_recyclerView);
     }
     public void showDialog(final String string) {
         new MaterialStyledDialog.Builder(this)
