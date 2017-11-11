@@ -1046,7 +1046,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 VA valueAdded = dataSnapshot.getValue(VA.class);
-                Log.d(TAG, valueAdded.toString());
+//                Log.d(TAG, valueAdded.toString());
                 initVAs(valueAdded);
             }
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Estimate</string>
+    <string name="app_name">Estimator 2</string>
     <string-array name="listArray">
         <item>Gold</item>
         <item>Silver</item>

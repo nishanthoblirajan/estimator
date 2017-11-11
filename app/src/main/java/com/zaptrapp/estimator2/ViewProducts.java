@@ -1,8 +1,11 @@
 package com.zaptrapp.estimator2;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,16 +17,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.zaptrapp.estimator2.Models.Product;
 import com.zaptrapp.estimator2.Models.ProductHolder;
 
@@ -34,6 +36,7 @@ public class ViewProducts extends AppCompatActivity {
     DatabaseReference mDatabaseReference;
     FirebaseRecyclerAdapter<Product, ProductHolder> mProductListAdapter;
     SharedPreferences mSharedPreferences;
+    Context mContext;
     private Toolbar toolbar;
     private RecyclerView productListRecyclerView;
     private FloatingActionButton fab;
@@ -42,6 +45,7 @@ public class ViewProducts extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_products);
+        mContext = getApplicationContext();
         initView();
         initFirebase();
         setSupportActionBar(toolbar);
@@ -50,7 +54,7 @@ public class ViewProducts extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "In Progress", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -92,17 +96,17 @@ public class ViewProducts extends AppCompatActivity {
         Query productListQuery = mDatabaseReference.child(materialChoice);
         Log.d(TAG, "initproductListRecycler: " + productListQuery.getRef());
         productListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        productListQuery.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onDataChange: " + dataSnapshot.getValue().toString());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+//        productListQuery.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                Log.d(TAG, "onDataChange: " + dataSnapshot.getValue().toString());
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 
         FirebaseRecyclerOptions<Product> productOptions =
                 new FirebaseRecyclerOptions.Builder<Product>()
@@ -136,7 +140,7 @@ public class ViewProducts extends AppCompatActivity {
         productListRecyclerView.setAdapter(mProductListAdapter);
     }
 
-    public void showDialog(Product product) {
+    public void showDialog(final Product product) {
 
         String description =
                 "<1g  : " + product.getLessThanOne() +
@@ -151,6 +155,16 @@ public class ViewProducts extends AppCompatActivity {
                 .setStyle(Style.HEADER_WITH_TITLE)
                 .setTitle(product.getProductName())
                 .setDescription(description)
+                .setPositiveText("Edit")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Intent intent = new Intent(mContext, EditProduct.class);
+                        intent.putExtra("productExtra", product);
+                        startActivity(intent);
+
+                    }
+                })
                 .setCancelable(true)
                 .show();
     }

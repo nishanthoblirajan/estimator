@@ -18,11 +18,8 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.zaptrapp.estimator2.Models.EstimateLog;
 import com.zaptrapp.estimator2.Models.ProductHolder;
 
@@ -67,18 +64,18 @@ public class LogActivity extends AppCompatActivity {
         Query query = FirebaseDatabase.getInstance().getReference("estimator2").child("Estimates").child(materialChoice).child(dateStamp).orderByChild("timeStamp");
         Log.d(TAG, "initRecycler: " + query);
         logRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onDataChange:\n" + dataSnapshot.getValue().toString());
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+//        query.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                Log.d(TAG, "onDataChange:\n" + dataSnapshot.getValue().toString());
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
         FirebaseRecyclerOptions<EstimateLog> estimateLogFirebaseRecyclerOptions =
                 new FirebaseRecyclerOptions.Builder<EstimateLog>()
                         .setQuery(query, EstimateLog.class)

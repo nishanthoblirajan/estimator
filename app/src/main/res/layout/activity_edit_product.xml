@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.zaptrapp.estimator2.EditProduct">
+
+    <EditText
+        android:id="@+id/et_edit_product_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Product Name" />
+
+
+    <EditText
+        android:id="@+id/et_edit_va_below_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Less than 1g"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/et_edit_va_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="1-2g"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/et_edit_va_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="2-3g"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/et_edit_va_three"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="3-4g"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/et_edit_va_four"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="4-5g"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/et_edit_va_five"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="5-6g"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/et_edit_va_six"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="6-7g"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/et_edit_va_above_six"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Greater than 7g"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/bt_change_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClickChange"
+        android:text="Change" />
+</LinearLayout>

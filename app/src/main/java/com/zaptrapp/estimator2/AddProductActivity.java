@@ -11,17 +11,24 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.zaptrapp.estimator2.Models.Product;
 import com.zaptrapp.estimator2.Models.VA;
 
 public class AddProductActivity extends AppCompatActivity {
     public static final String TAG = AddProductActivity.class.getSimpleName();
-
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+    //required VAs
+    double belowOne;
+    double one;
+    double two;
+    double three;
+    double four;
+    double five;
+    double six;
+    double aboveSix;
     private RadioGroup rgAdd;
     private RadioButton rbAddProduct;
     private RadioButton rbAddVa;
@@ -46,28 +53,28 @@ public class AddProductActivity extends AppCompatActivity {
     private Button btAddVa;
 
     private void initView() {
-        rgAdd = (RadioGroup) findViewById(R.id.rg_add);
-        rbAddProduct = (RadioButton) findViewById(R.id.rb_add_product);
-        rbAddVa = (RadioButton) findViewById(R.id.rb_add_va);
-        rgAddGoldOrSilver = (RadioGroup) findViewById(R.id.rg_add_gold_or_silver);
-        rbAddGold = (RadioButton) findViewById(R.id.rb_add_gold);
-        rbAddSilver = (RadioButton) findViewById(R.id.rb_add_silver);
-        layoutAddProduct = (LinearLayout) findViewById(R.id.layout_add_product);
-        etAddProductName = (EditText) findViewById(R.id.et_add_product_name);
-        layoutAddVa = (LinearLayout) findViewById(R.id.layout_add_va);
-        etAddVaBelowOne = (EditText) findViewById(R.id.et_add_va_below_one);
-        etAddVaOne = (EditText) findViewById(R.id.et_add_va_one);
-        etAddVaTwo = (EditText) findViewById(R.id.et_add_va_two);
-        etAddVaThree = (EditText) findViewById(R.id.et_add_va_three);
-        etAddVaFour = (EditText) findViewById(R.id.et_add_va_four);
-        etAddVaFive = (EditText) findViewById(R.id.et_add_va_five);
-        etAddVaSix = (EditText) findViewById(R.id.et_add_va_six);
-        etAddVaAboveSix = (EditText) findViewById(R.id.et_add_va_above_six);
-        rgCustomVa = (RadioGroup) findViewById(R.id.rg_custom_va);
-        rbVaDefault = (RadioButton) findViewById(R.id.rb_va_default);
-        rbVaCustom = (RadioButton) findViewById(R.id.rb_va_custom);
-        btAddProduct = (Button) findViewById(R.id.bt_add_product);
-        btAddVa = (Button) findViewById(R.id.bt_add_va);
+        rgAdd = findViewById(R.id.rg_add);
+        rbAddProduct = findViewById(R.id.rb_add_product);
+        rbAddVa = findViewById(R.id.rb_add_va);
+        rgAddGoldOrSilver = findViewById(R.id.rg_add_gold_or_silver);
+        rbAddGold = findViewById(R.id.rb_add_gold);
+        rbAddSilver = findViewById(R.id.rb_add_silver);
+        layoutAddProduct = findViewById(R.id.layout_add_product);
+        etAddProductName = findViewById(R.id.et_add_product_name);
+        layoutAddVa = findViewById(R.id.layout_add_va);
+        etAddVaBelowOne = findViewById(R.id.et_add_va_below_one);
+        etAddVaOne = findViewById(R.id.et_add_va_one);
+        etAddVaTwo = findViewById(R.id.et_add_va_two);
+        etAddVaThree = findViewById(R.id.et_add_va_three);
+        etAddVaFour = findViewById(R.id.et_add_va_four);
+        etAddVaFive = findViewById(R.id.et_add_va_five);
+        etAddVaSix = findViewById(R.id.et_add_va_six);
+        etAddVaAboveSix = findViewById(R.id.et_add_va_above_six);
+        rgCustomVa = findViewById(R.id.rg_custom_va);
+        rbVaDefault = findViewById(R.id.rb_va_default);
+        rbVaCustom = findViewById(R.id.rb_va_custom);
+        btAddProduct = findViewById(R.id.bt_add_product);
+        btAddVa = findViewById(R.id.bt_add_va);
     }
 
     @Override
@@ -81,9 +88,6 @@ public class AddProductActivity extends AppCompatActivity {
 
 
     }
-
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
 
     private void initDatabase() {
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -193,7 +197,6 @@ public class AddProductActivity extends AppCompatActivity {
         return 0;
     }
 
-
     public void onClickAddProduct(View view) {
 
         int va_choice = rgCustomVa.getCheckedRadioButtonId();
@@ -289,35 +292,25 @@ public class AddProductActivity extends AppCompatActivity {
 
     }
 
-
-
     ///////Retrival of Default VAs from Firebase Database
     private void retrieveDataFromFirebase(String product_estimate) {
         Log.d(TAG, "retrieveDataFromFirebase: " + product_estimate);
         DatabaseReference databaseReference1 = firebaseDatabase.getReference("estimator2/VA/" + product_estimate);
-        databaseReference1.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                VA valueAdded = dataSnapshot.getValue(VA.class);
-                Log.d(TAG, valueAdded.toString());
-                initVAs(valueAdded);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                initVAs();
-            }
-        });
+//        databaseReference1.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                VA valueAdded = dataSnapshot.getValue(VA.class);
+//                Log.d(TAG, valueAdded.toString());
+//                initVAs(valueAdded);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                initVAs();
+//            }
+//        });
     }
-    //required VAs
-    double belowOne;
-    double one;
-    double two;
-    double three;
-    double four;
-    double five;
-    double six;
-    double aboveSix;
+
     //onCancelled
     private void initVAs() {
         belowOne = 0;
