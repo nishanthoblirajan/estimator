@@ -241,7 +241,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         setupListeners();
 
         //TODO  change all adapters to searchAdapter
-        initSearchRecycler("*");
         initSearchListener();
     }
 
@@ -274,6 +273,16 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             @Override
             public void onSearchViewClosed() {
                 Toast.makeText(mContext, "closed", Toast.LENGTH_SHORT).show();
+                switch (product) {
+                    case "gold":
+                        goldRecyclerView.invalidate();
+                        goldRecyclerView.setAdapter(goldAdapter);
+                        break;
+                    case "silver":
+                        silverRecyclerView.invalidate();
+                        silverRecyclerView.setAdapter(silverAdapter);
+                        break;
+                }
                 searchAdapter.stopListening();
                 //Do some magic
             }
