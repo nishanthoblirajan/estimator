@@ -11,8 +11,11 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.zaptrapp.estimator2.Models.Product;
 import com.zaptrapp.estimator2.Models.VA;
 
@@ -142,6 +145,7 @@ public class AddProductActivity extends AppCompatActivity {
         rbAddGold.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "onClick: gold");
                 retrieveDataFromFirebase("gold");
             }
         });
@@ -149,6 +153,7 @@ public class AddProductActivity extends AppCompatActivity {
         rbAddSilver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "onClick: silver");
                 retrieveDataFromFirebase("silver");
             }
         });
@@ -227,6 +232,7 @@ public class AddProductActivity extends AppCompatActivity {
                         doubleFromET(etAddVaAboveSix));
                 break;
             case "default":
+
                 productModel = new Product(
                         stringFromET(etAddProductName),
                         belowOne,
@@ -237,6 +243,7 @@ public class AddProductActivity extends AppCompatActivity {
                         five,
                         six,
                         aboveSix);
+                Log.d(TAG, "onClickAddProduct: "+productModel.toString());
                 break;
             default:
                 productModel = new Product();
@@ -296,19 +303,20 @@ public class AddProductActivity extends AppCompatActivity {
     private void retrieveDataFromFirebase(String product_estimate) {
         Log.d(TAG, "retrieveDataFromFirebase: " + product_estimate);
         DatabaseReference databaseReference1 = firebaseDatabase.getReference("estimator2/VA/" + product_estimate);
-//        databaseReference1.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                VA valueAdded = dataSnapshot.getValue(VA.class);
-//                Log.d(TAG, valueAdded.toString());
-//                initVAs(valueAdded);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                initVAs();
-//            }
-//        });
+        Log.d(TAG, "retrieveDataFromFirebase: "+databaseReference1.getRef());
+        databaseReference1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                VA valueAdded = dataSnapshot.getValue(VA.class);
+//                Log.d(TAG, "datachange"+valueAdded.toString());
+                initVAs(valueAdded);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                initVAs();
+            }
+        });
     }
 
     //onCancelled
@@ -332,6 +340,7 @@ public class AddProductActivity extends AppCompatActivity {
         five = valueAdded.getFive();
         six = valueAdded.getSix();
         aboveSix = valueAdded.getGreaterThanSix();
+        Log.d(TAG, "initVAs: "+valueAdded.toString());
     }
 
 }
