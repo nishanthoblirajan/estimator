@@ -987,6 +987,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     }
 
     private boolean runPrintReceiptSequence(String printString) {
+        dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
+        timeStamp = new SimpleDateFormat("HH-mm-ss").format(new Date());
         EstimateLog estimateLog = new EstimateLog(timeStamp, printString);
         Log.d(TAG, "runPrintReceiptSequence: ");
         Log.d(TAG, "runPrintReceiptSequence: " + estimateLog.toString());
