@@ -176,7 +176,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     public static String buyingEstimateCreator(StringBuilder stringBuilder, String modelName, double price, double netWeight, double grossWeight) {
 
+        //TODO Do buyign estimate calculation
         double value = round(price * netWeight, 2);
+
 
         //TODO Do estimate calculator for buying old
         stringBuilder.append("-------------------OLD ITEM---------------\n");
@@ -201,6 +203,27 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         return stringBuilder.toString();
     }
 
+    public static String buyingEstimateCreator(double beforeTotal, StringBuilder stringBuilder, String modelName, double price, double netWeight, double grossWeight) {
+
+        double value = round(price * netWeight, 2);
+
+        //TODO Do estimate calculator for buying old
+        stringBuilder.append("-------------------OLD ITEM---------------\n");
+        stringBuilder.append("------------------------------------------\n");
+        stringBuilder.append("Desc   gross wt(g)  net wt(g)  Price(Rs/g)\n");
+        stringBuilder.append("------------------------------------------\n");
+        stringBuilder.append(modelName + "    " + grossWeight + "     " + netWeight + "       " + price + "\n");
+        stringBuilder.append("\n");
+        stringBuilder.append(String.format("%-22s", String.valueOf("")) + " " + String.format("%15s", String.valueOf(value)) + "\n");
+
+        double total = value;
+        stringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", String.valueOf(total)) + "\n");
+
+        double finalTotal = beforeTotal - total;
+        stringBuilder.append("_" + String.valueOf(finalTotal));
+
+        return stringBuilder.toString();
+    }
     //View initalization
     private void initView() {
         etGramRate = findViewById(R.id.et_gram_rate);
@@ -791,6 +814,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         insertGSTValues(mCreateEstimateList, stringBuilder);
         insertTotal(mCreateEstimateList, stringBuilder);
+
+        double total = Double.parseDouble(stringBuilder.toString().split("_")[1]);
+        insertBuying(mCreateEstimateList, stringBuilder, total);
+
         Log.d(TAG, "onClickEstimate: \n" + stringBuilder.toString());
 
 
@@ -801,6 +828,20 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
 
     }
+
+    private void insertBuying(List<CreateEstimate> mCreateEstimateList, StringBuilder stringBuilder, double total) {
+        for (int i = 0; i < mCreateEstimateList.size(); i++) {
+            Log.d(TAG, "Estimate List: " + mCreateEstimateList.get(i).toString());
+            if (mCreateEstimateList.get(i).isBuyingItem()) {
+                buyingEstimateCreator(total, stringBuilder,
+                        "Buying Item " + (i + 1),
+                        mCreateEstimateList.get(i).estimateBuyingPrice,
+                        mCreateEstimateList.get(i).estimateBuyingNetWeight,
+                        mCreateEstimateList.get(i).estimateBuyingGrossWeight);
+            }
+        }
+    }
+
 
     public void showDialog(final String string) {
         new MaterialStyledDialog.Builder(this)
