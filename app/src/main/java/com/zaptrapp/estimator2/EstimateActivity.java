@@ -154,6 +154,26 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         return bd.doubleValue();
     }
 
+    public static String buyingEstimateCreator(String modelName, double price, double netWeight, double grossWeight) {
+
+        double value = round(price * netWeight, 2);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        //TODO Do estimate calculator for buying old
+        stringBuilder.append("-------------------OLD ITEM---------------\n");
+        stringBuilder.append("------------------------------------------\n");
+        stringBuilder.append("Desc   gross wt(g)  net wt(g)  Price(Rs/g)\n");
+        stringBuilder.append("------------------------------------------\n");
+        stringBuilder.append(modelName + "    " + grossWeight + "     " + netWeight + "       " + price + "\n");
+        stringBuilder.append("\n");
+        stringBuilder.append(String.format("%-22s", String.valueOf("")) + " " + String.format("%15s", String.valueOf(value)) + "\n");
+        double total = value;
+        stringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", String.valueOf(total)) + "\n");
+
+
+        return stringBuilder.toString();
+    }
+
     public static String buyingEstimateCreator(StringBuilder stringBuilder, String modelName, double price, double netWeight, double grossWeight) {
 
         double value = round(price * netWeight, 2);
@@ -691,11 +711,28 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         databaseReference = firebaseDatabase.getReference("estimator2");
     }
 
+    public String ediTextToString(EditText editText) {
+        if (editText.getText() != null) {
+            return editText.getText().toString();
+        } else {
+            return "";
+        }
+    }
+
     //onClickAddAnother
     public void onClickAddAnotherEstimate(View view) {
 
+        //TODO implement the buying
+        if (cbBuying.isChecked()) {
+            buyingEstimateCreator("old item",
+                    Double.parseDouble(ediTextToString(etBuyingPrice)),
+                    Double.parseDouble(ediTextToString(etNetWeight)),
+                    Double.parseDouble(ediTextToString(etGrossWeight)));
+        }
+
         String product_estimate = product;
         retrieveDataFromFirebase(product_estimate);
+
 
         //TODOcompleted implement the Add Another Button Click
         //retrieve all datas from the preference.xml file
@@ -1162,6 +1199,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             super.onBackPressed();
         }
     }
+
     private boolean createReceiptData(String printString) {
         Log.d(TAG, "createReceiptData: ");
 
