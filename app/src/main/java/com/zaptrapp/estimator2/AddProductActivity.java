@@ -1,6 +1,8 @@
 package com.zaptrapp.estimator2;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -32,12 +35,11 @@ public class AddProductActivity extends AppCompatActivity {
     double five;
     double six;
     double aboveSix;
+    SharedPreferences mSharedPreferences;
+    String materialChoice;
     private RadioGroup rgAdd;
     private RadioButton rbAddProduct;
     private RadioButton rbAddVa;
-    private RadioGroup rgAddGoldOrSilver;
-    private RadioButton rbAddGold;
-    private RadioButton rbAddSilver;
     private LinearLayout layoutAddProduct;
     private EditText etAddProductName;
     private LinearLayout layoutAddVa;
@@ -54,14 +56,12 @@ public class AddProductActivity extends AppCompatActivity {
     private RadioButton rbVaCustom;
     private Button btAddProduct;
     private Button btAddVa;
+    private TextView tvChosenProduct;
 
     private void initView() {
         rgAdd = findViewById(R.id.rg_add);
         rbAddProduct = findViewById(R.id.rb_add_product);
         rbAddVa = findViewById(R.id.rb_add_va);
-        rgAddGoldOrSilver = findViewById(R.id.rg_add_gold_or_silver);
-        rbAddGold = findViewById(R.id.rb_add_gold);
-        rbAddSilver = findViewById(R.id.rb_add_silver);
         layoutAddProduct = findViewById(R.id.layout_add_product);
         etAddProductName = findViewById(R.id.et_add_product_name);
         layoutAddVa = findViewById(R.id.layout_add_va);
@@ -78,6 +78,7 @@ public class AddProductActivity extends AppCompatActivity {
         rbVaCustom = findViewById(R.id.rb_va_custom);
         btAddProduct = findViewById(R.id.bt_add_product);
         btAddVa = findViewById(R.id.bt_add_va);
+        tvChosenProduct = findViewById(R.id.tv_chosen_product);
     }
 
     @Override
@@ -86,10 +87,32 @@ public class AddProductActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_product);
         initDatabase();
         initView();
+        initSharedPreference();
         initDisplayViews();
         setClickListenersForButtons();
 
 
+    }
+
+    private void initSharedPreference() {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String choice = mSharedPreferences.getString("materialPref", "1");
+        materialChoice = "gold";
+        switch (choice) {
+            case "1":
+                //This is gold
+                materialChoice = "gold";
+
+                break;
+            case "2":
+                //This is silver
+                materialChoice = "silver";
+                break;
+            default:
+                //This is default
+                break;
+        }
+        tvChosenProduct.setText(materialChoice);
     }
 
     private void initDatabase() {
@@ -97,19 +120,55 @@ public class AddProductActivity extends AppCompatActivity {
         databaseReference = firebaseDatabase.getReference("estimator2");
     }
 
-    private void setClickListenersForButtons() {
-        rbAddProduct.setOnClickListener(new View.OnClickListener() {
+    private void saveVAToFirebase(VA va) {
+        databaseReference.child("VA").child(va.getMaterial()).setValue(va);
+    }
+
+
+    ///////Retrival of Default VAs from Firebase Database
+    private void retrieveVAFromFirebase() {
+        Log.d(TAG, "retrieveDataFromFirebase: " + materialChoice);
+        DatabaseReference databaseReference1 = databaseReference.child("VA").child(materialChoice);
+        Log.d(TAG, "retrieveDataFromFirebase: " + databaseReference1.getRef());
+        databaseReference1.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View view) {
-                addProductMode();
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                VA valueAdded = dataSnapshot.getValue(VA.class);
+//                Log.d(TAG, "datachange"+valueAdded.toString());
+                initVAs(valueAdded);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                initVAs();
             }
         });
-        rbAddVa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addVaMode();
-            }
-        });
+    }
+
+
+    //onCancelled
+    private void initVAs() {
+        belowOne = 0;
+        one = 0;
+        two = 0;
+        three = 0;
+        four = 0;
+        five = 0;
+        six = 0;
+        aboveSix = 0;
+    }
+
+    //on receiving the value from the Firebase Database
+    private void initVAs(VA valueAdded) {
+        belowOne = valueAdded.getLessThanOne();
+        one = valueAdded.getOne();
+        two = valueAdded.getTwo();
+        three = valueAdded.getThree();
+        four = valueAdded.getFour();
+        five = valueAdded.getFive();
+        six = valueAdded.getSix();
+        aboveSix = valueAdded.getGreaterThanSix();
+        Log.d(TAG, "initVAs: " + valueAdded.toString());
     }
 
     private void showCustomVAInput() {
@@ -118,7 +177,6 @@ public class AddProductActivity extends AppCompatActivity {
 
     private void addProductMode() {
         layoutAddProduct.setVisibility(View.VISIBLE);
-        rgAddGoldOrSilver.setVisibility(View.VISIBLE);
         layoutAddVa.setVisibility(View.GONE);
         rgCustomVa.setVisibility(View.VISIBLE);
         btAddProduct.setVisibility(View.VISIBLE);
@@ -141,22 +199,23 @@ public class AddProductActivity extends AppCompatActivity {
 
     }
 
-    private void productType() {
-        rbAddGold.setOnClickListener(new View.OnClickListener() {
+    private void setClickListenersForButtons() {
+        rbAddProduct.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: gold");
-                retrieveDataFromFirebase("gold");
+            public void onClick(View view) {
+                addProductMode();
             }
         });
+        rbAddVa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addVaMode();
+            }
+        });
+    }
 
-        rbAddSilver.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: silver");
-                retrieveDataFromFirebase("silver");
-            }
-        });
+    private void productType() {
+        retrieveVAFromFirebase();
     }
 
     private void showDefaultProductInput() {
@@ -165,7 +224,6 @@ public class AddProductActivity extends AppCompatActivity {
 
     private void addVaMode() {
         layoutAddProduct.setVisibility(View.GONE);
-        rgAddGoldOrSilver.setVisibility(View.VISIBLE);
         layoutAddVa.setVisibility(View.VISIBLE);
         rgCustomVa.setVisibility(View.GONE);
         btAddProduct.setVisibility(View.GONE);
@@ -175,7 +233,6 @@ public class AddProductActivity extends AppCompatActivity {
 
     private void initDisplayViews() {
         layoutAddProduct.setVisibility(View.GONE);
-        rgAddGoldOrSilver.setVisibility(View.GONE);
         layoutAddVa.setVisibility(View.GONE);
         rgCustomVa.setVisibility(View.GONE);
         btAddProduct.setVisibility(View.GONE);
@@ -243,47 +300,32 @@ public class AddProductActivity extends AppCompatActivity {
                         five,
                         six,
                         aboveSix);
-                Log.d(TAG, "onClickAddProduct: "+productModel.toString());
+                Log.d(TAG, "onClickAddProduct: " + productModel.toString());
                 break;
             default:
                 productModel = new Product();
                 break;
         }
-        int product_type = rgAddGoldOrSilver.getCheckedRadioButtonId();
         String product_choice = "Error";
-        switch (product_type) {
-            case R.id.rb_add_gold:
-                product_choice = "gold";
-                break;
-            case R.id.rb_add_silver:
-                product_choice = "silver";
-                break;
-            default:
-                product_choice = "Error";
-                break;
+        product_choice = materialChoice;
+
+        if (productModel != null) {
+            saveProductToFirebase(productModel, product_choice);
+            Toast.makeText(this, "Process Completed", Toast.LENGTH_SHORT).show();
+            initDisplayViews();
+        } else {
+            Toast.makeText(this, "Adding product failed. Try Again", Toast.LENGTH_SHORT).show();
         }
-
-        databaseReference.child(product_choice).child(productModel.getProductName()).setValue(productModel);
-
 
     }
 
-    public void onClickAddVA(View view) {
-        int product_type = rgAddGoldOrSilver.getCheckedRadioButtonId();
-        String product_choice = "Error";
-        switch (product_type) {
-            case R.id.rb_add_gold:
-                product_choice = "gold";
-                break;
-            case R.id.rb_add_silver:
-                product_choice = "silver";
-                break;
-            default:
-                product_choice = "Error";
-                break;
-        }
+    private void saveProductToFirebase(Product productModel, String product_choice) {
+        databaseReference.child(product_choice).child(productModel.getProductName()).setValue(productModel);
+    }
 
-        String product = product_choice;
+    public void onClickAddVA(View view) {
+
+        String product = materialChoice;
         VA vaModel = new VA(
                 product,
                 doubleFromET(etAddVaBelowOne),
@@ -295,52 +337,13 @@ public class AddProductActivity extends AppCompatActivity {
                 doubleFromET(etAddVaSix),
                 doubleFromET(etAddVaAboveSix));
 
-        databaseReference.child("VA").child(vaModel.getMaterial()).setValue(vaModel);
+        if (vaModel != null) {
+            saveVAToFirebase(vaModel);
+            Toast.makeText(this, "Process Completed", Toast.LENGTH_SHORT).show();
+            initDisplayViews();
+        } else {
+            Toast.makeText(this, "Adding VA Failed... Try Again", Toast.LENGTH_SHORT).show();
+        }
 
     }
-
-    ///////Retrival of Default VAs from Firebase Database
-    private void retrieveDataFromFirebase(String product_estimate) {
-        Log.d(TAG, "retrieveDataFromFirebase: " + product_estimate);
-        DatabaseReference databaseReference1 = firebaseDatabase.getReference("estimator2/VA/" + product_estimate);
-        Log.d(TAG, "retrieveDataFromFirebase: "+databaseReference1.getRef());
-        databaseReference1.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                VA valueAdded = dataSnapshot.getValue(VA.class);
-//                Log.d(TAG, "datachange"+valueAdded.toString());
-                initVAs(valueAdded);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                initVAs();
-            }
-        });
-    }
-
-    //onCancelled
-    private void initVAs() {
-        belowOne = 0;
-        one = 0;
-        two = 0;
-        three = 0;
-        four = 0;
-        five = 0;
-        six = 0;
-        aboveSix = 0;
-    }
-    //on receiving the value from the Firebase Database
-    private void initVAs(VA valueAdded) {
-        belowOne = valueAdded.getLessThanOne();
-        one = valueAdded.getOne();
-        two = valueAdded.getTwo();
-        three = valueAdded.getThree();
-        four = valueAdded.getFour();
-        five = valueAdded.getFive();
-        six = valueAdded.getSix();
-        aboveSix = valueAdded.getGreaterThanSix();
-        Log.d(TAG, "initVAs: "+valueAdded.toString());
-    }
-
 }

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -37,6 +38,7 @@ public class ViewProducts extends AppCompatActivity {
     FirebaseRecyclerAdapter<Product, ProductHolder> mProductListAdapter;
     SharedPreferences mSharedPreferences;
     Context mContext;
+    String materialChoice;
     private Toolbar toolbar;
     private RecyclerView productListRecyclerView;
     private FloatingActionButton fab;
@@ -77,7 +79,7 @@ public class ViewProducts extends AppCompatActivity {
     private void initproductListRecycler() {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String choice = mSharedPreferences.getString("materialPref", "1");
-        String materialChoice = "gold";
+        materialChoice = "gold";
         switch (choice) {
             case "1":
                 //This is gold
@@ -165,8 +167,21 @@ public class ViewProducts extends AppCompatActivity {
 
                     }
                 })
+                .setNegativeText("Delete")
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        removeProduct(product);
+                    }
+                })
                 .setCancelable(true)
                 .show();
+    }
+
+    private void removeProduct(Product product) {
+        mDatabaseReference.child(materialChoice).child(product.getProductName()).removeValue();
+        mDatabaseReference.child("deleted").child(materialChoice).child(product.getProductName()).setValue(product);
+        Toast.makeText(mContext, "Product Deleted", Toast.LENGTH_SHORT).show();
     }
 
     @Override

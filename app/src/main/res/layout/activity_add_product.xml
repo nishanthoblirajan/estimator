@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_margin="8dp"
-              tools:context="com.zaptrapp.estimator2.AddProductActivity">
+    android:orientation="vertical"
+    tools:context="com.zaptrapp.estimator2.AddProductActivity">
     <ScrollView android:layout_width="match_parent"
                 android:layout_height="match_parent">
         <LinearLayout android:layout_width="match_parent"
                       android:layout_height="match_parent"
                       android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/tv_chosen_product"
+                style="@style/TextAppearance.AppCompat.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chosen Product" />
             <RadioGroup
                 android:id="@+id/rg_add"
                 android:layout_width="match_parent"
@@ -29,25 +34,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Value Added"/>
-            </RadioGroup>
-
-            <RadioGroup
-                android:id="@+id/rg_add_gold_or_silver"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <RadioButton
-                    android:id="@+id/rb_add_gold"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Gold"
-                android:checked="true"/>
-
-                <RadioButton
-                    android:id="@+id/rb_add_silver"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Silver"/>
             </RadioGroup>
             <RadioGroup
                 android:id="@+id/rg_custom_va"
@@ -89,60 +75,65 @@
                     android:id="@+id/et_add_va_below_one"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:hint="Less than 1g"/>
+                    android:hint="Less than 1g"
+                    android:inputType="numberDecimal" />
 
                 <EditText
                     android:id="@+id/et_add_va_one"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:hint="1-2g"/>
+                    android:hint="1-2g"
+                    android:inputType="numberDecimal" />
 
                 <EditText
                     android:id="@+id/et_add_va_two"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:hint="2-3g"/>
+                    android:hint="2-3g"
+                    android:inputType="numberDecimal" />
                 <EditText
                     android:id="@+id/et_add_va_three"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:hint="3-4g"/>
+                    android:hint="3-4g"
+                    android:inputType="numberDecimal" />
                 <EditText
                     android:id="@+id/et_add_va_four"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:hint="4-5g"/>
+                    android:hint="4-5g"
+                    android:inputType="numberDecimal" />
                 <EditText
                     android:id="@+id/et_add_va_five"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:hint="5-6g"/>
+                    android:hint="5-6g"
+                    android:inputType="numberDecimal" />
                 <EditText
                     android:id="@+id/et_add_va_six"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:hint="6-7g"/>
+                    android:hint="6-7g"
+                    android:inputType="numberDecimal" />
                 <EditText
                     android:id="@+id/et_add_va_above_six"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:hint="Greater than 7g"/>
+                    android:hint="Greater than 7g"
+                    android:inputType="numberDecimal" />
             </LinearLayout>
 
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:id="@+id/bt_add_product"
+            <Button
+                android:id="@+id/bt_add_product"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
             android:onClick="onClickAddProduct"
             android:text="Add Product"/>
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:id="@+id/bt_add_va"
+
+            <Button
+                android:id="@+id/bt_add_va"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                     android:onClick="onClickAddVA"
             android:text="Add VA"/>
         </LinearLayout>
