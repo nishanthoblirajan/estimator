@@ -111,7 +111,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     double sgst;
     double cgst;
     String modelName;
-    String ipAddressM30;
+    String ipAddressM30 = "0";
     List<CreateEstimate> mCreateEstimateList = new ArrayList<CreateEstimate>();
     Printer mPrinter;
     Context mContext = null;
@@ -370,7 +370,11 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                                 startActivity(new Intent(mContext, AddProductActivity.class));
                                 break;
                             case 3:
-                                startActivity(new Intent(mContext, LogActivity.class));
+                                Intent intent = new Intent(mContext, LogActivity.class);
+                                intent.putExtra("printerExtra", selected_printer);
+                                intent.putExtra("productExtra", product);
+                                intent.putExtra("ipExtra", ipAddressM30);
+                                startActivity(intent);
                                 break;
                             case 4:
                                 startActivity(new Intent(mContext, ViewProducts.class));

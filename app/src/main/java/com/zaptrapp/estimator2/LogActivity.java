@@ -1,5 +1,6 @@
 package com.zaptrapp.estimator2;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -23,6 +24,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.zaptrapp.estimator2.Models.EstimateLog;
@@ -32,13 +34,21 @@ import com.zaptrapp.estimator2.Printer.ShowMsg;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class LogActivity extends AppCompatActivity {
+public class LogActivity extends AppCompatActivity implements ReceiveListener {
 
     public static final String TAG = LogActivity.class.getSimpleName();
+    public String PRINTER = "BT:00:01:90:C2:AE:35";
+    String ipAddressM30 = "";
     SharedPreferences mSharedPreferences;
     FirebaseRecyclerAdapter<EstimateLog, ProductHolder> logAdapter;
-    String dateStamp;
+    String dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
     String timeStamp;
+    Printer mPrinter;
+    int selected_printer = 1;
+    Context mContext;
+    String product;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
     private RecyclerView logRecyclerView;
 
     @Override
@@ -46,7 +56,21 @@ public class LogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log);
         initView();
+        initDatabase();
         initRecycler();
+        mContext = this;
+        selected_printer = getIntent().getIntExtra("printerExtra", 1);
+        ipAddressM30 = getIntent().getStringExtra("ipExtra");
+        switch (selected_printer) {
+            case 1:
+                PRINTER = "TCP:" + ipAddressM30;
+                break;
+            case 2:
+                PRINTER = "BT:00:01:90:C2:AE:35";
+                break;
+        }
+        product = getIntent().getStringExtra("productExtra");
+        Log.d(TAG, "onCreate: " + selected_printer + " " + product + " " + ipAddressM30);
     }
 
     private void initRecycler() {
@@ -71,29 +95,17 @@ public class LogActivity extends AppCompatActivity {
         Query query = FirebaseDatabase.getInstance().getReference("estimator2").child("Estimates").child(materialChoice).child(dateStamp).orderByChild("timeStamp");
         Log.d(TAG, "initRecycler: " + query);
         logRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        query.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                Log.d(TAG, "onDataChange:\n" + dataSnapshot.getValue().toString());
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
         FirebaseRecyclerOptions<EstimateLog> estimateLogFirebaseRecyclerOptions =
                 new FirebaseRecyclerOptions.Builder<EstimateLog>()
                         .setQuery(query, EstimateLog.class)
                         .build();
-        Log.d(TAG, "initRecycler: "+estimateLogFirebaseRecyclerOptions.toString());
+        Log.d(TAG, "initRecycler: " + estimateLogFirebaseRecyclerOptions.toString());
 
         logAdapter = new FirebaseRecyclerAdapter<EstimateLog, ProductHolder>(estimateLogFirebaseRecyclerOptions) {
             @Override
             protected void onBindViewHolder(ProductHolder holder, int position, final EstimateLog model) {
                 Log.d(TAG, "onBindViewHolder: ");
-                holder.product.setText(model.getTimeStamp().replaceAll("-",":")+" - \u20B9 "+model.getEstimate().split("_")[1]);
+                holder.product.setText(model.getTimeStamp().replaceAll("-", ":") + " - \u20B9 " + model.getEstimate().split("_")[1]);
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -117,6 +129,7 @@ public class LogActivity extends AppCompatActivity {
     private void initView() {
         logRecyclerView = findViewById(R.id.log_recyclerView);
     }
+
     public void showDialog(final String string) {
         new MaterialStyledDialog.Builder(this)
                 .setStyle(Style.HEADER_WITH_TITLE)
@@ -126,10 +139,10 @@ public class LogActivity extends AppCompatActivity {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        runPrintSequence(string);
+                        runPrintReceiptSequence(string);
                     }
                 })
-                .setNegativeText("Clear")
+                .setNegativeText("Cancel")
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -138,6 +151,7 @@ public class LogActivity extends AppCompatActivity {
                 .setCancelable(true)
                 .show();
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -150,15 +164,13 @@ public class LogActivity extends AppCompatActivity {
         logAdapter.stopListening();
     }
 
-
     private boolean runPrintReceiptSequence(String printString) {
         dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
         timeStamp = new SimpleDateFormat("HH-mm-ss").format(new Date());
         EstimateLog estimateLog = new EstimateLog(timeStamp, printString);
         Log.d(TAG, "runPrintReceiptSequence: ");
         Log.d(TAG, "runPrintReceiptSequence: " + estimateLog.toString());
-        .
-        child("Estimates").child(product).child(dateStamp).child(estimateLog.getTimeStamp()).setValue(estimateLog);
+        databaseReference.child("Estimates").child(product).child(dateStamp).child(estimateLog.getTimeStamp()).setValue(estimateLog);
         Log.d(TAG, "runPrintReceiptSequence: ");
         try {
 
@@ -443,5 +455,8 @@ public class LogActivity extends AppCompatActivity {
         return msg;
     }
 
-
+    private void initDatabase() {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("estimator2");
+    }
 }
