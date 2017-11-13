@@ -560,38 +560,38 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     private void setDefaultVA(double productGram) {
         if (productGram >= 7) {
-            vaPercentShow(aboveSix, etGramRate.getText().toString());
+            vaPercentShow(aboveSix, productGram);
         } else if (productGram < 7 && productGram >= 6) {
-            vaPercentShow(six, etGramRate.getText().toString());
+            vaPercentShow(six, productGram);
         } else if (productGram < 6 && productGram >= 5) {
-            vaPercentShow(five, etGramRate.getText().toString());
+            vaPercentShow(five, productGram);
         } else if (productGram < 5 && productGram >= 4) {
-            vaPercentShow(four, etGramRate.getText().toString());
+            vaPercentShow(four, productGram);
         } else if (productGram < 4 && productGram >= 3) {
-            vaPercentShow(three, etGramRate.getText().toString());
+            vaPercentShow(three, productGram);
         } else if (productGram < 3 && productGram >= 2) {
-            vaPercentShow(two, etGramRate.getText().toString());
+            vaPercentShow(two, productGram);
         } else if (productGram < 2 && productGram >= 1) {
-            vaPercentShow(one, etGramRate.getText().toString());
+            vaPercentShow(one, productGram);
         } else {
-            vaPercentShow(belowOne, etGramRate.getText().toString());
+            vaPercentShow(belowOne, productGram);
         }
     }
 
-    private double setVAPercent(double vaNumber) {
-        if (etGramRate.getText() != null && etProductGram.getText() != null) {
-            double gram_rate = Double.parseDouble(etGramRate.getText().toString());
 
-            return round((vaNumber / (gram_rate * estimateProductGram)) * 100, 2);
+    //TODO already changed the below code for settings the va number for gram value
+
+    private double setVAPercent(double vaNumber) {
+        if (etProductGram.getText() != null) {
+            return round((vaNumber / (estimateProductGram)) * 100, 2);
         } else {
             return 0;
         }
     }
 
     private double setVANumber(double vaPercent) {
-        if (etGramRate.getText() != null && etProductGram.getText() != null) {
-            double gram_rate = Double.parseDouble(etGramRate.getText().toString());
-            return round((vaPercent / 100) * (gram_rate * estimateProductGram), 2);
+        if (etProductGram.getText() != null) {
+            return round((vaPercent / 100) * (estimateProductGram), 2);
         } else {
             return 0;
         }
@@ -604,14 +604,13 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 + "\nExtra Input " + estimateExtraInput);
     }
 
-    private void vaPercentShow(double input, String gramRateString) {
-        double gramRate = Double.parseDouble(gramRateString);
+    //TODO made changes here
+    private void vaPercentShow(double input, double gramInput) {
         etVaPercentage.setHint(String.valueOf(input));
-        double vaNumberDouble = (input / 100) * gramRate;
+        double vaNumberDouble = (input / 100) * gramInput;
         etVaNumber.setHint(String.valueOf(round(vaNumberDouble, 2)));
         estimateVaPercent = Double.valueOf(etVaPercentage.getHint().toString());
         estimateVaNumber = Double.valueOf(etVaNumber.getHint().toString());
-
         viewLog();
     }
 
@@ -936,16 +935,19 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append(String.format("%-22s", String.valueOf("SGST     " + cgst + "%")) + "-" + String.format("%15s", String.valueOf(sgstValue)) + "\n");
     }
 
+    //TODO made changes here
+
     private double calculateVA(CreateEstimate createEstimate) {
-        return round(calculateGramTimesWeight(createEstimate) * (createEstimate.estimateVaPercent / 100), 2);
+        return round(createEstimate.estimateProductGram * (createEstimate.estimateVaPercent / 100), 2);
     }
 
     private double calculateExtraInput(CreateEstimate createEstimate) {
         return round(createEstimate.extraInput, 2);
     }
 
+    //TODO made cahnges here
     private void insertVA(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-22s", "VA " + createEstimate.estimateVaPercent + "%") + "-" + String.format("%15s", calculateVA(createEstimate)) + "\n");
+        stringBuilder.append(String.format("%-22s", "VA " + createEstimate.estimateVaPercent + "%") + "-" + String.format("%15s", calculateVA(createEstimate)) + "g" + "\n");
 
     }
 
