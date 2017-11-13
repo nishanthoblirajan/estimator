@@ -224,6 +224,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         return stringBuilder.toString();
     }
+
     //View initalization
     private void initView() {
         etGramRate = findViewById(R.id.et_gram_rate);
@@ -811,7 +812,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             insertProducts(mCreateEstimateList.get(i), stringBuilder);
         }
 
-        insertGSTValues(mCreateEstimateList, stringBuilder);
+//        insertGSTValues(mCreateEstimateList, stringBuilder);
         insertTotal(mCreateEstimateList, stringBuilder);
 
         double total = Double.parseDouble(stringBuilder.toString().split("_")[1]);
@@ -847,6 +848,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 .setStyle(Style.HEADER_WITH_TITLE)
                 .setTitle("\u20B9 " + string.split("_")[1])
                 .setDescription(string.split("_")[0])
+                .withDialogAnimation(true)
                 .setPositiveText("Print")
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
@@ -896,9 +898,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     private StringBuilder initiatedEstimateTemplate() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(String.format("%-22s", String.valueOf("Gram Rate")) + " " + String.format("%15s", gramRate + "\n"));
+        stringBuilder.append(String.format("%-22s", String.valueOf("Gram Rate")) + " " + String.format("%15s", gramRate + "/Gms\n"));
         stringBuilder.append("------------------------------------------\n");
-        stringBuilder.append("Description      wt (g)           Total   \n");
+        stringBuilder.append(String.format("%-7s", "Desc") + String.format("%-7s", "Wt") + String.format("%-7s", "VA") + String.format("%-7s", "EC") + String.format("%12s", "Total") + "\n");
         stringBuilder.append("------------------------------------------\n");
         return stringBuilder;
     }
@@ -906,10 +908,13 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private void insertTotal(List<CreateEstimate> createEstimate, StringBuilder stringBuilder) {
         double total = 0;
         for (int i = 0; i < createEstimate.size(); i++) {
-            total += round(calculateGramTimesWeight(createEstimate.get(i)) + calculateVA(createEstimate.get(i)) + calculateExtraInput(createEstimate.get(i)) + calculateGSTValue(createEstimate.get(i))[0] + calculateGSTValue(createEstimate.get(i))[1], 2);
+            //TODO added the newCalculation here
+//            total += round(calculateGramTimesWeight(createEstimate.get(i)) + calculateVA(createEstimate.get(i)) + calculateExtraInput(createEstimate.get(i)) + calculateGSTValue(createEstimate.get(i))[0] + calculateGSTValue(createEstimate.get(i))[1], 2);
+            total += newCalculation(createEstimate.get(i));
         }
         total = round(total, 2);
         stringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", total) + "\n");
+        stringBuilder.append("\n(Inclusive of GST)");
         stringBuilder.append("_" + String.valueOf(total));
     }
 
@@ -935,10 +940,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append(String.format("%-22s", String.valueOf("SGST     " + cgst + "%")) + "-" + String.format("%15s", String.valueOf(sgstValue)) + "\n");
     }
 
-    //TODO made changes here
 
     private double calculateVA(CreateEstimate createEstimate) {
-        return round(createEstimate.estimateProductGram * (createEstimate.estimateVaPercent / 100), 2);
+        return round(calculateGramTimesWeight(createEstimate) * (createEstimate.estimateVaPercent / 100), 2);
     }
 
     private double calculateExtraInput(CreateEstimate createEstimate) {
@@ -972,10 +976,30 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     private void insertProducts(CreateEstimate createEstimate, StringBuilder stringBuilder) {
 //        stringBuilder.append(String.format("%-17s", createEstimate.modelName) + String.format("%-5s", createEstimate.estimateProductGram) + String.format("%15s", calculateWeightTimesGramRate(createEstimate)) + "\n");
-        stringBuilder.append(String.format("%-9s", createEstimate.modelName) + String.format("%-3s", createEstimate.estimateProductGram) + String.format("%-3s", createEstimate.estimateVaPercent) + "%" + String.format("%-3s", createEstimate.estimateVaNumber) + "g" + String.format("%12s", calculateWeightTimesGramRate(createEstimate)) + "\n");
-//        insertVA(createEstimate, stringBuilder);
-        insertExtraInput(createEstimate, stringBuilder);
+//        stringBuilder.append(String.format("%-9s", createEstimate.modelName) + String.format("%-3s", createEstimate.estimateProductGram) +  String.format("%-3s", createEstimate.estimateVaPercent)+"%"+String.format("%-3s", createEstimate.estimateVaNumber)+"g"+String.format("%12s", calculateWeightTimesGramRate(createEstimate)) + "\n");
+        stringBuilder.append(String.format("%-7s", createEstimate.modelName) +
+                String.format("%-7s", createEstimate.estimateProductGram) +
+                String.format("%-7s", createEstimate.estimateVaPercent + "%") +
+                String.format("%-7s", createEstimate.extraInput) +
+                String.format("%12s", newCalculation(createEstimate)) + "\n");
+
+        //        insertVA(createEstimate, stringBuilder);
+//        insertExtraInput(createEstimate, stringBuilder);
         stringBuilder.append("\n");
+    }
+
+
+    //TODO created this new newCalculation method for total calculation of the estimate
+
+    private double newCalculation(CreateEstimate createEstimate) {
+        double gramTimesWeight = createEstimate.estimateProductGram * createEstimate.gramRate;
+        double vaPercentInput = gramTimesWeight * (createEstimate.estimateVaPercent / 100);
+        double extraInput = estimateProductGram * createEstimate.extraInput;
+        double total = (gramTimesWeight + vaPercentInput + extraInput);
+        double cgstInput = total * (createEstimate.cgst / 100);
+        double sgstInput = total * (createEstimate.sgst / 100);
+        double return_total = total + cgstInput + sgstInput;
+        return round(return_total, 2);
     }
 
     //onOptionsmenuCreated
