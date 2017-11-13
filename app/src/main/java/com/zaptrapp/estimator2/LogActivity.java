@@ -142,6 +142,7 @@ public class LogActivity extends AppCompatActivity implements ReceiveListener {
                         runPrintReceiptSequence(string);
                     }
                 })
+                .setScrollable(true,20)
                 .setNegativeText("Cancel")
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
