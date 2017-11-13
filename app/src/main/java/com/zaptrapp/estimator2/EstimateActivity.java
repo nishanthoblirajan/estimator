@@ -844,7 +844,14 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         double total = 0;
         for (int i = 0; i < createEstimate.size(); i++) {
             CreateEstimate estimateProduct = createEstimate.get(i);
-            total += silverSellingCalculation(estimateProduct);
+            switch (product) {
+                case "silver":
+                    total += silverSellingCalculation(estimateProduct);
+                    break;
+                case "gold":
+                    total += goldSellingCalculation(estimateProduct);
+                    break;
+            }
             double buyingTotal = 0;
             if (estimateProduct.buyingItem) {
                 for (int j = 0; j < 1; j++) {
@@ -875,7 +882,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 String.format("%-7s", createEstimate.estimateVaPercent + "%") +
                 String.format("%-7s", createEstimate.extraInput));
 //        TODO bookmark
-        Log.d(TAG, "insertSellingProducts: product "+product);
+        Log.d(TAG, "insertSellingProducts: product " + product);
         switch (product) {
             case "silver":
                 stringBuilder.append(String.format("%12s", silverSellingCalculation(createEstimate)) + "\n");
@@ -893,10 +900,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         double gramTimesWeight = createEstimate.estimateProductGram * createEstimate.gramRate;
         double vaPercentInput = gramTimesWeight * (createEstimate.estimateVaPercent / 100);
         double extraInput = createEstimate.estimateProductGram * createEstimate.extraInput;
-        Log.d(TAG, "silverSellingCalculation: productGram"+createEstimate.estimateProductGram);
-        Log.d(TAG, "silverSellingCalculation: extraInput"+createEstimate.extraInput);
+        Log.d(TAG, "silverSellingCalculation: productGram" + createEstimate.estimateProductGram);
+        Log.d(TAG, "silverSellingCalculation: extraInput" + createEstimate.extraInput);
         double total = (gramTimesWeight + vaPercentInput + extraInput);
-        Log.d(TAG, "silverSellingCalculation: total "+total);
+        Log.d(TAG, "silverSellingCalculation: total " + total);
         double cgstInput = total * (createEstimate.cgst / 100);
         double sgstInput = total * (createEstimate.sgst / 100);
         double return_total = total + cgstInput + sgstInput;
@@ -908,15 +915,16 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         double vaPercentInput = gramTimesWeight * (createEstimate.estimateVaPercent / 100);
         double extraInput = createEstimate.extraInput;
 
-        Log.d(TAG, "goldSellingCalculation: productGram"+createEstimate.estimateProductGram);
-        Log.d(TAG, "goldSellingCalculation: extraInput"+createEstimate.extraInput);
+        Log.d(TAG, "goldSellingCalculation: productGram" + createEstimate.estimateProductGram);
+        Log.d(TAG, "goldSellingCalculation: extraInput" + createEstimate.extraInput);
         double total = (gramTimesWeight + vaPercentInput + extraInput);
-        Log.d(TAG, "goldSellingCalculation: total "+total);
+        Log.d(TAG, "goldSellingCalculation: total " + total);
         double cgstInput = total * (createEstimate.cgst / 100);
         double sgstInput = total * (createEstimate.sgst / 100);
         double return_total = total + cgstInput + sgstInput;
         return round(return_total, 2);
     }
+
     private void insertBuyingProduct(CreateEstimate createEstimate, StringBuilder stringBuilder) {
         stringBuilder.append(String.format("%-7s", createEstimate.estimateBuyingPrice) +
                 String.format("%-7s", createEstimate.estimateBuyingGrossWeight) +
