@@ -220,7 +220,7 @@
                 android:id="@+id/et_extra_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Extra Input"
+                android:hint="MC/g"
                 android:inputType="numberDecimal" />
 
             <TextView
@@ -240,14 +240,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:onClick="onClickAddAnotherEstimate"
-                    android:text="Add" />
+                    android:text="Add Another" />
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:onClick="onClickClearEstimate"
-                    android:text="Clear" />
+                    android:text="Clear All" />
 
             </LinearLayout>
             <Button
