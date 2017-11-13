@@ -971,8 +971,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     }
 
     private void insertProducts(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-17s", createEstimate.modelName) + String.format("%-5s", createEstimate.estimateProductGram) + String.format("%15s", calculateWeightTimesGramRate(createEstimate)) + "\n");
-        insertVA(createEstimate, stringBuilder);
+//        stringBuilder.append(String.format("%-17s", createEstimate.modelName) + String.format("%-5s", createEstimate.estimateProductGram) + String.format("%15s", calculateWeightTimesGramRate(createEstimate)) + "\n");
+        stringBuilder.append(String.format("%-9s", createEstimate.modelName) + String.format("%-3s", createEstimate.estimateProductGram) + String.format("%-3s", createEstimate.estimateVaPercent) + "%" + String.format("%-3s", createEstimate.estimateVaNumber) + "g" + String.format("%12s", calculateWeightTimesGramRate(createEstimate)) + "\n");
+//        insertVA(createEstimate, stringBuilder);
         insertExtraInput(createEstimate, stringBuilder);
         stringBuilder.append("\n");
     }
