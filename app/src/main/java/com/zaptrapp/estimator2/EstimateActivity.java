@@ -862,7 +862,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             if (estimateProduct.buyingItem) {
                 initiatedBuyingTemplate(stringBuilder);
                 insertBuyingProduct(estimateProduct, stringBuilder);
-                buyingTotal+=buyingCalculation(estimateProduct);
+                buyingTotal += buyingCalculation(estimateProduct);
             }
             total = total - buyingTotal;
         }

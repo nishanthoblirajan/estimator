@@ -3,12 +3,17 @@ package com.zaptrapp.estimator2;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.zaptrapp.estimator2.Models.Product;
@@ -103,12 +108,11 @@ public class EditProduct extends AppCompatActivity {
         btChangeData.setVisibility(View.GONE);
     }
 
-    private double stringToDouble(String input) {
-        return Double.parseDouble(input);
-    }
-
     private double stringToDouble(EditText input) {
-        return Double.parseDouble(input.getText().toString());
+        if (input.getText() != null) {
+            return Double.parseDouble(input.getText().toString());
+        }
+        return 0;
     }
 
     public void onClickChange(View view) {
@@ -124,6 +128,17 @@ public class EditProduct extends AppCompatActivity {
                 stringToDouble(etEditVaSix),
                 stringToDouble(etEditVaAboveSix));
         Log.d(TAG, "onClickChange: " + newProduct.toString());
-        databaseReference.child(materialChoice).child(newProduct.getProductName()).setValue(newProduct);
+        databaseReference.child(materialChoice).child(newProduct.getProductName()).setValue(newProduct).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(EditProduct.this, "Process Completed", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(EditProduct.this, "Process Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
