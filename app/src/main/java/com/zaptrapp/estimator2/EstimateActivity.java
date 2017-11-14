@@ -117,6 +117,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     Context mContext = null;
     String dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
     String timeStamp = new SimpleDateFormat("HH-mm-ss").format(new Date());
+    boolean buyingInitiated = false;
     private EditText etGramRate;
     private EditText etProductGram;
     private RadioGroup rgProduct;
@@ -141,7 +142,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private EditText etGrossWeight;
     private EditText etNetWeight;
     private TextView tvPrinter;
-
     private Button btAddAnotherEstimate;
     private EditText etExtraInput;
     private MaterialSearchView searchView;
@@ -153,7 +153,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
-
 
     //View initalization
     private void initView() {
@@ -489,6 +488,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 });
     }
 
+
+    //TODO already changed the below code for settings the va number for gram value
+
     private void setDefaultVA(double productGram) {
         if (productGram >= 7) {
             vaPercentShow(aboveSix, productGram);
@@ -508,9 +510,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             vaPercentShow(belowOne, productGram);
         }
     }
-
-
-    //TODO already changed the below code for settings the va number for gram value
 
     private double setVAPercent(double vaNumber) {
         if (etProductGram.getText() != null) {
@@ -576,14 +575,19 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 tvPrinter.setText("Epson p20 " + PRINTER);
                 break;
         }
-        //retrieve gramrate
-        gramRate = Double.parseDouble(sharedPreferences.getString("gramRatePref", "0"));
+        try {
+            //retrieve gramrate
+            gramRate = Double.parseDouble(sharedPreferences.getString("gramRatePref", "0"));
+
+            //retrieve sgst and cgst
+            sgst = Double.parseDouble(sharedPreferences.getString("sgstRatePref", "0"));
+            cgst = Double.parseDouble(sharedPreferences.getString("cgstRatePref", "0"));
+        } catch (Exception e) {
+            Toast.makeText(mContext, "Something happened", Toast.LENGTH_SHORT).show();
+        }
         etGramRate.setText(String.valueOf(gramRate));
         etGramRate.setEnabled(false);
 
-        //retrieve sgst and cgst
-        sgst = Double.parseDouble(sharedPreferences.getString("sgstRatePref", "0"));
-        cgst = Double.parseDouble(sharedPreferences.getString("cgstRatePref", "0"));
 
         //TODOCOMPLETED show only gold or silver based on the sharedpreference
         switch (choice) {
@@ -740,7 +744,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         Log.d(TAG, "createBuyingEstimate: " + stringBuilder.toString());
 
         showDialog(stringBuilder.toString());
-        runPrintReceiptSequence(stringBuilder.toString());
+//        runPrintReceiptSequence(stringBuilder.toString());
     }
 
     //On Estimate Button Click
@@ -762,11 +766,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         //show Material Dialog
         showDialog(stringBuilder.toString());
 
-        runPrintReceiptSequence(stringBuilder.toString());
+//        runPrintReceiptSequence(stringBuilder.toString());
 
 
     }
-
 
     public void showDialog(final String string) {
         new MaterialStyledDialog.Builder(this)
@@ -832,11 +835,14 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     }
 
     private void initiatedBuyingTemplate(StringBuilder stringBuilder) {
-        stringBuilder.append("\n------------------------------------------");
-        stringBuilder.append("\n--------------BUYING ITEM-----------------");
-        stringBuilder.append("\n------------------------------------------\n");
-        stringBuilder.append(String.format("%-7s", "Price") + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%12s", "Total") + "\n");
-        stringBuilder.append("------------------------------------------\n");
+        if (!buyingInitiated) {
+            stringBuilder.append("\n------------------------------------------");
+            stringBuilder.append("\n--------------BUYING ITEM-----------------");
+            stringBuilder.append("\n------------------------------------------\n");
+            stringBuilder.append(String.format("%-7s", "Price") + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%12s", "Total") + "\n");
+            stringBuilder.append("------------------------------------------\n");
+            buyingInitiated = true;
+        }
     }
 
     private void insertTotal(List<CreateEstimate> createEstimate, StringBuilder stringBuilder) {
@@ -853,9 +859,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             }
             double buyingTotal = 0;
             if (estimateProduct.buyingItem) {
-                for (int j = 0; j < 1; j++) {
                     initiatedBuyingTemplate(stringBuilder);
-                }
+//
                 insertBuyingProduct(estimateProduct, stringBuilder);
                 buyingTotal+=buyingCalculation(estimateProduct);
             }
@@ -863,9 +868,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         }
         total = round(total, 2);
         stringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", total) + "\n");
-        stringBuilder.append("\n(Inclusive of GST)");
+        stringBuilder.append("\n(Inclusive of GST)\n");
         stringBuilder.append("_" + String.valueOf(total));
     }
+
 
 
     private void insertHallmarkOrKDM(CreateEstimate createEstimate, StringBuilder stringBuilder) {
@@ -1457,8 +1463,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         if (mCreateEstimateList.size() > 0) {
             mCreateEstimateList.clear();
             Toast.makeText(mContext, "Data Cleared", Toast.LENGTH_SHORT).show();
+            buyingInitiated = false;
         } else {
             Toast.makeText(mContext, "No Data to Clear", Toast.LENGTH_SHORT).show();
+            buyingInitiated = false;
         }
     }
 
