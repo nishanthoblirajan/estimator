@@ -740,7 +740,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         Log.d(TAG, "createBuyingEstimate: " + stringBuilder.toString());
 
         showDialog(stringBuilder.toString());
-//        runPrintReceiptSequence(stringBuilder.toString());
+        runPrintReceiptSequence(stringBuilder.toString());
     }
 
     //On Estimate Button Click
@@ -754,7 +754,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             insertSellingProducts(mCreateEstimateList.get(i), stringBuilder);
         }
 
-//        insertGSTValues(mCreateEstimateList, stringBuilder);
         insertTotal(mCreateEstimateList, stringBuilder);
 
         Log.d(TAG, "onClickEstimate: \n" + stringBuilder.toString());
@@ -763,7 +762,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         //show Material Dialog
         showDialog(stringBuilder.toString());
 
-//        runPrintReceiptSequence(stringBuilder.toString());
+        runPrintReceiptSequence(stringBuilder.toString());
 
 
     }
@@ -836,7 +835,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append("\n------------------------------------------");
         stringBuilder.append("\n--------------BUYING ITEM-----------------");
         stringBuilder.append("\n------------------------------------------\n");
-        stringBuilder.append(String.format("%-7s", "Desc") + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%12s", "Total") + "\n");
+        stringBuilder.append(String.format("%-7s", "Price") + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%12s", "Total") + "\n");
         stringBuilder.append("------------------------------------------\n");
     }
 
@@ -858,7 +857,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                     initiatedBuyingTemplate(stringBuilder);
                 }
                 insertBuyingProduct(estimateProduct, stringBuilder);
-
+                buyingTotal+=buyingCalculation(estimateProduct);
             }
             total = total - buyingTotal;
         }
