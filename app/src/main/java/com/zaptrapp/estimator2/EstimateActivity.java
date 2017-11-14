@@ -118,6 +118,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     String dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
     String timeStamp = new SimpleDateFormat("HH-mm-ss").format(new Date());
     boolean buyingInitiated = false;
+    int buyingCount = 1;
     private EditText etGramRate;
     private EditText etProductGram;
     private RadioGroup rgProduct;
@@ -371,6 +372,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     }
 
+
+    //TODO already changed the below code for settings the va number for gram value
+
     //Listeners to know whether the program gram has been inputed
     private void setupListeners() {
 
@@ -487,9 +491,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                     }
                 });
     }
-
-
-    //TODO already changed the below code for settings the va number for gram value
 
     private void setDefaultVA(double productGram) {
         if (productGram >= 7) {
@@ -837,9 +838,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private void initiatedBuyingTemplate(StringBuilder stringBuilder) {
         if (!buyingInitiated) {
             stringBuilder.append("\n------------------------------------------");
-            stringBuilder.append("\n--------------BUYING ITEM-----------------");
+            stringBuilder.append("\n------------------BUYING------------------");
             stringBuilder.append("\n------------------------------------------\n");
-            stringBuilder.append(String.format("%-7s", "Price") + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%12s", "Total") + "\n");
+            stringBuilder.append(String.format("%-7s", "Item") + String.format("%-7s", "Price") + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%12s", "Total") + "\n");
             stringBuilder.append("------------------------------------------\n");
             buyingInitiated = true;
         }
@@ -859,8 +860,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             }
             double buyingTotal = 0;
             if (estimateProduct.buyingItem) {
-                    initiatedBuyingTemplate(stringBuilder);
-//
+                initiatedBuyingTemplate(stringBuilder);
                 insertBuyingProduct(estimateProduct, stringBuilder);
                 buyingTotal+=buyingCalculation(estimateProduct);
             }
@@ -872,14 +872,11 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append("_" + String.valueOf(total));
     }
 
-
-
     private void insertHallmarkOrKDM(CreateEstimate createEstimate, StringBuilder stringBuilder) {
         if (createEstimate.hallmarkOrKDM != "") {
             stringBuilder.append(createEstimate.hallmarkOrKDM + "\n");
         }
     }
-
 
     private void insertSellingProducts(CreateEstimate createEstimate, StringBuilder stringBuilder) {
         stringBuilder.append(String.format("%-7s", createEstimate.modelName) +
@@ -899,7 +896,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         stringBuilder.append("\n");
     }
-
 
     private double silverSellingCalculation(CreateEstimate createEstimate) {
         double gramTimesWeight = createEstimate.estimateProductGram * createEstimate.gramRate;
@@ -931,11 +927,12 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     }
 
     private void insertBuyingProduct(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-7s", createEstimate.estimateBuyingPrice) +
+        stringBuilder.append(String.format("%-7s", buyingCount) + String.format("%-7s", createEstimate.estimateBuyingPrice) +
                 String.format("%-7s", createEstimate.estimateBuyingGrossWeight) +
                 String.format("%-7s", createEstimate.estimateBuyingNetWeight) +
                 String.format("%12s", buyingCalculation(createEstimate)) + "\n");
         stringBuilder.append("\n");
+        buyingCount++;
     }
 
 
@@ -1463,10 +1460,12 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         if (mCreateEstimateList.size() > 0) {
             mCreateEstimateList.clear();
             Toast.makeText(mContext, "Data Cleared", Toast.LENGTH_SHORT).show();
+            buyingCount = 1;
             buyingInitiated = false;
         } else {
             Toast.makeText(mContext, "No Data to Clear", Toast.LENGTH_SHORT).show();
             buyingInitiated = false;
+            buyingCount = 1;
         }
     }
 
