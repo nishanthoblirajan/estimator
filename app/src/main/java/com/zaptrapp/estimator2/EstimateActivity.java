@@ -910,7 +910,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 //        TODO bookmark
         Log.d(TAG, "insertSellingProducts: product " + product);
         stringBuilder.append(String.format("%12s", goldSellingCalculation(createEstimate)) + "\n");
-        stringBuilder.append("\ninclusive of \nCGST " + createEstimate.cgst + "% = " + goldSellingCalculationGST(createEstimate, "cgst") +
+        stringBuilder.append("\ninclusive of \nVA " + goldSellingCalculationVA(createEstimate) + "\nCGST " + createEstimate.cgst + "% = " + goldSellingCalculationGST(createEstimate, "cgst") +
                 "\nSGST " + createEstimate.sgst + "% = " + goldSellingCalculationGST(createEstimate, "sgst") + "\n");
         stringBuilder.append("\n");
     }
@@ -962,6 +962,13 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         }
         return round(gst_return, 2);
+    }
+
+    private double goldSellingCalculationVA(CreateEstimate createEstimate) {
+        double gramTimesWeight = createEstimate.estimateProductGram * createEstimate.gramRate;
+        double vaPercentInput = gramTimesWeight * (createEstimate.estimateVaPercent / 100);
+
+        return round(vaPercentInput, 2);
     }
 
     private void insertBuyingProduct(CreateEstimate createEstimate, StringBuilder stringBuilder) {
