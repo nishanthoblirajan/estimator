@@ -1081,17 +1081,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         silverQuery = databaseReference.child(product);
         Log.d(TAG, "initSilverRecycler: " + silverQuery.getRef());
         silverRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-//        silverQuery.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                Log.d(TAG, "onDataChange: " + dataSnapshot.getValue().toString());
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
         FirebaseRecyclerOptions<Product> productOptions =
                 new FirebaseRecyclerOptions.Builder<Product>()
                         .setQuery(silverQuery, Product.class)
