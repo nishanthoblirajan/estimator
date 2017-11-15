@@ -240,23 +240,23 @@ public class AddProductActivity extends AppCompatActivity {
     }
 
     private String stringFromET(EditText et) {
-        String input = et.getText().toString();
-        if (input.matches("")) {
+        if (et.getText().toString().trim().length() == 0) {
             Toast.makeText(this, "No input " + et.getHint(), Toast.LENGTH_SHORT).show();
+            return "";
         } else {
+            String input = et.getText().toString();
             return input;
         }
-        return "";
     }
 
     private double doubleFromET(EditText et) {
-        String input = et.getText().toString();
-        if (input.matches("")) {
+        if (et.getText().toString().trim().length() == 0) {
             Toast.makeText(this, "No input " + et.getHint(), Toast.LENGTH_SHORT).show();
+            return 0;
         } else {
+            String input = et.getText().toString();
             return Double.parseDouble(input);
         }
-        return 0;
     }
 
     public void onClickAddProduct(View view) {

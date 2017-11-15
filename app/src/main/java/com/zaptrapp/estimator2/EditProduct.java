@@ -109,10 +109,11 @@ public class EditProduct extends AppCompatActivity {
     }
 
     private double stringToDouble(EditText input) {
-        if (input.getText() != null) {
+        if (input.getText().toString().trim().length() == 0) {
+            return 0;
+        } else {
             return Double.parseDouble(input.getText().toString());
         }
-        return 0;
     }
 
     public void onClickChange(View view) {
