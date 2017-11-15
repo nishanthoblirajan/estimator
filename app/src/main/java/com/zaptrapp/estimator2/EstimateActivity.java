@@ -756,7 +756,14 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         for (int i = 0; i < mCreateEstimateList.size(); i++) {
             Log.d(TAG, "Estimate List: " + mCreateEstimateList.get(i).toString());
             insertHallmarkOrKDM(mCreateEstimateList.get(i), stringBuilder);
-            insertSellingProducts(mCreateEstimateList.get(i), stringBuilder);
+            switch (product) {
+                case "silver":
+                    insertSilverSellingProducts(mCreateEstimateList.get(i), stringBuilder);
+                    break;
+                case "gold":
+                    insertGoldSellingProducts(mCreateEstimateList.get(i),stringBuilder);
+                    break;
+            }
         }
 
         insertTotal(mCreateEstimateList, stringBuilder);
@@ -878,22 +885,29 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         }
     }
 
-    private void insertSellingProducts(CreateEstimate createEstimate, StringBuilder stringBuilder) {
+    private void insertSilverSellingProducts(CreateEstimate createEstimate, StringBuilder stringBuilder) {
         stringBuilder.append(String.format("%-7s", createEstimate.modelName) +
                 String.format("%-7s", createEstimate.estimateProductGram) +
                 String.format("%-7s", createEstimate.estimateVaPercent + "%") +
                 String.format("%-7s", createEstimate.extraInput));
 //        TODO bookmark
         Log.d(TAG, "insertSellingProducts: product " + product);
-        switch (product) {
-            case "silver":
                 stringBuilder.append(String.format("%12s", silverSellingCalculation(createEstimate)) + "\n");
-                break;
-            case "gold":
-                stringBuilder.append(String.format("%12s", goldSellingCalculation(createEstimate)) + "\n");
-                break;
-        }
 
+        stringBuilder.append("\n");
+    }
+
+
+    private void insertGoldSellingProducts(CreateEstimate createEstimate, StringBuilder stringBuilder) {
+        stringBuilder.append(String.format("%-7s", createEstimate.modelName) +
+                String.format("%-7s", createEstimate.estimateProductGram) +
+                String.format("%-7s", createEstimate.estimateVaPercent + "%") +
+                String.format("%-7s", createEstimate.extraInput));
+//        TODO bookmark
+        Log.d(TAG, "insertSellingProducts: product " + product);
+        stringBuilder.append(String.format("%12s", goldSellingCalculation(createEstimate)) + "\n");
+        stringBuilder.append("\ninclusive of \nCGST "+createEstimate.cgst+"% = "+goldSellingCalculationGST(createEstimate,"cgst")+
+                        "\nSGST "+createEstimate.sgst+"% = "+goldSellingCalculationGST(createEstimate,"sgst"));
         stringBuilder.append("\n");
     }
 
@@ -924,6 +938,25 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         double sgstInput = total * (createEstimate.sgst / 100);
         double return_total = total + cgstInput + sgstInput;
         return round(return_total, 2);
+    }
+    private double goldSellingCalculationGST(CreateEstimate createEstimate,String gst_type) {
+        double gramTimesWeight = createEstimate.estimateProductGram * createEstimate.gramRate;
+        double vaPercentInput = gramTimesWeight * (createEstimate.estimateVaPercent / 100);
+        double extraInput = createEstimate.extraInput;
+
+        Log.d(TAG, "goldSellingCalculation: productGram" + createEstimate.estimateProductGram);
+        Log.d(TAG, "goldSellingCalculation: extraInput" + createEstimate.extraInput);
+        double total = (gramTimesWeight + vaPercentInput + extraInput);
+        Log.d(TAG, "goldSellingCalculation: total " + total);
+        double gst_return = 0;
+        switch (gst_type){
+            case "sgst":
+                gst_return = total * (createEstimate.sgst / 100);
+            case "cgst":
+                gst_return = total * (createEstimate.cgst / 100);
+
+        }
+        return round(gst_return, 2);
     }
 
     private void insertBuyingProduct(CreateEstimate createEstimate, StringBuilder stringBuilder) {
@@ -974,18 +1007,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         goldQuery = databaseReference.child(product);
         Log.d(TAG, "initGoldRecycler: " + goldQuery.toString());
         goldRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-//        goldQuery.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                Log.d(TAG, "onDataChange: " + dataSnapshot.getValue().toString());
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-
         FirebaseRecyclerOptions<Product> productOptions =
                 new FirebaseRecyclerOptions.Builder<Product>()
                         .setQuery(goldQuery, Product.class)
