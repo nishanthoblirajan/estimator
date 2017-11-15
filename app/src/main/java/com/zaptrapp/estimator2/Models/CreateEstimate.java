@@ -4,12 +4,35 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class CreateEstimate implements Parcelable {
+    public static final Creator<CreateEstimate> CREATOR = new Creator<CreateEstimate>() {
+        @Override
+        public CreateEstimate createFromParcel(Parcel source) {
+            return new CreateEstimate(source);
+        }
+
+        @Override
+        public CreateEstimate[] newArray(int size) {
+            return new CreateEstimate[size];
+        }
+    };
     public String material;
     public String printer;
     public String modelName;
+    public String hallmarkOrKDM;
+    public double gramRate;
+    public double estimateProductGram;
+    public double estimateVaPercent;
+    public double estimateVaNumber;
+    public double sgst;
+    public double cgst;
+    public boolean buyingItem;
+    public double extraInput;
+    public double estimateBuyingPrice;
+    public String estimateBuyingDesc;
+    public double estimateBuyingGrossWeight;
+    public double estimateBuyingNetWeight;
 
-
-    public CreateEstimate(String material, String printer, String modelName, String hallmarkOrKDM, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double extraInput, double sgst, double cgst, boolean buyingItem, double estimateBuyingPrice, double estimateBuyingGrossWeight, double estimateBuyingNetWeight) {
+    public CreateEstimate(String material, String printer, String modelName, String hallmarkOrKDM, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double sgst, double cgst, boolean buyingItem, double extraInput, double estimateBuyingPrice, String estimateBuyingDesc, double estimateBuyingGrossWeight, double estimateBuyingNetWeight) {
         this.material = material;
         this.printer = printer;
         this.modelName = modelName;
@@ -23,8 +46,39 @@ public class CreateEstimate implements Parcelable {
         this.buyingItem = buyingItem;
         this.extraInput = extraInput;
         this.estimateBuyingPrice = estimateBuyingPrice;
+        this.estimateBuyingDesc = estimateBuyingDesc;
         this.estimateBuyingGrossWeight = estimateBuyingGrossWeight;
         this.estimateBuyingNetWeight = estimateBuyingNetWeight;
+    }
+
+    public CreateEstimate() {
+    }
+
+    protected CreateEstimate(Parcel in) {
+        this.material = in.readString();
+        this.printer = in.readString();
+        this.modelName = in.readString();
+        this.hallmarkOrKDM = in.readString();
+        this.gramRate = in.readDouble();
+        this.estimateProductGram = in.readDouble();
+        this.estimateVaPercent = in.readDouble();
+        this.estimateVaNumber = in.readDouble();
+        this.sgst = in.readDouble();
+        this.cgst = in.readDouble();
+        this.buyingItem = in.readByte() != 0;
+        this.extraInput = in.readDouble();
+        this.estimateBuyingPrice = in.readDouble();
+        this.estimateBuyingDesc = in.readString();
+        this.estimateBuyingGrossWeight = in.readDouble();
+        this.estimateBuyingNetWeight = in.readDouble();
+    }
+
+    public String getEstimateBuyingDesc() {
+        return estimateBuyingDesc;
+    }
+
+    public void setEstimateBuyingDesc(String estimateBuyingDesc) {
+        this.estimateBuyingDesc = estimateBuyingDesc;
     }
 
     public double getExtraInput() {
@@ -55,10 +109,6 @@ public class CreateEstimate implements Parcelable {
                 '}';
     }
 
-    public CreateEstimate() {
-    }
-
-
     public String getHallmarkOrKDM() {
         return hallmarkOrKDM;
     }
@@ -66,22 +116,6 @@ public class CreateEstimate implements Parcelable {
     public void setHallmarkOrKDM(String hallmarkOrKDM) {
         this.hallmarkOrKDM = hallmarkOrKDM;
     }
-
-    public String hallmarkOrKDM;
-    public double gramRate;
-
-    public double estimateProductGram;
-    public double estimateVaPercent;
-    public double estimateVaNumber;
-    public double sgst;
-    public double cgst;
-    public boolean buyingItem;
-    public double extraInput;
-
-    public double estimateBuyingPrice;
-    public double estimateBuyingGrossWeight;
-    public double estimateBuyingNetWeight;
-
 
     public String getModelName() {
         return modelName;
@@ -114,7 +148,6 @@ public class CreateEstimate implements Parcelable {
     public void setEstimateBuyingNetWeight(double estimateBuyingNetWeight) {
         this.estimateBuyingNetWeight = estimateBuyingNetWeight;
     }
-
 
     public String getMaterial() {
         return material;
@@ -208,37 +241,8 @@ public class CreateEstimate implements Parcelable {
         dest.writeByte(this.buyingItem ? (byte) 1 : (byte) 0);
         dest.writeDouble(this.extraInput);
         dest.writeDouble(this.estimateBuyingPrice);
+        dest.writeString(this.estimateBuyingDesc);
         dest.writeDouble(this.estimateBuyingGrossWeight);
         dest.writeDouble(this.estimateBuyingNetWeight);
     }
-
-    protected CreateEstimate(Parcel in) {
-        this.material = in.readString();
-        this.printer = in.readString();
-        this.modelName = in.readString();
-        this.hallmarkOrKDM = in.readString();
-        this.gramRate = in.readDouble();
-        this.estimateProductGram = in.readDouble();
-        this.estimateVaPercent = in.readDouble();
-        this.estimateVaNumber = in.readDouble();
-        this.sgst = in.readDouble();
-        this.cgst = in.readDouble();
-        this.buyingItem = in.readByte() != 0;
-        this.extraInput = in.readDouble();
-        this.estimateBuyingPrice = in.readDouble();
-        this.estimateBuyingGrossWeight = in.readDouble();
-        this.estimateBuyingNetWeight = in.readDouble();
-    }
-
-    public static final Creator<CreateEstimate> CREATOR = new Creator<CreateEstimate>() {
-        @Override
-        public CreateEstimate createFromParcel(Parcel source) {
-            return new CreateEstimate(source);
-        }
-
-        @Override
-        public CreateEstimate[] newArray(int size) {
-            return new CreateEstimate[size];
-        }
-    };
 }

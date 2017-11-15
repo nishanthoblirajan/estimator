@@ -146,6 +146,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private Button btAddAnotherEstimate;
     private EditText etExtraInput;
     private MaterialSearchView searchView;
+    private EditText etBuyingDesc;
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -190,6 +191,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         etExtraInput = findViewById(R.id.et_extra_input);
         searchView = findViewById(R.id.search_view);
+        etBuyingDesc = findViewById(R.id.et_buying_desc);
     }
 
     @Override
@@ -628,6 +630,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                         product = "gold";
                         Log.d(TAG, "onCheckedChanged: " + product);
                         etExtraInput.setHint("MC");
+                        etNetWeight.setHint("Net Weight");
                         rgHOrK.setVisibility(View.VISIBLE);
                         toolbar.setBackgroundColor(Color.parseColor("#D4AF37"));
                         break;
@@ -636,7 +639,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                         Log.d(TAG, "onCheckedChanged: " + product);
                         rgHOrK.clearCheck();
                         etExtraInput.setHint("MC/g");
-
+                        etNetWeight.setHint("Net Weight %");
                         rgHOrK.setVisibility(View.INVISIBLE);
                         toolbar.setBackgroundColor(Color.parseColor("#C0C0C0"));
                         break;
@@ -734,6 +737,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         StringBuilder stringBuilder = new StringBuilder();
         CreateEstimate createEstimate = new CreateEstimate();
         createEstimate.buyingItem = true;
+        createEstimate.estimateBuyingDesc = ediTextToString(etBuyingDesc);
         createEstimate.estimateBuyingPrice = editTextToDouble(etBuyingPrice);
         createEstimate.estimateBuyingGrossWeight = editTextToDouble(etGrossWeight);
         createEstimate.estimateBuyingNetWeight = editTextToDouble(etNetWeight);
@@ -761,7 +765,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                     insertSilverSellingProducts(mCreateEstimateList.get(i), stringBuilder);
                     break;
                 case "gold":
-                    insertGoldSellingProducts(mCreateEstimateList.get(i),stringBuilder);
+                    insertGoldSellingProducts(mCreateEstimateList.get(i), stringBuilder);
                     break;
             }
         }
@@ -816,14 +820,14 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 estimateProductGram,
                 estimateVaPercent,
                 estimateVaNumber,
-                estimateExtraInput,
                 sgst,
                 cgst,
-                buyingItem, 0, 0, 0);
+                buyingItem, estimateExtraInput, 0, "", 0, 0);
 
 
         //if buying is true
         if (createEstimate.buyingItem) {
+            createEstimate.estimateBuyingDesc = ediTextToString(etBuyingDesc);
             createEstimate.estimateBuyingPrice = editTextToDouble(etBuyingPrice);
             createEstimate.estimateBuyingGrossWeight = editTextToDouble(etGrossWeight);
             createEstimate.estimateBuyingNetWeight = editTextToDouble(etNetWeight);
@@ -892,7 +896,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 String.format("%-7s", createEstimate.extraInput));
 //        TODO bookmark
         Log.d(TAG, "insertSellingProducts: product " + product);
-                stringBuilder.append(String.format("%12s", silverSellingCalculation(createEstimate)) + "\n");
+        stringBuilder.append(String.format("%12s", silverSellingCalculation(createEstimate)) + "\n");
 
         stringBuilder.append("\n");
     }
@@ -906,8 +910,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 //        TODO bookmark
         Log.d(TAG, "insertSellingProducts: product " + product);
         stringBuilder.append(String.format("%12s", goldSellingCalculation(createEstimate)) + "\n");
-        stringBuilder.append("\ninclusive of \nCGST "+createEstimate.cgst+"% = "+goldSellingCalculationGST(createEstimate,"cgst")+
-                        "\nSGST "+createEstimate.sgst+"% = "+goldSellingCalculationGST(createEstimate,"sgst"));
+        stringBuilder.append("\ninclusive of \nCGST " + createEstimate.cgst + "% = " + goldSellingCalculationGST(createEstimate, "cgst") +
+                "\nSGST " + createEstimate.sgst + "% = " + goldSellingCalculationGST(createEstimate, "sgst") + "\n");
         stringBuilder.append("\n");
     }
 
@@ -939,7 +943,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         double return_total = total + cgstInput + sgstInput;
         return round(return_total, 2);
     }
-    private double goldSellingCalculationGST(CreateEstimate createEstimate,String gst_type) {
+
+    private double goldSellingCalculationGST(CreateEstimate createEstimate, String gst_type) {
         double gramTimesWeight = createEstimate.estimateProductGram * createEstimate.gramRate;
         double vaPercentInput = gramTimesWeight * (createEstimate.estimateVaPercent / 100);
         double extraInput = createEstimate.extraInput;
@@ -949,7 +954,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         double total = (gramTimesWeight + vaPercentInput + extraInput);
         Log.d(TAG, "goldSellingCalculation: total " + total);
         double gst_return = 0;
-        switch (gst_type){
+        switch (gst_type) {
             case "sgst":
                 gst_return = total * (createEstimate.sgst / 100);
             case "cgst":
@@ -960,10 +965,21 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     }
 
     private void insertBuyingProduct(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-7s", buyingCount) + String.format("%-7s", createEstimate.estimateBuyingPrice) +
-                String.format("%-7s", createEstimate.estimateBuyingGrossWeight) +
-                String.format("%-7s", createEstimate.estimateBuyingNetWeight) +
-                String.format("%12s", buyingCalculation(createEstimate)) + "\n");
+        switch (product) {
+            case "silver":
+                stringBuilder.append(String.format("%-7s", createEstimate.estimateBuyingDesc) + String.format("%-7s", createEstimate.estimateBuyingPrice) +
+                        String.format("%-7s", createEstimate.estimateBuyingGrossWeight) +
+                        String.format("%-7s", (createEstimate.estimateBuyingGrossWeight * (createEstimate.estimateBuyingNetWeight / 100))) +
+                        String.format("%12s", buyingCalculation(createEstimate)) + "\n");
+                break;
+            case "gold":
+                stringBuilder.append(String.format("%-7s", createEstimate.estimateBuyingDesc) + String.format("%-7s", createEstimate.estimateBuyingPrice) +
+                        String.format("%-7s", createEstimate.estimateBuyingGrossWeight) +
+                        String.format("%-7s", createEstimate.estimateBuyingNetWeight) +
+                        String.format("%12s", buyingCalculation(createEstimate)) + "\n");
+                break;
+        }
+
         stringBuilder.append("\n");
         buyingCount++;
     }
@@ -972,7 +988,16 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private double buyingCalculation(CreateEstimate createEstimate) {
         double buyingPrice = createEstimate.estimateBuyingPrice;
         double grossWeight = createEstimate.estimateBuyingGrossWeight;
-        double netWeight = createEstimate.estimateBuyingNetWeight;
+        double netWeight = 0;
+        switch (product) {
+            case "gold":
+                netWeight = createEstimate.estimateBuyingNetWeight;
+                break;
+            case "silver":
+                netWeight = grossWeight * (createEstimate.estimateBuyingNetWeight / 100);
+                break;
+
+        }
         return round(buyingPrice * netWeight, 2);
 
     }
