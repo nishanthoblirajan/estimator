@@ -320,7 +320,11 @@ public class AddProductActivity extends AppCompatActivity {
     }
 
     private void saveProductToFirebase(Product productModel, String product_choice) {
-        databaseReference.child(product_choice).child(productModel.getProductName()).setValue(productModel);
+        if (productModel.getProductName().length() > 0) {
+            databaseReference.child(product_choice).child(productModel.getProductName()).setValue(productModel);
+        } else {
+            Toast.makeText(this, "Invalid Product Name", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onClickAddVA(View view) {

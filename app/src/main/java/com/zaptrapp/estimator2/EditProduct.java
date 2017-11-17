@@ -129,17 +129,21 @@ public class EditProduct extends AppCompatActivity {
                 stringToDouble(etEditVaSix),
                 stringToDouble(etEditVaAboveSix));
         Log.d(TAG, "onClickChange: " + newProduct.toString());
-        databaseReference.child(materialChoice).child(newProduct.getProductName()).setValue(newProduct).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText(EditProduct.this, "Process Completed", Toast.LENGTH_SHORT).show();
-                onBackPressed();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(EditProduct.this, "Process Failed", Toast.LENGTH_SHORT).show();
-            }
-        });
+        if (newProduct.getProductName().length() > 0) {
+            databaseReference.child(materialChoice).child(newProduct.getProductName()).setValue(newProduct).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Toast.makeText(EditProduct.this, "Process Completed", Toast.LENGTH_SHORT).show();
+                    onBackPressed();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(EditProduct.this, "Process Failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(this, "Invalid Product Name", Toast.LENGTH_SHORT).show();
+        }
     }
 }
