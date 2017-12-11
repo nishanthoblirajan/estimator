@@ -114,7 +114,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     double cgst;
     String modelName;
     String ipAddressM30 = "0";
-    List<CreateEstimate> mCreateEstimateList = new ArrayList<CreateEstimate>();
+//    List<CreateEstimate> mCreateEstimateList = new ArrayList<CreateEstimate>();
+
+    List<CreateBuying> mCreateBuyingList = new ArrayList<>();
+    List<CreateSelling> mCreateSellings = new ArrayList<>();
     Printer mPrinter;
     Context mContext = null;
     String dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
@@ -247,13 +250,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
             public void onSearchViewShown() {
-//                Toast.makeText(mContext, "showing", Toast.LENGTH_SHORT).show();
-                //Do some magic
             }
 
             @Override
             public void onSearchViewClosed() {
-//                Toast.makeText(mContext, "closed", Toast.LENGTH_SHORT).show();
                 switch (product) {
                     case "gold":
                         goldRecyclerView.invalidate();
@@ -702,9 +702,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         String product_estimate = product;
         retrieveDataFromFirebase(product_estimate);
 
+        stringBuilder=new StringBuilder();
         CreateBuying createBuying;
         CreateSelling createSelling;
-        if (etProductGram.getText() != null) {
+        if (!isEmpty(etProductGram)) {
             createSelling = addASellingItem(stringBuilder);
             Log.d(TAG, "onClickAddAnotherEstimate: " + createSelling.toString());
         }
@@ -716,14 +717,18 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         resetViews();
     }
+    private boolean isEmpty(EditText etText) {
+        if (etText.getText().toString().trim().length() > 0)
+            return false;
 
+        return true;
+    }
     private CreateBuying addABuyingItem(StringBuilder stringBuilder) {
         if (buyingCount == 0) {
             initiatedBuyingTemplate(stringBuilder);
             buyingCount++;
         }
         CreateBuying returnCreateBuying = new CreateBuying();
-        returnCreateBuying.buyingItem = true;
         returnCreateBuying.buyingItem = true;
         returnCreateBuying.estimateBuyingDesc = editTextToString(etBuyingDesc);
         returnCreateBuying.estimateBuyingPrice = editTextToDouble(etBuyingPrice);
@@ -761,7 +766,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         insertSellingProduct(createSelling, stringBuilder);
 
-
     }
 
     private void addToPrintData(CreateBuying createBuying, StringBuilder stringBuilder) {
@@ -788,12 +792,14 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 String.format("%-7s", (createBuying.estimateBuyingGrossWeight * (createBuying.estimateBuyingNetWeight / 100))) +
                 String.format("%12s", buyingCalculation(createBuying)) + "\n");
     }
+
     private void insertGoldBuyingProducts(CreateBuying createBuying,StringBuilder stringBuilder){
         stringBuilder.append(String.format("%-7s", createBuying.estimateBuyingDesc) + String.format("%-7s", createBuying.estimateBuyingPrice) +
                 String.format("%-7s", createBuying.estimateBuyingGrossWeight) +
                 String.format("%-7s", createBuying.estimateBuyingNetWeight) +
                 String.format("%12s", buyingCalculation(createBuying)) + "\n");
     }
+
     private void insertSellingProduct(CreateSelling createSelling, StringBuilder stringBuilder) {
         switch (product) {
             case "silver":
@@ -837,27 +843,11 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etBuyingPrice.setText("");
         etGrossWeight.setText("");
         etNetWeight.setText("");
+        etBuyingDesc.setText("");
         buyingCount = 0;
         sellingCount = 0;
 
     }
-
-//    public void createBuyingEstimate(View view) {
-//        StringBuilder stringBuilder = new StringBuilder();
-//
-////        CreateBuying createBuying = addABuyingItem();
-//
-//
-//        initiatedBuyingTemplate(stringBuilder);
-//        insertBuyingProduct(createBuying, stringBuilder);
-//        double total = 0;
-//        total += buyingCalculation(createBuying);
-//        stringBuilder.append(total + "_" + total);
-//        Log.d(TAG, "createBuyingEstimate: " + stringBuilder.toString());
-//
-//        showDialog(stringBuilder.toString());
-////        runPrintReceiptSequence(stringBuilder.toString());
-//    }
 
 
     //On Estimate Button Click
