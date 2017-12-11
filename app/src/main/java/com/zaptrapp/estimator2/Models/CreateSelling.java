@@ -8,6 +8,17 @@ import android.os.Parcelable;
  */
 
 public class CreateSelling implements Parcelable {
+    public static final Creator<CreateSelling> CREATOR = new Creator<CreateSelling>() {
+        @Override
+        public CreateSelling createFromParcel(Parcel source) {
+            return new CreateSelling(source);
+        }
+
+        @Override
+        public CreateSelling[] newArray(int size) {
+            return new CreateSelling[size];
+        }
+    };
     public String material;
     public String printer;
     public String modelName;
@@ -16,8 +27,40 @@ public class CreateSelling implements Parcelable {
     public double estimateProductGram;
     public double estimateVaPercent;
     public double estimateVaNumber;
+    public double extraInput;
     public double sgst;
     public double cgst;
+
+    public CreateSelling() {
+    }
+
+    public CreateSelling(String material, String printer, String modelName, String hallmarkOrKDM, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double extraInput, double sgst, double cgst) {
+        this.material = material;
+        this.printer = printer;
+        this.modelName = modelName;
+        this.hallmarkOrKDM = hallmarkOrKDM;
+        this.gramRate = gramRate;
+        this.estimateProductGram = estimateProductGram;
+        this.estimateVaPercent = estimateVaPercent;
+        this.estimateVaNumber = estimateVaNumber;
+        this.extraInput = extraInput;
+        this.sgst = sgst;
+        this.cgst = cgst;
+    }
+
+    protected CreateSelling(Parcel in) {
+        this.material = in.readString();
+        this.printer = in.readString();
+        this.modelName = in.readString();
+        this.hallmarkOrKDM = in.readString();
+        this.gramRate = in.readDouble();
+        this.estimateProductGram = in.readDouble();
+        this.estimateVaPercent = in.readDouble();
+        this.estimateVaNumber = in.readDouble();
+        this.extraInput = in.readDouble();
+        this.sgst = in.readDouble();
+        this.cgst = in.readDouble();
+    }
 
     @Override
     public String toString() {
@@ -30,25 +73,10 @@ public class CreateSelling implements Parcelable {
                 ", estimateProductGram=" + estimateProductGram +
                 ", estimateVaPercent=" + estimateVaPercent +
                 ", estimateVaNumber=" + estimateVaNumber +
+                ", extraInput=" + extraInput +
                 ", sgst=" + sgst +
                 ", cgst=" + cgst +
                 '}';
-    }
-
-    public CreateSelling() {
-    }
-
-    public CreateSelling(String material, String printer, String modelName, String hallmarkOrKDM, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double sgst, double cgst) {
-        this.material = material;
-        this.printer = printer;
-        this.modelName = modelName;
-        this.hallmarkOrKDM = hallmarkOrKDM;
-        this.gramRate = gramRate;
-        this.estimateProductGram = estimateProductGram;
-        this.estimateVaPercent = estimateVaPercent;
-        this.estimateVaNumber = estimateVaNumber;
-        this.sgst = sgst;
-        this.cgst = cgst;
     }
 
     @Override
@@ -66,32 +94,8 @@ public class CreateSelling implements Parcelable {
         dest.writeDouble(this.estimateProductGram);
         dest.writeDouble(this.estimateVaPercent);
         dest.writeDouble(this.estimateVaNumber);
+        dest.writeDouble(this.extraInput);
         dest.writeDouble(this.sgst);
         dest.writeDouble(this.cgst);
     }
-
-    protected CreateSelling(Parcel in) {
-        this.material = in.readString();
-        this.printer = in.readString();
-        this.modelName = in.readString();
-        this.hallmarkOrKDM = in.readString();
-        this.gramRate = in.readDouble();
-        this.estimateProductGram = in.readDouble();
-        this.estimateVaPercent = in.readDouble();
-        this.estimateVaNumber = in.readDouble();
-        this.sgst = in.readDouble();
-        this.cgst = in.readDouble();
-    }
-
-    public static final Parcelable.Creator<CreateSelling> CREATOR = new Parcelable.Creator<CreateSelling>() {
-        @Override
-        public CreateSelling createFromParcel(Parcel source) {
-            return new CreateSelling(source);
-        }
-
-        @Override
-        public CreateSelling[] newArray(int size) {
-            return new CreateSelling[size];
-        }
-    };
 }
