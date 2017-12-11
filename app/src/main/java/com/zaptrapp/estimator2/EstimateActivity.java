@@ -797,19 +797,38 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append("\n");
     }
 
-    private void insertSellingProduct(CreateBuying createBuying, StringBuilder stringBuilder) {
+    private void insertSellingProduct(CreateSelling createSelling, StringBuilder stringBuilder) {
         switch (product) {
             case "silver":
-                insertSilverSellingProducts(createBuying, stringBuilder);
+                insertSilverSellingProducts(createSelling, stringBuilder);
                 break;
             case "gold":
-                stringBuilder.append(String.format("%-7s", createBuying.estimateBuyingDesc) + String.format("%-7s", createBuying.estimateBuyingPrice) +
-                        String.format("%-7s", createBuying.estimateBuyingGrossWeight) +
-                        String.format("%-7s", createBuying.estimateBuyingNetWeight) +
-                        String.format("%12s", buyingCalculation(createBuying)) + "\n");
+                stringBuilder.append(String.format("%-7s", createSelling.estimateBuyingDesc) + String.format("%-7s", createSelling.estimateBuyingPrice) +
+                        String.format("%-7s", createSelling.estimateBuyingGrossWeight) +
+                        String.format("%-7s", createSelling.estimateBuyingNetWeight) +
+                        String.format("%12s", buyingCalculation(createSelling)) + "\n");
                 break;
         }
         stringBuilder.append("\n");
+    }
+
+    private StringBuilder initiatedSellingTemplate(StringBuilder stringBuilder) {
+        stringBuilder.append(String.format("%-22s", String.valueOf("Gram Rate")) + " " + String.format("%15s", gramRate + "/Gms\n"));
+        stringBuilder.append("------------------------------------------\n");
+        stringBuilder.append(String.format("%-7s", "Desc") + String.format("%-7s", "Wt") + String.format("%-7s", "VA") + String.format("%-7s", "MC") + String.format("%12s", "Total") + "\n");
+        stringBuilder.append("------------------------------------------\n");
+        return stringBuilder;
+    }
+
+    private void initiatedBuyingTemplate(StringBuilder stringBuilder) {
+        if (!buyingInitiated) {
+            stringBuilder.append("\n------------------------------------------");
+            stringBuilder.append("\n------------------BUYING------------------");
+            stringBuilder.append("\n------------------------------------------\n");
+            stringBuilder.append(String.format("%-7s", "Item") + String.format("%-7s", "Price") + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%12s", "Total") + "\n");
+            stringBuilder.append("------------------------------------------\n");
+            buyingInitiated = true;
+        }
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -931,24 +950,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         Log.d(TAG, "createEstimate: " + mCreateEstimateList.size());
     }
 
-    private StringBuilder initiatedSellingTemplate(StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-22s", String.valueOf("Gram Rate")) + " " + String.format("%15s", gramRate + "/Gms\n"));
-        stringBuilder.append("------------------------------------------\n");
-        stringBuilder.append(String.format("%-7s", "Desc") + String.format("%-7s", "Wt") + String.format("%-7s", "VA") + String.format("%-7s", "MC") + String.format("%12s", "Total") + "\n");
-        stringBuilder.append("------------------------------------------\n");
-        return stringBuilder;
-    }
 
-    private void initiatedBuyingTemplate(StringBuilder stringBuilder) {
-        if (!buyingInitiated) {
-            stringBuilder.append("\n------------------------------------------");
-            stringBuilder.append("\n------------------BUYING------------------");
-            stringBuilder.append("\n------------------------------------------\n");
-            stringBuilder.append(String.format("%-7s", "Item") + String.format("%-7s", "Price") + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%12s", "Total") + "\n");
-            stringBuilder.append("------------------------------------------\n");
-            buyingInitiated = true;
-        }
-    }
 
     private void insertTotal(List<CreateEstimate> createEstimate, StringBuilder stringBuilder) {
         double total = 0;
@@ -982,14 +984,14 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         }
     }
 
-    private void insertSilverSellingProducts(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-7s", createEstimate.modelName) +
-                String.format("%-7s", createEstimate.estimateProductGram) +
-                String.format("%-7s", createEstimate.estimateVaPercent + "%") +
-                String.format("%-7s", createEstimate.extraInput));
+    private void insertSilverSellingProducts(CreateSelling createSelling, StringBuilder stringBuilder) {
+        stringBuilder.append(String.format("%-7s", createSelling.modelName) +
+                String.format("%-7s", createSelling.estimateProductGram) +
+                String.format("%-7s", createSelling.estimateVaPercent + "%") +
+                String.format("%-7s", createSelling.extraInput));
 //        TODO bookmark
         Log.d(TAG, "insertSellingProducts: product " + product);
-        stringBuilder.append(String.format("%12s", silverSellingCalculation(createEstimate)) + "\n");
+        stringBuilder.append(String.format("%12s", silverSellingCalculation(createSelling)) + "\n");
 
         stringBuilder.append("\n");
     }
@@ -1008,16 +1010,16 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append("\n");
     }
 
-    private double silverSellingCalculation(CreateEstimate createEstimate) {
-        double gramTimesWeight = createEstimate.estimateProductGram * createEstimate.gramRate;
-        double vaPercentInput = gramTimesWeight * (createEstimate.estimateVaPercent / 100);
-        double extraInput = createEstimate.estimateProductGram * createEstimate.extraInput;
-        Log.d(TAG, "silverSellingCalculation: productGram" + createEstimate.estimateProductGram);
-        Log.d(TAG, "silverSellingCalculation: extraInput" + createEstimate.extraInput);
+    private double silverSellingCalculation(CreateSelling createSelling) {
+        double gramTimesWeight = createSelling.estimateProductGram * createSelling.gramRate;
+        double vaPercentInput = gramTimesWeight * (createSelling.estimateVaPercent / 100);
+        double extraInput = createSelling.estimateProductGram * createSelling.extraInput;
+        Log.d(TAG, "silverSellingCalculation: productGram" + createSelling.estimateProductGram);
+        Log.d(TAG, "silverSellingCalculation: extraInput" + createSelling.extraInput);
         double total = (gramTimesWeight + vaPercentInput + extraInput);
         Log.d(TAG, "silverSellingCalculation: total " + total);
-        double cgstInput = total * (createEstimate.cgst / 100);
-        double sgstInput = total * (createEstimate.sgst / 100);
+        double cgstInput = total * (createSelling.cgst / 100);
+        double sgstInput = total * (createSelling.sgst / 100);
         double return_total = total + cgstInput + sgstInput;
         return round(return_total, 2);
     }
