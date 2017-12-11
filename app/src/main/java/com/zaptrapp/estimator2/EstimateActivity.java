@@ -117,7 +117,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 //    List<CreateEstimate> mCreateEstimateList = new ArrayList<CreateEstimate>();
 
     List<CreateBuying> mCreateBuyingList = new ArrayList<>();
-    List<CreateSelling> mCreateSellings = new ArrayList<>();
+    List<CreateSelling> mCreateSellingList = new ArrayList<>();
     Printer mPrinter;
     Context mContext = null;
     String dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
@@ -422,11 +422,15 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
                     llBuying.setVisibility(View.VISIBLE);
+                    btEstimate.setVisibility(View.VISIBLE);
+
                     buyingItem = true;
 
                 } else {
                     llBuying.setVisibility(View.GONE);
                     buyingItem = false;
+                    btEstimate.setVisibility(View.GONE);
+
                 }
                 viewLog();
             }
@@ -737,6 +741,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         addToPrintData(returnCreateBuying, stringBuilder);
 
+        //add it to the list
+        mCreateBuyingList.add(returnCreateBuying);
+
         return returnCreateBuying;
     }
 
@@ -758,6 +765,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 cgst);
 
         addToPrintData(returnCreateSelling, stringBuilder);
+
+        //add it to the list
+        mCreateSellingList.add(returnCreateSelling);
 
         return returnCreateSelling;
     }
@@ -847,6 +857,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         buyingCount = 0;
         sellingCount = 0;
 
+
     }
 
 
@@ -854,26 +865,20 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     public void onClickEstimate(View view) {
         onClickAddAnotherEstimate(view);
 
-        for (int i = 0; i < mCreateEstimateList.size(); i++) {
-            Log.d(TAG, "Estimate List: " + mCreateEstimateList.get(i).toString());
-            insertHallmarkOrKDM(mCreateEstimateList.get(i), stringBuilder);
-            switch (product) {
-                case "silver":
-//                    insertSilverSellingProducts(mCreateEstimateList.get(i), stringBuilder);
-                    break;
-                case "gold":
-//                    insertGoldSellingProducts(mCreateEstimateList.get(i), stringBuilder);
-                    break;
-            }
+        for (int i = 0; i < mCreateBuyingList.size(); i++) {
+            Log.d(TAG, "onClickEstimate: "+mCreateBuyingList.get(i).toString());
+        }
+        for (int i = 0; i < mCreateSellingList.size(); i++) {
+            Log.d(TAG, "onClickEstimate: "+mCreateSellingList.get(i).toString());
         }
 
 //        insertTotal(mCreateEstimateList, stringBuilder);
 
-        Log.d(TAG, "onClickEstimate: \n" + stringBuilder.toString());
+//        Log.d(TAG, "onClickEstimate: \n" + stringBuilder.toString());
 
 
         //show Material Dialog
-        showDialog(stringBuilder.toString());
+//        showDialog(stringBuilder.toString());
 
 //        runPrintReceiptSequence(stringBuilder.toString());
 
@@ -891,7 +896,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         runPrintReceiptSequence(string);
-                        mCreateEstimateList.clear();
+//                        mCreateEstimateList.clear();
                         resetViews();
                     }
                 })
@@ -931,8 +936,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             createEstimate.estimateBuyingNetWeight = editTextToDouble(etNetWeight);
         }
         Log.d(TAG, "createEstimate: " + createEstimate.toString());
-        mCreateEstimateList.add(createEstimate);
-        Log.d(TAG, "createEstimate: " + mCreateEstimateList.size());
+//        mCreateEstimateList.add(createEstimate);
+//        Log.d(TAG, "createEstimate: " + mCreateEstimateList.size());
     }
 
 
@@ -1559,16 +1564,19 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
 
     public void clearData() {
-        if (mCreateEstimateList.size() > 0) {
-            mCreateEstimateList.clear();
-            Toast.makeText(mContext, "Data Cleared", Toast.LENGTH_SHORT).show();
-            buyingCount = 1;
-            buyingInitiated = false;
-        } else {
-            Toast.makeText(mContext, "No Data to Clear", Toast.LENGTH_SHORT).show();
-            buyingInitiated = false;
-            buyingCount = 1;
-        }
+//        if (mCreateBuyingList.size() > 0) {
+//            mCreateBuyingList.clear();
+//            Toast.makeText(mContext, "Data Cleared", Toast.LENGTH_SHORT).show();
+//            buyingCount = 0;
+//            buyingInitiated = false;
+//        } else {
+//            Toast.makeText(mContext, "No Data to Clear", Toast.LENGTH_SHORT).show();
+//            buyingInitiated = false;
+//            buyingCount = 1;
+//        }
+
+        mCreateBuyingList.clear();
+        mCreateSellingList.clear();
     }
 
     public void onClickClearEstimate(View view) {
