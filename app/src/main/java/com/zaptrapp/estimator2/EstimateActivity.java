@@ -812,6 +812,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     private void createEstimate(String material, String printer, String modelName, String hallmarkOrKDM, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double estimateExtraInput, double sgst, double cgst, boolean buyingItem) {
 
+
         CreateEstimate createEstimate = new CreateEstimate(material,
                 printer,
                 modelName,
