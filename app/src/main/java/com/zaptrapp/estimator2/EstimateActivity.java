@@ -728,10 +728,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         return true;
     }
     private CreateBuying addABuyingItem(StringBuilder stringBuilder) {
-        if (buyingCount == 0) {
-            initiatedBuyingTemplate(stringBuilder);
-            buyingCount++;
-        }
+//        if (buyingCount == 0) {
+//            initiatedBuyingTemplate(stringBuilder);
+//            buyingCount++;
+//        }
         CreateBuying returnCreateBuying = new CreateBuying();
         returnCreateBuying.buyingItem = true;
         returnCreateBuying.estimateBuyingDesc = editTextToString(etBuyingDesc);
@@ -739,7 +739,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         returnCreateBuying.estimateBuyingGrossWeight = editTextToDouble(etGrossWeight);
         returnCreateBuying.estimateBuyingNetWeight = editTextToDouble(etNetWeight);
 
-        addToPrintData(returnCreateBuying, stringBuilder);
+//        addToPrintData(returnCreateBuying, stringBuilder);
 
         //add it to the list
         mCreateBuyingList.add(returnCreateBuying);
@@ -748,10 +748,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     }
 
     private CreateSelling addASellingItem(StringBuilder stringBuilder) {
-        if (sellingCount == 0) {
-            initiatedSellingTemplate(stringBuilder);
-            sellingCount++;
-        }
+//        if (sellingCount == 0) {
+//            initiatedSellingTemplate(stringBuilder);
+//            sellingCount++;
+//        }
         CreateSelling returnCreateSelling = new CreateSelling(material,
                 printer,
                 modelName,
@@ -764,7 +764,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 sgst,
                 cgst);
 
-        addToPrintData(returnCreateSelling, stringBuilder);
+//        addToPrintData(returnCreateSelling, stringBuilder);
 
         //add it to the list
         mCreateSellingList.add(returnCreateSelling);
@@ -861,24 +861,40 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     //On Estimate Button Click
     public void onClickEstimate(View view) {
+        StringBuilder estimateStringBuilder = new StringBuilder();
+
         onClickAddAnotherEstimate(view);
 
-        for (int i = 0; i < mCreateBuyingList.size(); i++) {
-            Log.d(TAG, "onClickEstimate: "+mCreateBuyingList.get(i).toString());
-        }
+
         for (int i = 0; i < mCreateSellingList.size(); i++) {
+            if (sellingCount == 0) {
+                initiatedSellingTemplate(estimateStringBuilder);
+                sellingCount++;
+            }
+            addToPrintData(mCreateSellingList.get(i),estimateStringBuilder);
+
             Log.d(TAG, "onClickEstimate: "+mCreateSellingList.get(i).toString());
         }
+        for (int i = 0; i < mCreateBuyingList.size(); i++) {
+
+            if (buyingCount == 0) {
+                initiatedBuyingTemplate(estimateStringBuilder);
+                buyingCount++;
+            }
+            addToPrintData(mCreateBuyingList.get(i),estimateStringBuilder);
+            Log.d(TAG, "onClickEstimate: "+mCreateBuyingList.get(i).toString());
+        }
+
 
 //        insertTotal(mCreateEstimateList, stringBuilder);
 
 //        Log.d(TAG, "onClickEstimate: \n" + stringBuilder.toString());
 
 
-        Log.d(TAG, "onClickEstimate: "+stringBuilder.toString());
-        stringBuilder.append("_3000");
+        Log.d(TAG, "onClickEstimate: "+estimateStringBuilder.toString());
+        estimateStringBuilder.append("_3000");
         //show Material Dialog
-        showDialog(stringBuilder.toString());
+        showDialog(estimateStringBuilder.toString());
 
 //        runPrintReceiptSequence(stringBuilder.toString());
 
