@@ -122,7 +122,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     Context mContext = null;
     String dateStamp = new SimpleDateFormat("dd-MM-yy").format(new Date());
     String timeStamp = new SimpleDateFormat("HH-mm-ss").format(new Date());
-    boolean buyingInitiated = false;
+
     /////////////////////////////////////////////////////////////////////////////////////////////////
     StringBuilder stringBuilder;
     int buyingCount = 0;
@@ -831,14 +831,12 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     }
 
     private void initiatedBuyingTemplate(StringBuilder stringBuilder) {
-        if (!buyingInitiated) {
             stringBuilder.append("\n------------------------------------------");
             stringBuilder.append("\n------------------BUYING------------------");
             stringBuilder.append("\n------------------------------------------\n");
             stringBuilder.append(String.format("%-7s", "Item") + String.format("%-7s", "Price") + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%12s", "Total") + "\n");
             stringBuilder.append("------------------------------------------\n");
-            buyingInitiated = true;
-        }
+
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -877,8 +875,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 //        Log.d(TAG, "onClickEstimate: \n" + stringBuilder.toString());
 
 
+        Log.d(TAG, "onClickEstimate: "+stringBuilder.toString());
+        stringBuilder.append("_3000");
         //show Material Dialog
-//        showDialog(stringBuilder.toString());
+        showDialog(stringBuilder.toString());
 
 //        runPrintReceiptSequence(stringBuilder.toString());
 
