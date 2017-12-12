@@ -722,10 +722,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         resetViews();
     }
     private boolean isEmpty(EditText etText) {
-        if (etText.getText().toString().trim().length() > 0)
-            return false;
-
-        return true;
+        return etText.getText().toString().trim().length() <= 0;
     }
     private CreateBuying addABuyingItem(StringBuilder stringBuilder) {
 //        if (buyingCount == 0) {
@@ -886,19 +883,45 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         }
 
 
-//        insertTotal(mCreateEstimateList, stringBuilder);
-
-//        Log.d(TAG, "onClickEstimate: \n" + stringBuilder.toString());
-
+        insertTotal(mCreateSellingList, mCreateBuyingList, estimateStringBuilder);
 
         Log.d(TAG, "onClickEstimate: "+estimateStringBuilder.toString());
-        estimateStringBuilder.append("_3000");
         //show Material Dialog
         showDialog(estimateStringBuilder.toString());
 
 //        runPrintReceiptSequence(stringBuilder.toString());
 
 
+    }
+
+    private void insertTotal(List<CreateSelling> mCreateSellingList, List<CreateBuying> mCreateBuyingList, StringBuilder estimateStringBuilder) {
+        double total = 0;
+        for (int i = 0; i < mCreateSellingList.size(); i++) {
+            CreateSelling estimateSelling = mCreateSellingList.get(i);
+            switch (product) {
+                case "silver":
+                    total += silverSellingCalculation(estimateSelling);
+                    break;
+                case "gold":
+                    total += goldSellingCalculation(estimateSelling);
+                    break;
+            }
+
+        }
+        double buyingTotal = 0;
+        for (int i = 0; i < mCreateBuyingList.size(); i++) {
+            CreateBuying estimateBuying = mCreateBuyingList.get(i);
+            buyingTotal += buyingCalculation(estimateBuying);
+        }
+        Log.d(TAG, "insertTotal: Selling " + total);
+        Log.d(TAG, "insertTotal: Buying " + buyingTotal);
+        total = total - buyingTotal;
+        Log.d(TAG, "insertTotal: Total" + total);
+        total = round(total, 2);
+        Log.d(TAG, "insertTotal: Total" + total);
+        stringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", total) + "\n");
+        stringBuilder.append("\n(Inclusive of GST)\n");
+        stringBuilder.append("_" + String.valueOf(total));
     }
 
     public void showDialog(final String string) {
