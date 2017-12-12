@@ -919,9 +919,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         Log.d(TAG, "insertTotal: Total" + total);
         total = round(total, 2);
         Log.d(TAG, "insertTotal: Total" + total);
-        stringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", total) + "\n");
-        stringBuilder.append("\n(Inclusive of GST)\n");
-        stringBuilder.append("_" + String.valueOf(total));
+        estimateStringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", total) + "\n");
+        estimateStringBuilder.append("\n(Inclusive of GST)\n");
+        estimateStringBuilder.append("_" + String.valueOf(total));
     }
 
     public void showDialog(final String string) {
