@@ -270,8 +270,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     }
 
 
-    //TODO already changed the below code for settings the va number for gram value
-
     private void initSearchRecycler(String query) {
         Log.d(TAG, "initSearchRecycler: ");
         Query searchQuery = databaseReference.child(product).orderByChild("productName").startAt(query).endAt(query + "\uf8ff");
@@ -716,7 +714,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             Log.d(TAG, "onClickAddAnotherEstimate: " + createBuying.toString());
         }
 
-
         resetViews();
     }
 
@@ -929,6 +926,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         runPrintReceiptSequence(string);
 //                        mCreateEstimateList.clear();
+                        showClearDialog();
                         resetViews();
                     }
                 })
@@ -943,61 +941,35 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 .setCancelable(true)
                 .show();
     }
-//
-//    private void createEstimate(String material, String printer, String modelName, String hallmarkOrKDM, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double estimateExtraInput, double sgst, double cgst, boolean buyingItem) {
-//
-//
-//        CreateEstimate createEstimate = new CreateEstimate(material,
-//                printer,
-//                modelName,
-//                hallmarkOrKDM,
-//                gramRate,
-//                estimateProductGram,
-//                estimateVaPercent,
-//                estimateVaNumber,
-//                sgst,
-//                cgst,
-//                buyingItem, estimateExtraInput, 0, "", 0, 0);
-//
-//
-//        //if buying is true
-//        if (createEstimate.buyingItem) {
-//            createEstimate.estimateBuyingDesc = editTextToString(etBuyingDesc);
-//            createEstimate.estimateBuyingPrice = editTextToDouble(etBuyingPrice);
-//            createEstimate.estimateBuyingGrossWeight = editTextToDouble(etGrossWeight);
-//            createEstimate.estimateBuyingNetWeight = editTextToDouble(etNetWeight);
-//        }
-//        Log.d(TAG, "createEstimate: " + createEstimate.toString());
-////        mCreateEstimateList.add(createEstimate);
-////        Log.d(TAG, "createEstimate: " + mCreateEstimateList.size());
-//    }
+
+    public void showClearDialog(){
+        new MaterialStyledDialog.Builder(this)
+                .setDescription("Clear Data?")
+                .withDarkerOverlay(true)
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_delete_forever_white_24dp)
+                .setHeaderColor(R.color.colorAccent)
+                .withIconAnimation(false)
+                .setPositiveText("Yes")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        clearData();
+                        resetViews();
+                    }
+                })
+                .setNegativeText("No")
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        resetViews();
+                    }
+                })
+                .show();
 
 
-//    private void insertTotal(List<CreateEstimate> createEstimate, StringBuilder stringBuilder) {
-//        double total = 0;
-//        for (int i = 0; i < createEstimate.size(); i++) {
-//            CreateEstimate estimateProduct = createEstimate.get(i);
-//            switch (product) {
-//                case "silver":
-//                    total += silverSellingCalculation(estimateProduct);
-//                    break;
-//                case "gold":
-//                    total += goldSellingCalculation(estimateProduct);
-//                    break;
-//            }
-//            double buyingTotal = 0;
-//            if (estimateProduct.buyingItem) {
-//                initiatedBuyingTemplate(stringBuilder);
-////                insertBuyingProduct(estimateProduct, stringBuilder);
-////                buyingTotal += buyingCalculation(estimateProduct);
-//            }
-//            total = total - buyingTotal;
-//        }
-//        total = round(total, 2);
-//        stringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", total) + "\n");
-//        stringBuilder.append("\n(Inclusive of GST)\n");
-//        stringBuilder.append("_" + String.valueOf(total));
-//    }
+    }
+
 
     private void insertHallmarkOrKDM(CreateSelling createSelling, StringBuilder stringBuilder) {
         if (createSelling.hallmarkOrKDM != "") {
@@ -1010,7 +982,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 String.format("%-7s", createSelling.estimateProductGram) +
                 String.format("%-7s", createSelling.estimateVaPercent + "%") +
                 String.format("%-7s", createSelling.extraInput));
-//        TODO bookmark
         Log.d(TAG, "insertSellingProducts: product " + product);
         stringBuilder.append(String.format("%12s", silverSellingCalculation(createSelling)) + "\n");
 
@@ -1024,7 +995,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 String.format("%-7s", createSelling.estimateProductGram) +
                 String.format("%-7s", createSelling.estimateVaPercent + "%") +
                 String.format("%-7s", createSelling.extraInput));
-//        TODO bookmark
         Log.d(TAG, "insertSellingProducts: product " + product);
         stringBuilder.append(String.format("%12s", goldSellingCalculation(createSelling)) + "\n");
         stringBuilder.append("\ninclusive of \nVA " + goldSellingCalculationVA(createSelling) + "\nCGST " + createSelling.cgst + "% = " + goldSellingCalculationGST(createSelling, "cgst") +

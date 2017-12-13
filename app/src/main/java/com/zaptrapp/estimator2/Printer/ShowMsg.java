@@ -1,8 +1,7 @@
 package com.zaptrapp.estimator2.Printer;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.widget.Toast;
 
 import com.epson.epos2.Epos2CallbackCode;
 import com.epson.epos2.Epos2Exception;
@@ -49,15 +48,16 @@ public class ShowMsg {
     }
 
     private static void show(String msg, Context context) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-        alertDialog.setMessage(msg);
-        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                return ;
-            }
-        });
-        alertDialog.create();
-        alertDialog.show();
+//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+//        alertDialog.setMessage(msg);
+//        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int whichButton) {
+//                return ;
+//            }
+//        });
+//        alertDialog.create();
+//        alertDialog.show();
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 
     private static String getEposExceptionText(int state) {
