@@ -909,7 +909,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         total = round(total, 2);
         Log.d(TAG, "insertTotal: Total" + total);
         estimateStringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", total) + "\n");
-        estimateStringBuilder.append("\n(Estimate Inclusive of GST)\n");
+//        estimateStringBuilder.append("\n(Estimate Inclusive of GST)\n");
 
         estimateStringBuilder.append("_" + String.valueOf(total));
     }
@@ -1347,6 +1347,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             mPrinter.addFeedLine(3);
             mPrinter.addTextSize(1, 1);
             mPrinter.addText("------------------------------------------\n");
+            mPrinter.addText("(Price inclusive of GST)");
             mPrinter.addText("Thank You\n");
             mPrinter.addTextAlign(Printer.ALIGN_RIGHT);
             mPrinter.addFeedLine(4);
