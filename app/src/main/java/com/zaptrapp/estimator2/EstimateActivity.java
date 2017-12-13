@@ -55,7 +55,6 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.zaptrapp.estimator2.Models.CreateBuying;
-import com.zaptrapp.estimator2.Models.CreateEstimate;
 import com.zaptrapp.estimator2.Models.CreateSelling;
 import com.zaptrapp.estimator2.Models.EstimateLog;
 import com.zaptrapp.estimator2.Models.Product;
@@ -706,29 +705,26 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         String product_estimate = product;
         retrieveDataFromFirebase(product_estimate);
 
-        stringBuilder=new StringBuilder();
         CreateBuying createBuying;
         CreateSelling createSelling;
         if (!isEmpty(etProductGram)) {
-            createSelling = addASellingItem(stringBuilder);
+            createSelling = addASellingItem();
             Log.d(TAG, "onClickAddAnotherEstimate: " + createSelling.toString());
         }
         if (cbBuying.isChecked()) {
-            createBuying = addABuyingItem(stringBuilder);
+            createBuying = addABuyingItem();
             Log.d(TAG, "onClickAddAnotherEstimate: " + createBuying.toString());
         }
 
 
         resetViews();
     }
+
     private boolean isEmpty(EditText etText) {
         return etText.getText().toString().trim().length() <= 0;
     }
-    private CreateBuying addABuyingItem(StringBuilder stringBuilder) {
-//        if (buyingCount == 0) {
-//            initiatedBuyingTemplate(stringBuilder);
-//            buyingCount++;
-//        }
+
+    private CreateBuying addABuyingItem() {
         CreateBuying returnCreateBuying = new CreateBuying();
         returnCreateBuying.buyingItem = true;
         returnCreateBuying.estimateBuyingDesc = editTextToString(etBuyingDesc);
@@ -736,7 +732,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         returnCreateBuying.estimateBuyingGrossWeight = editTextToDouble(etGrossWeight);
         returnCreateBuying.estimateBuyingNetWeight = editTextToDouble(etNetWeight);
 
-//        addToPrintData(returnCreateBuying, stringBuilder);
 
         //add it to the list
         mCreateBuyingList.add(returnCreateBuying);
@@ -744,11 +739,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         return returnCreateBuying;
     }
 
-    private CreateSelling addASellingItem(StringBuilder stringBuilder) {
-//        if (sellingCount == 0) {
-//            initiatedSellingTemplate(stringBuilder);
-//            sellingCount++;
-//        }
+    private CreateSelling addASellingItem() {
         CreateSelling returnCreateSelling = new CreateSelling(material,
                 printer,
                 modelName,
@@ -761,7 +752,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 sgst,
                 cgst);
 
-//        addToPrintData(returnCreateSelling, stringBuilder);
 
         //add it to the list
         mCreateSellingList.add(returnCreateSelling);
@@ -784,23 +774,23 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private void insertBuyingProduct(CreateBuying createBuying, StringBuilder stringBuilder) {
         switch (product) {
             case "silver":
-                insertSilverBuyingProducts(createBuying,stringBuilder);
+                insertSilverBuyingProducts(createBuying, stringBuilder);
                 break;
             case "gold":
-                insertGoldBuyingProducts(createBuying,stringBuilder);
+                insertGoldBuyingProducts(createBuying, stringBuilder);
                 break;
         }
         stringBuilder.append("\n");
     }
 
-    private void insertSilverBuyingProducts(CreateBuying createBuying,StringBuilder stringBuilder){
+    private void insertSilverBuyingProducts(CreateBuying createBuying, StringBuilder stringBuilder) {
         stringBuilder.append(String.format("%-7s", createBuying.estimateBuyingDesc) + String.format("%-7s", createBuying.estimateBuyingPrice) +
                 String.format("%-7s", createBuying.estimateBuyingGrossWeight) +
                 String.format("%-7s", (createBuying.estimateBuyingGrossWeight * (createBuying.estimateBuyingNetWeight / 100))) +
                 String.format("%12s", buyingCalculation(createBuying)) + "\n");
     }
 
-    private void insertGoldBuyingProducts(CreateBuying createBuying,StringBuilder stringBuilder){
+    private void insertGoldBuyingProducts(CreateBuying createBuying, StringBuilder stringBuilder) {
         stringBuilder.append(String.format("%-7s", createBuying.estimateBuyingDesc) + String.format("%-7s", createBuying.estimateBuyingPrice) +
                 String.format("%-7s", createBuying.estimateBuyingGrossWeight) +
                 String.format("%-7s", createBuying.estimateBuyingNetWeight) +
@@ -813,7 +803,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 insertSilverSellingProducts(createSelling, stringBuilder);
                 break;
             case "gold":
-                insertGoldSellingProducts(createSelling,stringBuilder);
+                insertGoldSellingProducts(createSelling, stringBuilder);
                 break;
         }
         stringBuilder.append("\n");
@@ -828,11 +818,11 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     }
 
     private void initiatedBuyingTemplate(StringBuilder stringBuilder) {
-            stringBuilder.append("\n------------------------------------------");
-            stringBuilder.append("\n------------------BUYING------------------");
-            stringBuilder.append("\n------------------------------------------\n");
-            stringBuilder.append(String.format("%-7s", "Item") + String.format("%-7s", "Price") + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%12s", "Total") + "\n");
-            stringBuilder.append("------------------------------------------\n");
+        stringBuilder.append("\n------------------------------------------");
+        stringBuilder.append("\n------------------BUYING------------------");
+        stringBuilder.append("\n------------------------------------------\n");
+        stringBuilder.append(String.format("%-7s", "Item") + String.format("%-7s", "Price") + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%12s", "Total") + "\n");
+        stringBuilder.append("------------------------------------------\n");
 
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -851,7 +841,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etBuyingDesc.setText("");
         buyingCount = 0;
         sellingCount = 0;
-
+clearData();
 
     }
 
@@ -868,9 +858,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 initiatedSellingTemplate(estimateStringBuilder);
                 sellingCount++;
             }
-            addToPrintData(mCreateSellingList.get(i),estimateStringBuilder);
+            addToPrintData(mCreateSellingList.get(i), estimateStringBuilder);
 
-            Log.d(TAG, "onClickEstimate: "+mCreateSellingList.get(i).toString());
+            Log.d(TAG, "onClickEstimate: " + mCreateSellingList.get(i).toString());
         }
         for (int i = 0; i < mCreateBuyingList.size(); i++) {
 
@@ -878,17 +868,19 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 initiatedBuyingTemplate(estimateStringBuilder);
                 buyingCount++;
             }
-            addToPrintData(mCreateBuyingList.get(i),estimateStringBuilder);
-            Log.d(TAG, "onClickEstimate: "+mCreateBuyingList.get(i).toString());
+            addToPrintData(mCreateBuyingList.get(i), estimateStringBuilder);
+            Log.d(TAG, "onClickEstimate: " + mCreateBuyingList.get(i).toString());
         }
 
 
         insertTotal(mCreateSellingList, mCreateBuyingList, estimateStringBuilder);
 
-        Log.d(TAG, "onClickEstimate: "+estimateStringBuilder.toString());
+        Log.d(TAG, "onClickEstimate: " + estimateStringBuilder.toString());
         //show Material Dialog
         showDialog(estimateStringBuilder.toString());
 
+
+        //TODO enable it while testing
 //        runPrintReceiptSequence(stringBuilder.toString());
 
 
@@ -920,7 +912,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         total = round(total, 2);
         Log.d(TAG, "insertTotal: Total" + total);
         estimateStringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", total) + "\n");
-        estimateStringBuilder.append("\n(Inclusive of GST)\n");
+        estimateStringBuilder.append("\n(Estimate Inclusive of` GST)\n");
+
         estimateStringBuilder.append("_" + String.valueOf(total));
     }
 
@@ -950,35 +943,34 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 .setCancelable(true)
                 .show();
     }
-
-    private void createEstimate(String material, String printer, String modelName, String hallmarkOrKDM, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double estimateExtraInput, double sgst, double cgst, boolean buyingItem) {
-
-
-        CreateEstimate createEstimate = new CreateEstimate(material,
-                printer,
-                modelName,
-                hallmarkOrKDM,
-                gramRate,
-                estimateProductGram,
-                estimateVaPercent,
-                estimateVaNumber,
-                sgst,
-                cgst,
-                buyingItem, estimateExtraInput, 0, "", 0, 0);
-
-
-        //if buying is true
-        if (createEstimate.buyingItem) {
-            createEstimate.estimateBuyingDesc = editTextToString(etBuyingDesc);
-            createEstimate.estimateBuyingPrice = editTextToDouble(etBuyingPrice);
-            createEstimate.estimateBuyingGrossWeight = editTextToDouble(etGrossWeight);
-            createEstimate.estimateBuyingNetWeight = editTextToDouble(etNetWeight);
-        }
-        Log.d(TAG, "createEstimate: " + createEstimate.toString());
-//        mCreateEstimateList.add(createEstimate);
-//        Log.d(TAG, "createEstimate: " + mCreateEstimateList.size());
-    }
-
+//
+//    private void createEstimate(String material, String printer, String modelName, String hallmarkOrKDM, double gramRate, double estimateProductGram, double estimateVaPercent, double estimateVaNumber, double estimateExtraInput, double sgst, double cgst, boolean buyingItem) {
+//
+//
+//        CreateEstimate createEstimate = new CreateEstimate(material,
+//                printer,
+//                modelName,
+//                hallmarkOrKDM,
+//                gramRate,
+//                estimateProductGram,
+//                estimateVaPercent,
+//                estimateVaNumber,
+//                sgst,
+//                cgst,
+//                buyingItem, estimateExtraInput, 0, "", 0, 0);
+//
+//
+//        //if buying is true
+//        if (createEstimate.buyingItem) {
+//            createEstimate.estimateBuyingDesc = editTextToString(etBuyingDesc);
+//            createEstimate.estimateBuyingPrice = editTextToDouble(etBuyingPrice);
+//            createEstimate.estimateBuyingGrossWeight = editTextToDouble(etGrossWeight);
+//            createEstimate.estimateBuyingNetWeight = editTextToDouble(etNetWeight);
+//        }
+//        Log.d(TAG, "createEstimate: " + createEstimate.toString());
+////        mCreateEstimateList.add(createEstimate);
+////        Log.d(TAG, "createEstimate: " + mCreateEstimateList.size());
+//    }
 
 
 //    private void insertTotal(List<CreateEstimate> createEstimate, StringBuilder stringBuilder) {
@@ -1007,9 +999,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 //        stringBuilder.append("_" + String.valueOf(total));
 //    }
 
-    private void insertHallmarkOrKDM(CreateEstimate createEstimate, StringBuilder stringBuilder) {
-        if (createEstimate.hallmarkOrKDM != "") {
-            stringBuilder.append(createEstimate.hallmarkOrKDM + "\n");
+    private void insertHallmarkOrKDM(CreateSelling createSelling, StringBuilder stringBuilder) {
+        if (createSelling.hallmarkOrKDM != "") {
+            stringBuilder.append(createSelling.hallmarkOrKDM + "\n");
         }
     }
 
@@ -1027,6 +1019,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
 
     private void insertGoldSellingProducts(CreateSelling createSelling, StringBuilder stringBuilder) {
+        insertHallmarkOrKDM(createSelling, stringBuilder);
         stringBuilder.append(String.format("%-7s", createSelling.modelName) +
                 String.format("%-7s", createSelling.estimateProductGram) +
                 String.format("%-7s", createSelling.estimateVaPercent + "%") +
@@ -1603,19 +1596,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
 
     public void clearData() {
-//        if (mCreateBuyingList.size() > 0) {
-//            mCreateBuyingList.clear();
-//            Toast.makeText(mContext, "Data Cleared", Toast.LENGTH_SHORT).show();
-//            buyingCount = 0;
-//            buyingInitiated = false;
-//        } else {
-//            Toast.makeText(mContext, "No Data to Clear", Toast.LENGTH_SHORT).show();
-//            buyingInitiated = false;
-//            buyingCount = 1;
-//        }
-
         mCreateBuyingList.clear();
         mCreateSellingList.clear();
+        Toast.makeText(mContext, "Cleared", Toast.LENGTH_SHORT).show();
     }
 
     public void onClickClearEstimate(View view) {
