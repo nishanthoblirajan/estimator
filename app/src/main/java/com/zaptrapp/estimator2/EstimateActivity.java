@@ -838,6 +838,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etBuyingDesc.setText("");
         buyingCount = 0;
         sellingCount = 0;
+        if(mCreateBuyingList.size()>0||mCreateSellingList.size()>0){
+            btEstimate.setVisibility(View.VISIBLE);
+        }
 //clearData();
 
     }
@@ -1084,15 +1087,16 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         menuInflater.inflate(R.menu.main_menu, menu);
         MenuItem item = menu.findItem(R.id.menu_search);
         searchView.setMenuItem(item);
+        searchView.setVoiceSearch(true);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_add:
-                startActivity(new Intent(this, AddProductActivity.class));
-                return true;
+//            case R.id.menu_add:
+//                startActivity(new Intent(this, AddProductActivity.class));
+//                return true;
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
@@ -1569,7 +1573,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     public void clearData() {
         mCreateBuyingList.clear();
         mCreateSellingList.clear();
-        Toast.makeText(mContext, "Cleared", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "Cleared", Toast.LENGTH_SHORT).show();            btEstimate.setVisibility(View.GONE);
+        btEstimate.setVisibility(View.GONE);
+
     }
 
     public void onClickClearEstimate(View view) {
