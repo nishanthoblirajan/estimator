@@ -841,7 +841,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etBuyingDesc.setText("");
         buyingCount = 0;
         sellingCount = 0;
-clearData();
+//clearData();
 
     }
 
@@ -912,7 +912,7 @@ clearData();
         total = round(total, 2);
         Log.d(TAG, "insertTotal: Total" + total);
         estimateStringBuilder.append(String.format("%-22s", String.valueOf("Total")) + "-" + String.format("%15s", total) + "\n");
-        estimateStringBuilder.append("\n(Estimate Inclusive of` GST)\n");
+        estimateStringBuilder.append("\n(Estimate Inclusive of GST)\n");
 
         estimateStringBuilder.append("_" + String.valueOf(total));
     }
