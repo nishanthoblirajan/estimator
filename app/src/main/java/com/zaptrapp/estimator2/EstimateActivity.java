@@ -155,6 +155,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private MaterialSearchView searchView;
     private EditText etBuyingDesc;
     private MaterialFancyButton btClear;
+    private MaterialFancyButton copyrightText;
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -201,6 +202,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         searchView = findViewById(R.id.search_view);
         etBuyingDesc = findViewById(R.id.et_buying_desc);
         btClear = (MaterialFancyButton) findViewById(R.id.bt_clear);
+        copyrightText = (MaterialFancyButton) findViewById(R.id.copyright_text);
     }
 
     @Override

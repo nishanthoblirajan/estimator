@@ -30,10 +30,10 @@
 
     </FrameLayout>
 
-    <ScrollView
+    3<ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
+        android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -241,6 +241,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     fancy:mfb_icon="@string/fawi_plus_square"
+                    android:layout_margin="8dp"
+                    fancy:mfb_radius="5dp"
+
                     fancy:mfb_defaultColor = "@color/accent"
                     android:layout_gravity="center_horizontal"
                     android:onClick="onClickAddAnotherEstimate"
@@ -252,26 +255,21 @@
                     android:layout_gravity="center_horizontal"
                     android:onClick="onClickClearEstimate"
                     android:layout_margin="8dp"
+                    fancy:mfb_radius="5dp"
+                    fancy:mfb_borderWidth="6dp"
                     android:text="Clear All"
                     android:id="@+id/bt_clear"
                     fancy:mfb_icon="@string/fawi_trash_o"
                     fancy:mfb_defaultColor = "@color/accent"/>
 
             </LinearLayout>
-            <!--<Button-->
-                <!--android:id="@+id/bt_estimate"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:onClick="onClickEstimate"-->
-                <!--android:text="Estimate" />-->
-
             <com.rilixtech.materialfancybutton.MaterialFancyButton
                 android:id="@+id/bt_estimate"
                 android:layout_width="wrap_content"
                 fancy:mfb_icon="@string/fawi_file_o"
                 android:onClick="onClickEstimate"
                 fancy:mfb_text="Estimate"
+                fancy:mfb_radius="5dp"
                 android:layout_gravity="center_horizontal"
                 fancy:mfb_defaultColor = "@color/accent"
                 android:layout_height="wrap_content"/>
@@ -287,13 +285,18 @@
                 android:id="@+id/tv_estimate_out"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <com.rilixtech.materialfancybutton.MaterialFancyButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClickAbout"
+                android:gravity="bottom|end"
+                fancy:mfb_radius="10dp"
+                android:id="@+id/copyright_text"
+                android:layout_gravity="bottom|center"
+                fancy:mfb_icon="@string/fawi_copyright"
+                fancy:mfb_text="Sowdambiga Jewellers" />
         </LinearLayout>
 
     </ScrollView>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClickAbout"
-        android:layout_gravity="bottom|center"
-        android:text="Copyright  &#169; Sowdambiga Jewellers" />
+
 </LinearLayout>
