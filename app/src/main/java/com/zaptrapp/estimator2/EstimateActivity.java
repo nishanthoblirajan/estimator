@@ -18,7 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -54,6 +53,7 @@ import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.rilixtech.materialfancybutton.MaterialFancyButton;
 import com.zaptrapp.estimator2.Models.CreateBuying;
 import com.zaptrapp.estimator2.Models.CreateSelling;
 import com.zaptrapp.estimator2.Models.EstimateLog;
@@ -134,7 +134,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private RadioGroup rgHOrK;
     private RadioButton rbHallmark;
     private RadioButton rbKdm;
-    private Button btEstimate;
+    private MaterialFancyButton btEstimate;
     private TextView tvEstimateOut;
     private RecyclerView goldRecyclerView;
     private RecyclerView silverRecyclerView;
@@ -150,10 +150,11 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private EditText etGrossWeight;
     private EditText etNetWeight;
     private TextView tvPrinter;
-    private Button btAddAnotherEstimate;
+    private MaterialFancyButton btAddAnotherEstimate;
     private EditText etExtraInput;
     private MaterialSearchView searchView;
     private EditText etBuyingDesc;
+    private MaterialFancyButton btClear;
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -199,6 +200,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etExtraInput = findViewById(R.id.et_extra_input);
         searchView = findViewById(R.id.search_view);
         etBuyingDesc = findViewById(R.id.et_buying_desc);
+        btClear = (MaterialFancyButton) findViewById(R.id.bt_clear);
     }
 
     @Override
@@ -341,6 +343,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                         item2,
                         new SecondaryDrawerItem().withIdentifier(3).withName("Log"),
                         new SecondaryDrawerItem().withIdentifier(4).withName("Product List")
+
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -358,12 +361,16 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                                 startActivity(intent);
                                 break;
                             case 4:
+                                Log.d(TAG, "onItemClick: ViewProducts clicked");
                                 startActivity(new Intent(mContext, ViewProducts.class));
+                                break;
+
                         }
                         return true;
                     }
                 })
                 .build();
+
     }
 
     private void initToolbar() {
@@ -838,7 +845,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etBuyingDesc.setText("");
         buyingCount = 0;
         sellingCount = 0;
-        if(mCreateBuyingList.size()>0||mCreateSellingList.size()>0){
+        if (mCreateBuyingList.size() > 0 || mCreateSellingList.size() > 0) {
             btEstimate.setVisibility(View.VISIBLE);
         }
 //clearData();
@@ -945,7 +952,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 .show();
     }
 
-    public void showClearDialog(){
+    public void showClearDialog() {
         new MaterialStyledDialog.Builder(this)
                 .setDescription("Clear Data?")
                 .withDarkerOverlay(true)
@@ -1573,7 +1580,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     public void clearData() {
         mCreateBuyingList.clear();
         mCreateSellingList.clear();
-        Toast.makeText(mContext, "Cleared", Toast.LENGTH_SHORT).show();            btEstimate.setVisibility(View.GONE);
+        Toast.makeText(mContext, "Cleared", Toast.LENGTH_SHORT).show();
+        btEstimate.setVisibility(View.GONE);
         btEstimate.setVisibility(View.GONE);
 
     }
@@ -1581,5 +1589,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     public void onClickClearEstimate(View view) {
         clearData();
 
+    }
+
+    public void onClickAbout(View view) {
+        startActivity(new Intent(this, About.class));
     }
 }
