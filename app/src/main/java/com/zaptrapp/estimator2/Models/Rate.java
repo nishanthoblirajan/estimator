@@ -3,10 +3,9 @@ package com.zaptrapp.estimator2.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by Nishanth on 22-Dec-17.
- */
 
+
+//Not used yet
 public class Rate implements Parcelable {
     public static final Parcelable.Creator<Rate> CREATOR = new Parcelable.Creator<Rate>() {
         @Override
