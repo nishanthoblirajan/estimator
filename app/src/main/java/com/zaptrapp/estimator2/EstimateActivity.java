@@ -3,10 +3,7 @@ package com.zaptrapp.estimator2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -159,6 +156,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private EditText etBuyingDesc;
     private MaterialFancyButton btClear;
     private MaterialFancyButton copyrightText;
+    private String productSelected = "gold";
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -204,8 +202,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         etExtraInput = findViewById(R.id.et_extra_input);
         searchView = findViewById(R.id.search_view);
         etBuyingDesc = findViewById(R.id.et_buying_desc);
-        btClear = (MaterialFancyButton) findViewById(R.id.bt_clear);
-        copyrightText = (MaterialFancyButton) findViewById(R.id.copyright_text);
+        btClear = findViewById(R.id.bt_clear);
+        copyrightText = findViewById(R.id.copyright_text);
     }
 
     @Override
@@ -233,59 +231,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         //TODO  change all adapters to searchAdapter
         initSearchListener();
 
-        //SMS TESTING
-        readSMSTest();
-    }
+        retrieveProductGramRateFromFirebase();
 
 
-    //SMS TESTING
-    private void readSMSTest(){
-
-        StringBuilder smsBuilder = new StringBuilder();
-        final String SMS_URI_INBOX = "content://sms/inbox";
-        final String SMS_URI_ALL = "content://sms/";
-        try {
-            Uri uri = Uri.parse(SMS_URI_INBOX);
-            String[] projection = new String[] { "_id", "address", "person", "body", "date", "type" };
-//            Cursor cur = getContentResolver().query(uri, projection, "address='VM-BPCLMS'", null, "date desc");
-            Cursor cur = getContentResolver().query(uri, projection, null, null, "date desc");
-            if (cur.moveToFirst()) {
-                int index_Address = cur.getColumnIndex("address");
-                int index_Person = cur.getColumnIndex("person");
-                int index_Body = cur.getColumnIndex("body");
-                int index_Date = cur.getColumnIndex("date");
-                int index_Type = cur.getColumnIndex("type");
-                do {
-                    String strAddress = cur.getString(index_Address);
-                    int intPerson = cur.getInt(index_Person);
-                    String strbody = cur.getString(index_Body);
-                    long longDate = cur.getLong(index_Date);
-                    int int_Type = cur.getInt(index_Type);
-
-                    Date date = new Date(longDate);
-                    String formattedDate = new SimpleDateFormat("dd/MM/yyyy").format(date);
-                    if(strAddress.contains("BPCL")&& formattedDate.equals("21/12/2017")) {
-                        smsBuilder.append("[ ");
-                        smsBuilder.append(strAddress + ", ");
-                        smsBuilder.append(intPerson + ", ");
-                        smsBuilder.append(strbody + ", ");
-                        smsBuilder.append(longDate + ", ");
-                        smsBuilder.append(int_Type);
-                        smsBuilder.append(" ]\n\n");
-                    }
-                } while (cur.moveToNext());
-
-                if (!cur.isClosed()) {
-                    cur.close();
-                    cur = null;
-                }
-            } else {
-                smsBuilder.append("no result!");
-            } // end if
-        } catch (SQLiteException ex) {
-        Log.d("SQLiteException", ex.getMessage());
-        }
-        Log.d(TAG, "readSMSTest: "+smsBuilder.toString());
     }
 
     //TODO implementation of search view
@@ -329,7 +277,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             }
         });
     }
-
 
     private void initSearchRecycler(String query) {
         Log.d(TAG, "initSearchRecycler: ");
@@ -635,7 +582,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         //retrieve gold/silver
         String choice = sharedPreferences.getString("materialPref", "1");
         material = choice;
-
+        Log.d(TAG, "materialPref: " + choice);
         ipAddressM30 = sharedPreferences.getString("ipPref", "");
         //retrieve printer
         printer = sharedPreferences.getString("printerPref", "1");
@@ -668,6 +615,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         switch (choice) {
             case "1":
                 //This is gold
+                productSelected = "gold";
                 rbGold.setChecked(true);
                 rbGold.setEnabled(true);
                 rbSilver.setChecked(false);
@@ -676,6 +624,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 break;
             case "2":
                 //This is silver
+                productSelected = "silver";
                 rbGold.setChecked(false);
                 rbGold.setEnabled(false);
                 rbSilver.setChecked(true);
@@ -683,6 +632,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 break;
             default:
                 //This is default
+                productSelected = "gold";
                 break;
         }
     }
@@ -691,6 +641,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     protected void onResume() {
         super.onResume();
         initSharedPreference();
+        retrieveProductGramRateFromFirebase();
     }
 
     private void initRadioButtons() {
@@ -745,6 +696,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private void initDatabase() {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("estimator2");
+        databaseReference.child("testing").setValue("test");
     }
 
     public String editTextToString(EditText editText) {
@@ -1286,8 +1238,29 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 initVAs();
             }
         });
+
+
     }
 
+    private void retrieveProductGramRateFromFirebase() {
+        Log.d(TAG, "retrieveDataFromFirebase: " + productSelected);
+        DatabaseReference databaseReference2 = firebaseDatabase.getReference("estimator2/Gram Rate/" + productSelected);
+
+        databaseReference2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                double gram = Double.parseDouble(dataSnapshot.getValue(String.class));
+//                Log.d(TAG, valueAdded.toString());
+                gramRate = gram;
+                etGramRate.setText(String.valueOf(gramRate));
+                Log.d(TAG, "gramRate: " + gramRate);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
     //onCancelled
     private void initVAs() {
         belowOne = 0;
@@ -1423,9 +1396,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             mPrinter.addFeedLine(4);
             mPrinter.addText("Time " + timeStamp + "\n");
             mPrinter.addCut(Printer.CUT_FEED);
-            FirebaseDatabase firebase = FirebaseDatabase.getInstance();
-            String dateStampChild = new SimpleDateFormat("dd").format(new Date());
-            firebase.getReference("estimates").child(dateStampChild).child(timeStamp).setValue(printString.split("_")[1]);
+//            FirebaseDatabase firebase = FirebaseDatabase.getInstance();
+//            String dateStampChild = new SimpleDateFormat("dd").format(new Date());
+//            firebase.getReference("estimates").child(dateStampChild).child(timeStamp).setValue(printString.split("_")[1]);
         } catch (Exception e) {
             ShowMsg.showException(e, "", mContext);
             return false;

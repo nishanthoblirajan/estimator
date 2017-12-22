@@ -9,35 +9,67 @@ import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.Map;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+
     SharedPreferences sharedPreferences;
-
-
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+    DatabaseReference gramRateReference;
+    EditTextPreference gramRatePreference;
+    String materialChoice = "gold";
+    String TAG = SettingsFragment.class.getSimpleName();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_main);
         sharedPreferences = getPreferenceManager().getSharedPreferences();
+        initDatabase();
 
-        EditTextPreference gramRatePreference = (EditTextPreference) findPreference("gramRatePref");
-        gramRatePreference.setSummary(sharedPreferences.getString("gramRatePref",""));
+        gramRatePreference = (EditTextPreference) findPreference("gramRatePref");
 
         EditTextPreference sgstRatePreference = (EditTextPreference) findPreference("sgstRatePref");
-        sgstRatePreference.setSummary(sharedPreferences.getString("sgstRatePref",""));
+        sgstRatePreference.setSummary(sharedPreferences.getString("sgstRatePref", ""));
 
         EditTextPreference cgstRatePreference = (EditTextPreference) findPreference("cgstRatePref");
-        cgstRatePreference.setSummary(sharedPreferences.getString("cgstRatePref",""));
-
+        cgstRatePreference.setSummary(sharedPreferences.getString("cgstRatePref", ""));
 
         EditTextPreference ipPreference = (EditTextPreference) findPreference("ipPref");
-        ipPreference.setSummary(sharedPreferences.getString("ipPref",""));
+        ipPreference.setSummary(sharedPreferences.getString("ipPref", ""));
 
-
+        gramRateFromFirebase();
     }
 
+    private void gramRateFromFirebase() {
+        gramRateReference = firebaseDatabase.getReference("estimator2/Gram Rate/" + materialChoice);
+
+        gramRateReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String gramRate;
+                gramRate = dataSnapshot.getValue(String.class);
+                gramRatePreference.setSummary(gramRate);
+                Log.d(TAG, "gramRate: " + gramRate);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void initDatabase() {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("estimator2");
+    }
 
     @Override
     public void onResume() {
@@ -55,6 +87,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 updateSummary((EditTextPreference) preferenceEntry);
             }
         }
+        gramRateFromFirebase();
     }
 
     @Override
@@ -62,35 +95,49 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
         super.onPause();
     }
-        String TAG = SettingsFragment.class.getSimpleName();
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Log.d(TAG, "onSharedPreferenceChanged: ");
-        for(int i = 0; i < getPreferenceScreen().getPreferenceCount(); i++) {
+        for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); i++) {
             Log.d(TAG, "onSharedPreferenceChanged: " + key);
             // and if it's an instance of EditTextPreference class, update its summary
             Preference preference = findPreference(key);
             if (preference instanceof EditTextPreference) {
                 Log.d(TAG, "onSharedPreferenceChanged: Inside Loop");
                 updateSummary((EditTextPreference) preference);
-            }else if (preference instanceof ListPreference) {
+            } else if (preference instanceof ListPreference) {
                 Log.d(TAG, "onSharedPreferenceChanged: Inside Loop");
                 updateSummary((ListPreference) preference);
             }
         }
+
+        //Date: 22/12/2017
+        //Getting the choice of the product and the gram rate set to enable firebase integration of the gram rate
+        //for static gram rate across all connected devices
+        String choice = sharedPreferences.getString("materialPref", "1");
+        switch (choice) {
+            case "1":
+                materialChoice = "gold";
+                break;
+            case "2":
+                materialChoice = "silver";
+                break;
+        }
+        databaseReference.child("Gram Rate").child(materialChoice).setValue(gramRatePreference.getText());
+
     }
 
     private void updateSummary(EditTextPreference preference) {
         // set the EditTextPreference's summary value to its current text
-        Log.d(TAG, "updateSummary: edittextpreference "+preference.getText());
+        Log.d(TAG, "updateSummary: edittextpreference " + preference.getText());
         preference.setSummary(preference.getText());
 
     }
 
     private void updateSummary(ListPreference preference) {
         // set the EditTextPreference's summary value to its current text
-        Log.d(TAG, "updateSummary: listpreference "+preference.getEntry());
+        Log.d(TAG, "updateSummary: listpreference " + preference.getEntry());
         preference.setSummary(preference.getEntry());
 
     }
