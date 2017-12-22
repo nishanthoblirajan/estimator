@@ -3,7 +3,10 @@ package com.zaptrapp.estimator2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -229,6 +232,60 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
         //TODO  change all adapters to searchAdapter
         initSearchListener();
+
+        //SMS TESTING
+        readSMSTest();
+    }
+
+
+    //SMS TESTING
+    private void readSMSTest(){
+
+        StringBuilder smsBuilder = new StringBuilder();
+        final String SMS_URI_INBOX = "content://sms/inbox";
+        final String SMS_URI_ALL = "content://sms/";
+        try {
+            Uri uri = Uri.parse(SMS_URI_INBOX);
+            String[] projection = new String[] { "_id", "address", "person", "body", "date", "type" };
+//            Cursor cur = getContentResolver().query(uri, projection, "address='VM-BPCLMS'", null, "date desc");
+            Cursor cur = getContentResolver().query(uri, projection, null, null, "date desc");
+            if (cur.moveToFirst()) {
+                int index_Address = cur.getColumnIndex("address");
+                int index_Person = cur.getColumnIndex("person");
+                int index_Body = cur.getColumnIndex("body");
+                int index_Date = cur.getColumnIndex("date");
+                int index_Type = cur.getColumnIndex("type");
+                do {
+                    String strAddress = cur.getString(index_Address);
+                    int intPerson = cur.getInt(index_Person);
+                    String strbody = cur.getString(index_Body);
+                    long longDate = cur.getLong(index_Date);
+                    int int_Type = cur.getInt(index_Type);
+
+                    Date date = new Date(longDate);
+                    String formattedDate = new SimpleDateFormat("dd/MM/yyyy").format(date);
+                    if(strAddress.contains("BPCL")&& formattedDate.equals("21/12/2017")) {
+                        smsBuilder.append("[ ");
+                        smsBuilder.append(strAddress + ", ");
+                        smsBuilder.append(intPerson + ", ");
+                        smsBuilder.append(strbody + ", ");
+                        smsBuilder.append(longDate + ", ");
+                        smsBuilder.append(int_Type);
+                        smsBuilder.append(" ]\n\n");
+                    }
+                } while (cur.moveToNext());
+
+                if (!cur.isClosed()) {
+                    cur.close();
+                    cur = null;
+                }
+            } else {
+                smsBuilder.append("no result!");
+            } // end if
+        } catch (SQLiteException ex) {
+        Log.d("SQLiteException", ex.getMessage());
+        }
+        Log.d(TAG, "readSMSTest: "+smsBuilder.toString());
     }
 
     //TODO implementation of search view
