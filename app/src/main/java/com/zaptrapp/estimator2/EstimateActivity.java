@@ -598,9 +598,6 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 break;
         }
         try {
-            //retrieve gramrate
-            gramRate = Double.parseDouble(sharedPreferences.getString("gramRatePref", "0"));
-
             //retrieve sgst and cgst
             sgst = Double.parseDouble(sharedPreferences.getString("sgstRatePref", "0"));
             cgst = Double.parseDouble(sharedPreferences.getString("cgstRatePref", "0"));

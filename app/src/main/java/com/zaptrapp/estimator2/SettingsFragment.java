@@ -35,7 +35,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         initDatabase();
 
         gramRatePreference = (EditTextPreference) findPreference("gramRatePref");
-
+        getMaterialChoice();
         EditTextPreference sgstRatePreference = (EditTextPreference) findPreference("sgstRatePref");
         sgstRatePreference.setSummary(sharedPreferences.getString("sgstRatePref", ""));
 
@@ -96,6 +96,27 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         super.onPause();
     }
 
+    //Date: 22/12/2017
+    //Getting the choice of the product and the gram rate set to enable firebase integration of the gram rate
+    //for static gram rate across all connected devices
+    private void getMaterialChoice() {
+        String choice = sharedPreferences.getString("materialPref", "1");
+        switch (choice) {
+            case "1":
+                materialChoice = "gold";
+                break;
+            case "2":
+                materialChoice = "silver";
+                break;
+            default:
+                materialChoice = "gold";
+                break;
+
+        }
+        Log.d(TAG, "getMaterialChoice: " + materialChoice);
+        Log.d(TAG, "getMaterialChoice: " + gramRatePreference.getText());
+        //TODO Check this 23/12/2017
+    }
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Log.d(TAG, "onSharedPreferenceChanged: ");
@@ -112,18 +133,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             }
         }
 
-        //Date: 22/12/2017
-        //Getting the choice of the product and the gram rate set to enable firebase integration of the gram rate
-        //for static gram rate across all connected devices
-        String choice = sharedPreferences.getString("materialPref", "1");
-        switch (choice) {
-            case "1":
-                materialChoice = "gold";
-                break;
-            case "2":
-                materialChoice = "silver";
-                break;
-        }
+
+        getMaterialChoice();
         databaseReference.child("Gram Rate").child(materialChoice).setValue(gramRatePreference.getText());
 
     }
