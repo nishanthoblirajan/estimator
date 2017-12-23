@@ -158,4 +158,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         gramRateFromFirebase();
 
     }
+
 }
+
