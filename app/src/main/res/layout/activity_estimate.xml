@@ -30,273 +30,273 @@
 
     </FrameLayout>
 
-    3<ScrollView
+    <ScrollView
         android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:orientation="vertical">
 
-        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/tv_printer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Printer Selected"/>
+
+        <EditText
+            android:id="@+id/et_gram_rate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Gram Rate"
+            android:inputType="numberDecimal"/>
+
+        <EditText
+            android:id="@+id/et_product_gram"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Product Gram"
+            android:inputType="numberDecimal"/>
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tv_printer"
+            <RadioGroup
+                android:id="@+id/rg_product"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Printer Selected" />
-
-            <EditText
-                android:id="@+id/et_gram_rate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Gram Rate"
-                android:inputType="numberDecimal" />
-
-            <EditText
-                android:id="@+id/et_product_gram"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Product Gram"
-                android:inputType="numberDecimal" />
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="horizontal">
 
-                <RadioGroup
-                    android:id="@+id/rg_product"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/rb_gold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Gold" />
-
-                    <RadioButton
-                        android:id="@+id/rb_silver"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Silver" />
-                </RadioGroup>
-
-                <TextView
-                    android:id="@+id/tv_choice_clicked"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:text="Choice Clicked"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-            </LinearLayout>
-
-            <!--<android.support.v7.widget.RecyclerView-->
-            <!--android:id="@+id/search_recyclerView"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:overScrollMode="never"-->
-            <!--android:visibility="gone" />-->
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/gold_recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:overScrollMode="never"
-                android:visibility="gone" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/silver_recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:overScrollMode="never"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <RadioGroup
-                    android:id="@+id/rg_h_or_k"
+                <RadioButton
+                    android:id="@+id/rb_gold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:text="Gold"/>
 
-                    <RadioButton
-                        android:id="@+id/rb_hallmark"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Hallmark" />
-
-                    <RadioButton
-                        android:id="@+id/rb_kdm"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="KDM" />
-                </RadioGroup>
-
-                <CheckBox
-                    android:id="@+id/cb_buying"
+                <RadioButton
+                    android:id="@+id/rb_silver"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:text="Buying" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_buying"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <EditText
-                    android:id="@+id/et_buying_desc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="Description" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/et_buying_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Buying Price"
-                        android:inputType="numberDecimal" />
-
-                    <EditText
-                        android:id="@+id/et_gross_weight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-
-                        android:hint="Gross Weight"
-                        android:inputType="numberDecimal" />
-
-                    <EditText
-                        android:id="@+id/et_net_weight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-
-                        android:hint="Net Weight"
-                        android:inputType="numberDecimal" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <EditText
-                android:id="@+id/et_va_percentage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="VA%"
-                android:inputType="numberDecimal" />
-
-            <EditText
-                android:id="@+id/et_va_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="VA Amount"
-                android:inputType="numberDecimal" />
-
-            <EditText
-                android:id="@+id/et_extra_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="MC/g"
-                android:inputType="numberDecimal" />
+                    android:text="Silver"/>
+            </RadioGroup>
 
             <TextView
-                android:id="@+id/testing_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-            <LinearLayout
+                android:id="@+id/tv_choice_clicked"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.rilixtech.materialfancybutton.MaterialFancyButton
-                    android:id="@+id/bt_add_another_estimate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    fancy:mfb_icon="@string/fawi_plus_square"
-                    android:layout_margin="8dp"
-                    fancy:mfb_radius="5dp"
-
-                    fancy:mfb_defaultColor = "@color/accent"
-                    android:layout_gravity="center_horizontal"
-                    android:onClick="onClickAddAnotherEstimate"
-                    android:text="Add" />
-
-                <com.rilixtech.materialfancybutton.MaterialFancyButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:onClick="onClickClearEstimate"
-                    android:layout_margin="8dp"
-                    fancy:mfb_radius="5dp"
-                    fancy:mfb_borderWidth="6dp"
-                    android:text="Clear All"
-                    android:id="@+id/bt_clear"
-                    fancy:mfb_icon="@string/fawi_trash_o"
-                    fancy:mfb_defaultColor = "@color/accent"/>
-
-            </LinearLayout>
-            <com.rilixtech.materialfancybutton.MaterialFancyButton
-                android:id="@+id/bt_estimate"
-                android:layout_width="wrap_content"
-                fancy:mfb_icon="@string/fawi_file_o"
-                android:onClick="onClickEstimate"
-                fancy:mfb_text="Estimate"
-                fancy:mfb_radius="5dp"
-                android:layout_gravity="center_horizontal"
-                fancy:mfb_defaultColor = "@color/accent"
-                android:layout_height="wrap_content"/>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="testPrinter"
-                android:text="Test Printer"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tv_estimate_out"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <com.rilixtech.materialfancybutton.MaterialFancyButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="onClickAbout"
-                android:gravity="bottom|end"
-                fancy:mfb_radius="10dp"
-                android:id="@+id/copyright_text"
-                android:layout_gravity="bottom|center"
-                fancy:mfb_icon="@string/fawi_copyright"
-                fancy:mfb_text="Sowdambiga Jewellers" />
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="Choice Clicked"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
         </LinearLayout>
 
-    </ScrollView>
+        <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/search_recyclerView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:overScrollMode="never"-->
+        <!--android:visibility="gone" />-->
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/gold_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:visibility="gone"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/silver_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioGroup
+                android:id="@+id/rg_h_or_k"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rb_hallmark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Hallmark"/>
+
+                <RadioButton
+                    android:id="@+id/rb_kdm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="KDM"/>
+            </RadioGroup>
+
+            <CheckBox
+                android:id="@+id/cb_buying"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="Buying"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_buying"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/et_buying_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Description"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/et_buying_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Buying Price"
+                    android:inputType="numberDecimal"/>
+
+                <EditText
+                    android:id="@+id/et_gross_weight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+
+                    android:hint="Gross Weight"
+                    android:inputType="numberDecimal"/>
+
+                <EditText
+                    android:id="@+id/et_net_weight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+
+                    android:hint="Net Weight"
+                    android:inputType="numberDecimal"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/et_va_percentage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="VA%"
+            android:inputType="numberDecimal"/>
+
+        <EditText
+            android:id="@+id/et_va_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="VA Amount"
+            android:inputType="numberDecimal"/>
+
+        <EditText
+            android:id="@+id/et_extra_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="MC/g"
+            android:inputType="numberDecimal"/>
+
+        <TextView
+            android:id="@+id/testing_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.rilixtech.materialfancybutton.MaterialFancyButton
+                android:id="@+id/bt_add_another_estimate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="8dp"
+                android:onClick="onClickAddAnotherEstimate"
+
+                android:text="Add"
+                fancy:mfb_defaultColor="@color/accent"
+                fancy:mfb_icon="@string/fawi_plus_square"
+                fancy:mfb_radius="5dp"/>
+
+            <com.rilixtech.materialfancybutton.MaterialFancyButton
+                android:id="@+id/bt_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="8dp"
+                android:onClick="onClickClearEstimate"
+                android:text="Clear All"
+                fancy:mfb_borderWidth="6dp"
+                fancy:mfb_defaultColor="@color/accent"
+                fancy:mfb_icon="@string/fawi_trash_o"
+                fancy:mfb_radius="5dp"/>
+
+        </LinearLayout>
+        <com.rilixtech.materialfancybutton.MaterialFancyButton
+            android:id="@+id/bt_estimate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="onClickEstimate"
+            fancy:mfb_defaultColor="@color/accent"
+            fancy:mfb_icon="@string/fawi_file_o"
+            fancy:mfb_radius="5dp"
+            fancy:mfb_text="Estimate"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="testPrinter"
+            android:text="Test Printer"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tv_estimate_out"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <com.rilixtech.materialfancybutton.MaterialFancyButton
+            android:id="@+id/copyright_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            fancy:mfb_defaultColor="@color/md_blue_800"
+            android:gravity="bottom|end"
+            android:onClick="onClickAbout"
+            fancy:mfb_icon="@string/fawi_copyright"
+            fancy:mfb_radius="10dp"
+            fancy:mfb_text="Sowdambiga Jewellers"/>
+    </LinearLayout>
+
+</ScrollView>
 
 </LinearLayout>

@@ -693,7 +693,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private void initDatabase() {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("estimator2");
-        databaseReference.child("testing").setValue("test");
+
+        //For Testing
+//        databaseReference.child("testing").setValue("test");
     }
 
     public String editTextToString(EditText editText) {
