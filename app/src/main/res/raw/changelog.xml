@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelog bulletedList="true">
+    <changelogversion versionName="1.1" changeDate="Dec 23,2017">
+        <changelogtext>[b]New![/b] Enable gram rate entry and retrival from server</changelogtext>
+        <changelogtext>Change copyright color</changelogtext>
+    </changelogversion>
+    <changelogversion versionName="1.0" changeDate="Dec 18,2017">
+        <changelogtext>Initial release</changelogtext>
+    </changelogversion>
+
+
+
+</changelog>

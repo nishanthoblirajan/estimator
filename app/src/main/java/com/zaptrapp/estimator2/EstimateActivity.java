@@ -348,7 +348,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                         new DividerDrawerItem(),
                         item2,
                         new SecondaryDrawerItem().withIdentifier(3).withName("Log"),
-                        new SecondaryDrawerItem().withIdentifier(4).withName("Product List")
+                        new SecondaryDrawerItem().withIdentifier(4).withName("Product List"),
+                        new SecondaryDrawerItem().withIdentifier(5).withName("Version Log")
 
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -370,7 +371,10 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                                 Log.d(TAG, "onItemClick: ViewProducts clicked");
                                 startActivity(new Intent(mContext, ViewProducts.class));
                                 break;
-
+                            case 5:
+                                Log.d(TAG, "onItemClick: ChangeLog clicked");
+                                startActivity(new Intent(mContext, VersionLogActivity.class));
+                                break;
                         }
                         return true;
                     }
