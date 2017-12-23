@@ -130,12 +130,11 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             } else if (preference instanceof ListPreference) {
                 Log.d(TAG, "onSharedPreferenceChanged: Inside Loop");
                 updateSummary((ListPreference) preference);
+
             }
+
         }
 
-
-        getMaterialChoice();
-        databaseReference.child("Gram Rate").child(materialChoice).setValue(gramRatePreference.getText());
 
     }
 
@@ -143,6 +142,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         // set the EditTextPreference's summary value to its current text
         Log.d(TAG, "updateSummary: edittextpreference " + preference.getText());
         preference.setSummary(preference.getText());
+        if(preference ==gramRatePreference){
+            Log.d(TAG, "onSharedPreferenceChanged: gramRatePreference");
+            getMaterialChoice();
+            databaseReference.child("Gram Rate").child(materialChoice).setValue(gramRatePreference.getText());
+            gramRateFromFirebase();
+        }
 
     }
 
@@ -150,6 +155,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         // set the EditTextPreference's summary value to its current text
         Log.d(TAG, "updateSummary: listpreference " + preference.getEntry());
         preference.setSummary(preference.getEntry());
+        gramRateFromFirebase();
 
     }
 }

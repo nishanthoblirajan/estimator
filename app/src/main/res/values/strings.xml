@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Estimator 2</string>
+    <string name="app_name">Estimator</string>
     <string-array name="listArray">
         <item>Gold</item>
         <item>Silver</item>
@@ -40,7 +40,7 @@
         please cycle the power switch.\n
     </string>
     <string name="handlingmsg_err_unrecover">Please cycle the power switch of the printer.\nIf same
-        errors occurred even power cycled, the printer may out of order.
+        errors occurred even after power cycled, the printer may be out of order.
     </string>
     <string name="handlingmsg_err_overheat">Please wait until error LED of the printer turns off.
         \n
