@@ -68,6 +68,9 @@ dependencies {
 
     //change log activity
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
+    compile('com.crashlytics.sdk.android:answers:1.4.1@aar') {
+        transitive = true;
+    }
 
 
 

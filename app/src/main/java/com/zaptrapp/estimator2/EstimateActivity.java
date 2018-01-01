@@ -31,6 +31,8 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
@@ -948,6 +950,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                        registerClickEventInFabrics(1);
                         runPrintReceiptSequence(string);
 //                        mCreateEstimateList.clear();
                         showClearDialog();
@@ -959,11 +963,28 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        registerClickEventInFabrics(2);
                         clearData();
                     }
                 })
                 .setCancelable(true)
                 .show();
+    }
+
+    private void registerClickEventInFabrics(int i) {
+        switch (i) {
+            case 1:
+                Answers.getInstance().logCustom(new CustomEvent("Print Clicked"));
+                break;
+            case 2:
+                Answers.getInstance().logCustom(new CustomEvent("Clear Clicked"));
+                break;
+            default:
+                Answers.getInstance().logCustom(new CustomEvent("Error"));
+                break;
+
+
+        }
     }
 
     public void showClearDialog() {
@@ -1264,6 +1285,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             }
         });
     }
+
     //onCancelled
     private void initVAs() {
         belowOne = 0;
