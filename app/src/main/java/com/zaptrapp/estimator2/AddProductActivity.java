@@ -260,7 +260,7 @@ public class AddProductActivity extends AppCompatActivity {
     }
 
     public void onClickAddProduct(View view) {
-
+        EstimateActivity.registerClickEventInFabrics(6);
         int va_choice = rgCustomVa.getCheckedRadioButtonId();
         String vaChoice = "Error";
         switch (va_choice) {

@@ -117,6 +117,7 @@ public class EditProduct extends AppCompatActivity {
     }
 
     public void onClickChange(View view) {
+        EstimateActivity.registerClickEventInFabrics(5);
         Log.d(TAG, "onClickChange: " + materialChoice);
 
         Product newProduct = new Product(etEditProductName.getText().toString(),

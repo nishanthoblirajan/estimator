@@ -400,123 +400,126 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     //Listeners to know whether the program gram has been inputed
     private void setupListeners() {
+        try {
+            //get the product gram input and set the default VAs respective to the product gram
+            RxTextView.textChanges(etProductGram)
+                    .subscribe(new Consumer<CharSequence>() {
+                        @Override
+                        public void accept(CharSequence charSequence) throws Exception {
+                            if (charSequence.length() > 0) {
+                                showVAs();
+                                if (etGramRate.getText() != null) {
+                                    double productGram = Double.parseDouble(charSequence.toString());
+                                    estimateProductGram = productGram;
+                                    setDefaultVA(productGram);
+                                    etExtraInput.setVisibility(View.VISIBLE);
+                                    btEstimate.setVisibility(View.VISIBLE);
+                                } else {
+                                    etExtraInput.setVisibility(View.GONE);
+                                    btEstimate.setVisibility(View.GONE);
 
-        //get the product gram input and set the default VAs respective to the product gram
-        RxTextView.textChanges(etProductGram)
-                .subscribe(new Consumer<CharSequence>() {
-                    @Override
-                    public void accept(CharSequence charSequence) throws Exception {
-                        if (charSequence.length() > 0) {
-                            showVAs();
-                            if (etGramRate.getText() != null) {
-                                double productGram = Double.parseDouble(charSequence.toString());
-                                estimateProductGram = productGram;
-                                setDefaultVA(productGram);
-                                etExtraInput.setVisibility(View.VISIBLE);
-                                btEstimate.setVisibility(View.VISIBLE);
+                                    unshowVAs();
+                                }
                             } else {
                                 etExtraInput.setVisibility(View.GONE);
                                 btEstimate.setVisibility(View.GONE);
 
                                 unshowVAs();
                             }
-                        } else {
-                            etExtraInput.setVisibility(View.GONE);
-                            btEstimate.setVisibility(View.GONE);
+                            viewLog();
 
-                            unshowVAs();
                         }
-                        viewLog();
+                    });
+
+            //get the checkbox buying and set the buying boolean the buying boolean to true
+            //to check whether there is any buying input
+            cbBuying.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (b) {
+                        llBuying.setVisibility(View.VISIBLE);
+                        btEstimate.setVisibility(View.VISIBLE);
+
+                        buyingItem = true;
+
+                    } else {
+                        llBuying.setVisibility(View.GONE);
+                        buyingItem = false;
+                        btEstimate.setVisibility(View.GONE);
 
                     }
-                });
-
-        //get the checkbox buying and set the buying boolean the buying boolean to true
-        //to check whether there is any buying input
-        cbBuying.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    llBuying.setVisibility(View.VISIBLE);
-                    btEstimate.setVisibility(View.VISIBLE);
-
-                    buyingItem = true;
-
-                } else {
-                    llBuying.setVisibility(View.GONE);
-                    buyingItem = false;
-                    btEstimate.setVisibility(View.GONE);
-
+                    viewLog();
                 }
-                viewLog();
-            }
-        });
+            });
 
 
-        //get the Hallmark or KDM String from the H_or_K radiogroup
-        rgHOrK.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.rb_hallmark:
-                        hallmarkOrKDM = "Hallmark";
-                        break;
-                    case R.id.rb_kdm:
-                        hallmarkOrKDM = "KDM";
-                        break;
+            //get the Hallmark or KDM String from the H_or_K radiogroup
+            rgHOrK.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    switch (checkedId) {
+                        case R.id.rb_hallmark:
+                            hallmarkOrKDM = "Hallmark";
+                            break;
+                        case R.id.rb_kdm:
+                            hallmarkOrKDM = "KDM";
+                            break;
+                    }
+                    viewLog();
                 }
-                viewLog();
-            }
-        });
+            });
 
-        RxTextView.textChanges(etVaPercentage)
-                .subscribe(new Consumer<CharSequence>() {
-                    @Override
-                    public void accept(CharSequence charSequence) throws Exception {
-                        if (charSequence.length() > 0) {
-                            etVaNumber.setText("");
-                            estimateVaPercent = Double.parseDouble(charSequence.toString());
-                            estimateVaNumber = setVANumber(estimateVaPercent);
-                            etVaNumber.setHint(String.valueOf(estimateVaNumber));
-                        } else {
+            RxTextView.textChanges(etVaPercentage)
+                    .subscribe(new Consumer<CharSequence>() {
+                        @Override
+                        public void accept(CharSequence charSequence) throws Exception {
+                            if (charSequence.length() > 0) {
+                                etVaNumber.setText("");
+                                estimateVaPercent = Double.parseDouble(charSequence.toString());
+                                estimateVaNumber = setVANumber(estimateVaPercent);
+                                etVaNumber.setHint(String.valueOf(estimateVaNumber));
+                            } else {
 
-                            //not working
-                            setDefaultVA(estimateProductGram);
+                                //not working
+                                setDefaultVA(estimateProductGram);
 //                            estimateVaNumber = Double.parseDouble(etVaNumber.getHint().toString());
 //                            estimateVaPercent = Double.parseDouble(etVaPercentage.getHint().toString());
-                        }
+                            }
 
-                        viewLog();
-                    }
-                });
-        RxTextView.textChanges(etVaNumber)
-                .subscribe(new Consumer<CharSequence>() {
-                    @Override
-                    public void accept(CharSequence charSequence) throws Exception {
-                        if (charSequence.length() > 0) {
-                            etVaPercentage.setText("");
-                            estimateVaNumber = Double.parseDouble(charSequence.toString());
-                            estimateVaPercent = setVAPercent(estimateVaNumber);
-                            etVaPercentage.setHint(String.valueOf(estimateVaPercent));
-                        } else {
+                            viewLog();
+                        }
+                    });
+            RxTextView.textChanges(etVaNumber)
+                    .subscribe(new Consumer<CharSequence>() {
+                        @Override
+                        public void accept(CharSequence charSequence) throws Exception {
+                            if (charSequence.length() > 0) {
+                                etVaPercentage.setText("");
+                                estimateVaNumber = Double.parseDouble(charSequence.toString());
+                                estimateVaPercent = setVAPercent(estimateVaNumber);
+                                etVaPercentage.setHint(String.valueOf(estimateVaPercent));
+                            } else {
 
-                            setDefaultVA(estimateProductGram);
+                                setDefaultVA(estimateProductGram);
+                            }
+                            viewLog();
                         }
-                        viewLog();
-                    }
-                });
-        RxTextView.textChanges(etExtraInput)
-                .subscribe(new Consumer<CharSequence>() {
-                    @Override
-                    public void accept(CharSequence charSequence) throws Exception {
-                        if (charSequence.length() > 0) {
-                            estimateExtraInput = Double.parseDouble(charSequence.toString());
-                        } else {
-                            estimateExtraInput = 0;
+                    });
+            RxTextView.textChanges(etExtraInput)
+                    .subscribe(new Consumer<CharSequence>() {
+                        @Override
+                        public void accept(CharSequence charSequence) throws Exception {
+                            if (charSequence.length() > 0) {
+                                estimateExtraInput = Double.parseDouble(charSequence.toString());
+                            } else {
+                                estimateExtraInput = 0;
+                            }
+                            viewLog();
                         }
-                        viewLog();
-                    }
-                });
+                    });
+        } catch (NumberFormatException e) {
+            Toast.makeText(mContext, "Number Error", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setDefaultVA(double productGram) {
@@ -713,8 +716,14 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     }
 
     public double editTextToDouble(EditText editText) {
+
         if (editText.getText() != null) {
-            return Double.parseDouble(editText.getText().toString());
+            try {
+                return Double.parseDouble(editText.getText().toString());
+            }catch (NumberFormatException e){
+                Toast.makeText(mContext, "Number error. Try Again", Toast.LENGTH_SHORT).show();
+                return 0;
+            }
         } else {
             return 0;
         }
@@ -722,7 +731,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     //onClickAddAnother
     public void onClickAddAnotherEstimate(View view) {
-
+        registerClickEventInFabrics(4);
         String product_estimate = product;
         retrieveDataFromFirebase(product_estimate);
 
@@ -871,6 +880,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     //On Estimate Button Click
     public void onClickEstimate(View view) {
+        registerClickEventInFabrics(3);
         StringBuilder estimateStringBuilder = new StringBuilder();
 
         onClickAddAnotherEstimate(view);
@@ -971,13 +981,25 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 .show();
     }
 
-    private void registerClickEventInFabrics(int i) {
+    public static void registerClickEventInFabrics(int i) {
         switch (i) {
             case 1:
                 Answers.getInstance().logCustom(new CustomEvent("Print Clicked"));
                 break;
             case 2:
                 Answers.getInstance().logCustom(new CustomEvent("Clear Clicked"));
+                break;
+            case 3:
+                Answers.getInstance().logCustom(new CustomEvent("Estimate Clicked"));
+                break;
+            case 4:
+                Answers.getInstance().logCustom(new CustomEvent("Add Another Clicked"));
+                break;
+            case 5:
+                Answers.getInstance().logCustom(new CustomEvent("Product Changed"));
+                break;
+            case 6:
+                Answers.getInstance().logCustom(new CustomEvent("Product Added"));
                 break;
             default:
                 Answers.getInstance().logCustom(new CustomEvent("Error"));
@@ -1644,6 +1666,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     }
 
     public void onClickClearEstimate(View view) {
+        registerClickEventInFabrics(2);
         clearData();
 
     }
