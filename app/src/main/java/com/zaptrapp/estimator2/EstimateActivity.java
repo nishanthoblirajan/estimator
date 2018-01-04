@@ -815,7 +815,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private void insertSilverBuyingProducts(CreateBuying createBuying, StringBuilder stringBuilder) {
         stringBuilder.append(String.format("%-7s", createBuying.estimateBuyingDesc) + String.format("%-7s", createBuying.estimateBuyingPrice) +
                 String.format("%-7s", createBuying.estimateBuyingGrossWeight) +
-                String.format("%-7s", (createBuying.estimateBuyingGrossWeight * (createBuying.estimateBuyingNetWeight / 100))) +
+                //round off of net weight calculation from gross weight * net weight percentage
+                String.format("%-7s", round((createBuying.estimateBuyingGrossWeight * (createBuying.estimateBuyingNetWeight / 100)),2)) +
                 String.format("%12s", buyingCalculation(createBuying)) + "\n");
     }
 
