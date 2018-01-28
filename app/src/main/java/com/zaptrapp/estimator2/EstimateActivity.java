@@ -1002,6 +1002,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             case 6:
                 Answers.getInstance().logCustom(new CustomEvent("Product Added"));
                 break;
+            case 7:
+                Answers.getInstance().logCustom(new CustomEvent("Log Removed"));
+                break;
             default:
                 Answers.getInstance().logCustom(new CustomEvent("Error"));
                 break;

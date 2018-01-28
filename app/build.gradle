@@ -21,8 +21,8 @@ android {
         applicationId "com.zaptrapp.estimator2"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 12
-        versionName "1.2"
+        versionCode 122
+        versionName "1.22"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -71,9 +71,9 @@ dependencies {
     compile('com.crashlytics.sdk.android:answers:1.4.1@aar') {
         transitive = true;
     }
-//leakcanary
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+////leakcanary
+//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+//    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 
 
 }

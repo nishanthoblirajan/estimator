@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -122,8 +124,41 @@ public class LogActivity extends AppCompatActivity implements ReceiveListener {
                 return new ProductHolder(view);
             }
         };
-
         logRecyclerView.setAdapter(logAdapter);
+        final String finalMaterialChoice = materialChoice;
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.DOWN | ItemTouchHelper.UP) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                //Remove swiped item from list and notify the RecyclerView
+                final int position = viewHolder.getAdapterPosition();
+                EstimateLog estimateLog = logAdapter.getItem(position);
+
+                firebaseDatabase.getReference("estimator2").child("Estimates").child(finalMaterialChoice).child(dateStamp).child(estimateLog.getTimeStamp()).removeValue(new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        if(databaseError!=null){
+                            Toast.makeText(mContext, "Delete operation unsuccessful", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(mContext, "Log data deleted", Toast.LENGTH_SHORT).show();
+
+                            /*On successful data remove from the recycler view logAdapter,
+                                    fabrics will register the click event (#7) 'Log Item Removed'*/
+                            EstimateActivity.registerClickEventInFabrics(7);
+                        }
+                    }
+                });
+
+                logAdapter.notifyDataSetChanged();
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(logRecyclerView);
     }
 
     private void initView() {
