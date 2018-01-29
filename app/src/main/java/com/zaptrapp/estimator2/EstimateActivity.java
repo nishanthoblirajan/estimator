@@ -913,7 +913,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             }
         }
         if(selling_total!=0) {
-            estimateStringBuilder.append("Selling Total " + round(selling_total, 2)+"\n");
+            estimateStringBuilder.append("Total (Selling) " + round(selling_total, 2)+"\n");
         }
         for (int i = 0; i < mCreateBuyingList.size(); i++) {
 
@@ -930,7 +930,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             buying_total += buyingCalculation(estimateBuying);
         }
         if(buying_total!=0) {
-            estimateStringBuilder.append("Buying Total " + round(buying_total, 2)+"\n");
+            estimateStringBuilder.append("Total (Buying) " + round(buying_total, 2)+"\n");
         }
 
         //end of feature implementation 29th Jan 2018
