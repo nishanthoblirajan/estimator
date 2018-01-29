@@ -899,6 +899,22 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
             Log.d(TAG, "onClickEstimate: " + mCreateSellingList.get(i).toString());
         }
+
+        //feature implemention 29th Jan 2018
+        double selling_total = 0;
+        for (int i = 0; i < mCreateSellingList.size(); i++) {
+            switch (product) {
+                case "silver":
+                    selling_total += silverSellingCalculation(mCreateSellingList.get(i));
+                    break;
+                case "gold":
+                    selling_total += goldSellingCalculation(mCreateSellingList.get(i));
+                    break;
+            }
+        }
+        if(selling_total!=0) {
+            estimateStringBuilder.append("Selling Total " + round(selling_total, 2)+"\n");
+        }
         for (int i = 0; i < mCreateBuyingList.size(); i++) {
 
             if (buyingCount == 0) {
@@ -908,7 +924,16 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             addToPrintData(mCreateBuyingList.get(i), estimateStringBuilder);
             Log.d(TAG, "onClickEstimate: " + mCreateBuyingList.get(i).toString());
         }
+        double buying_total = 0;
+        for (int i = 0; i < mCreateBuyingList.size(); i++) {
+            CreateBuying estimateBuying = mCreateBuyingList.get(i);
+            buying_total += buyingCalculation(estimateBuying);
+        }
+        if(buying_total!=0) {
+            estimateStringBuilder.append("Buying Total " + round(buying_total, 2)+"\n");
+        }
 
+        //end of feature implementation 29th Jan 2018
 
         insertTotal(mCreateSellingList, mCreateBuyingList, estimateStringBuilder);
 
@@ -925,6 +950,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     private void insertTotal(List<CreateSelling> mCreateSellingList, List<CreateBuying> mCreateBuyingList, StringBuilder estimateStringBuilder) {
         double total = 0;
+        double selling_total = 0;
         for (int i = 0; i < mCreateSellingList.size(); i++) {
             CreateSelling estimateSelling = mCreateSellingList.get(i);
             switch (product) {
