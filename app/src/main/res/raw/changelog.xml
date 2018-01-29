@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
     <changelogversion changeDate="Jan 28,2018" versionName="1.22">
+        <changelogtext>Buying template changed</changelogtext>
         <changelogtext>Log features added</changelogtext>
         <changelogtext>Bug fix</changelogtext>
     </changelogversion>
