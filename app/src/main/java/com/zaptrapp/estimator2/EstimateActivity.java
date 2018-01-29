@@ -991,6 +991,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 
+                        Toast.makeText(mContext, "Printing", Toast.LENGTH_SHORT).show();
                         registerClickEventInFabrics(1);
                         runPrintReceiptSequence(string);
 //                        mCreateEstimateList.clear();
@@ -1003,6 +1004,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
                         registerClickEventInFabrics(2);
                         clearData();
                     }
