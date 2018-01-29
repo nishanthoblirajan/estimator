@@ -812,18 +812,21 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append("\n");
     }
 
+
     private void insertSilverBuyingProducts(CreateBuying createBuying, StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-7s", createBuying.estimateBuyingDesc) + String.format("%-7s", createBuying.estimateBuyingPrice) +
+        stringBuilder.append(String.format("%-7s", createBuying.estimateBuyingDesc) +
                 String.format("%-7s", createBuying.estimateBuyingGrossWeight) +
                 //round off of net weight calculation from gross weight * net weight percentage
                 String.format("%-7s", round((createBuying.estimateBuyingGrossWeight * (createBuying.estimateBuyingNetWeight / 100)),2)) +
+                        String.format("%-7s", createBuying.estimateBuyingPrice)+
                 String.format("%12s", buyingCalculation(createBuying)) + "\n");
     }
 
     private void insertGoldBuyingProducts(CreateBuying createBuying, StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-7s", createBuying.estimateBuyingDesc) + String.format("%-7s", createBuying.estimateBuyingPrice) +
+        stringBuilder.append(String.format("%-7s", createBuying.estimateBuyingDesc)  +
                 String.format("%-7s", createBuying.estimateBuyingGrossWeight) +
-                String.format("%-7s", createBuying.estimateBuyingNetWeight) +
+                String.format("%-7s", createBuying.estimateBuyingNetWeight)
+                        + String.format("%-7s", createBuying.estimateBuyingPrice)+
                 String.format("%12s", buyingCalculation(createBuying)) + "\n");
     }
 
@@ -851,7 +854,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append("\n------------------------------------------");
         stringBuilder.append("\n------------------BUYING------------------");
         stringBuilder.append("\n------------------------------------------\n");
-        stringBuilder.append(String.format("%-7s", "Item") + String.format("%-7s", "Price") + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%12s", "Total") + "\n");
+        stringBuilder.append(String.format("%-7s", "Item")  + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%-7s", "Price")+ String.format("%12s", "Total") + "\n");
         stringBuilder.append("------------------------------------------\n");
 
     }
