@@ -247,7 +247,6 @@ public class LogActivity extends AppCompatActivity implements ReceiveListener {
     private boolean initializeObject() {
         Log.d(TAG, "initializeObject: ");
         try {
-            //TODO added shared preference here
             mPrinter = new Printer(selected_printer,
                     Printer.MODEL_ANK,
                     this);

@@ -16,7 +16,7 @@ public class About extends AppCompatActivity {
 
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         AboutView view = AboutBuilder.with(this)
-                .setPhoto(R.mipmap.profile_picture)
+                .setPhoto(R.raw.profile_photo_fb)
                 .setCover(R.mipmap.profile_cover)
                 .setName("Obli Nishanth Oblirajan")
                 .setSubTitle("Android Developer")
