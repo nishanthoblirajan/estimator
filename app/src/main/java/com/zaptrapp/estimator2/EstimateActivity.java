@@ -1409,7 +1409,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         EstimateLog estimateLog = new EstimateLog(timeStamp, printString);
         Log.d(TAG, "runPrintReceiptSequence: ");
         Log.d(TAG, "runPrintReceiptSequence: " + estimateLog.toString());
-        Toast.makeText(mContext, PRINTER, Toast.LENGTH_SHORT).show();
+
+        //For Debug Purpose
+//        Toast.makeText(mContext, PRINTER, Toast.LENGTH_SHORT).show();
         Log.d(TAG, "runPrintReceiptSequence: Printer "+PRINTER);
         databaseReference.child("Estimates").child(product).child(dateStamp).child(estimateLog.getTimeStamp()).setValue(estimateLog);
         Log.d(TAG, "runPrintReceiptSequence: ");
