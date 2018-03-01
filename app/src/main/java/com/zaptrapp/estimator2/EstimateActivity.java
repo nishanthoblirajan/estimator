@@ -996,7 +996,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
                         PRINTER = "USB:/dev/bus/usb/001/002";
                         Toast.makeText(mContext, "Printing", Toast.LENGTH_SHORT).show();
-                        registerClickEventInFabrics(1);
+                        registerClickEventInFabrics(8);
                         runPrintReceiptSequence(string);
                         showClearDialog();
                         resetViews();
@@ -1050,6 +1050,9 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 break;
             case 7:
                 Answers.getInstance().logCustom(new CustomEvent("Log Removed"));
+                break;
+            case 8:
+                Answers.getInstance().logCustom(new CustomEvent("USB Print"));
                 break;
             default:
                 Answers.getInstance().logCustom(new CustomEvent("Error"));

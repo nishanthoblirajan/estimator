@@ -171,6 +171,16 @@ public class LogActivity extends AppCompatActivity implements ReceiveListener {
                 .setStyle(Style.HEADER_WITH_TITLE)
                 .setTitle("\u20B9 " + string.split("_")[1])
                 .setDescription(string.split("_")[0])
+                .setNeutralText("USB Print")
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                        PRINTER = "USB:/dev/bus/usb/001/002";
+                        Toast.makeText(mContext, "Printing", Toast.LENGTH_SHORT).show();
+                        runPrintReceiptSequence(string);
+                    }
+                })
                 .setPositiveText("Print")
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
