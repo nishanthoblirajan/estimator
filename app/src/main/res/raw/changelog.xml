@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<changelog bulletedList="true">
-    <changelogversion changeDate="March 1,2018" versionName="1.22">
+<changelog bulletedList="true">3
+    <changelogversion changeDate="March 1,2018" versionName="1.24">
         <changelogtext>Printing via USB</changelogtext>
+    </changelogversion>
+    <changelogversion changeDate="March 1,2018" versionName="1.23">
+        <changelogtext>Bug fix</changelogtext>
     </changelogversion>
     <changelogversion changeDate="Jan 28,2018" versionName="1.22">
         <changelogtext>Buying template changed</changelogtext>
