@@ -161,6 +161,7 @@ public class LogActivity extends AppCompatActivity implements ReceiveListener {
         itemTouchHelper.attachToRecyclerView(logRecyclerView);
     }
 
+
     private void initView() {
         logRecyclerView = findViewById(R.id.log_recyclerView);
     }

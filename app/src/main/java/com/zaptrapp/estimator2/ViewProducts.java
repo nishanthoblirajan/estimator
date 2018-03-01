@@ -14,6 +14,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -27,6 +30,7 @@ import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.zaptrapp.estimator2.Models.Product;
 import com.zaptrapp.estimator2.Models.ProductHolder;
 
@@ -42,6 +46,7 @@ public class ViewProducts extends AppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView productListRecyclerView;
     private FloatingActionButton fab;
+    private MaterialSearchView viewProductSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +57,6 @@ public class ViewProducts extends AppCompatActivity {
         initFirebase();
         setSupportActionBar(toolbar);
 
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "In Progress", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         initproductListRecycler();
 
 
@@ -73,7 +70,6 @@ public class ViewProducts extends AppCompatActivity {
     private void initView() {
         toolbar = findViewById(R.id.toolbar);
         productListRecyclerView = findViewById(R.id.product_list_recycler_view);
-        fab = findViewById(R.id.fab);
     }
 
     private void initproductListRecycler() {
@@ -98,17 +94,6 @@ public class ViewProducts extends AppCompatActivity {
         Query productListQuery = mDatabaseReference.child(materialChoice);
         Log.d(TAG, "initproductListRecycler: " + productListQuery.getRef());
         productListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        productListQuery.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                Log.d(TAG, "onDataChange: " + dataSnapshot.getValue().toString());
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
 
         FirebaseRecyclerOptions<Product> productOptions =
                 new FirebaseRecyclerOptions.Builder<Product>()
@@ -195,4 +180,5 @@ public class ViewProducts extends AppCompatActivity {
         super.onStop();
         mProductListAdapter.stopListening();
     }
+
 }

@@ -159,6 +159,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
     private MaterialFancyButton btClear;
     private MaterialFancyButton copyrightText;
     private String productSelected = "gold";
+    private MaterialFancyButton btUsbPrinter;
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -720,7 +721,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         if (editText.getText() != null) {
             try {
                 return Double.parseDouble(editText.getText().toString());
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 Toast.makeText(mContext, "Number error. Try Again", Toast.LENGTH_SHORT).show();
                 return 0;
             }
@@ -817,16 +818,16 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append(String.format("%-7s", createBuying.estimateBuyingDesc) +
                 String.format("%-7s", createBuying.estimateBuyingGrossWeight) +
                 //round off of net weight calculation from gross weight * net weight percentage
-                String.format("%-7s", round((createBuying.estimateBuyingGrossWeight * (createBuying.estimateBuyingNetWeight / 100)),2)) +
-                        String.format("%-7s", createBuying.estimateBuyingPrice)+
+                String.format("%-7s", round((createBuying.estimateBuyingGrossWeight * (createBuying.estimateBuyingNetWeight / 100)), 2)) +
+                String.format("%-7s", createBuying.estimateBuyingPrice) +
                 String.format("%12s", buyingCalculation(createBuying)) + "\n");
     }
 
     private void insertGoldBuyingProducts(CreateBuying createBuying, StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("%-7s", createBuying.estimateBuyingDesc)  +
+        stringBuilder.append(String.format("%-7s", createBuying.estimateBuyingDesc) +
                 String.format("%-7s", createBuying.estimateBuyingGrossWeight) +
                 String.format("%-7s", createBuying.estimateBuyingNetWeight)
-                        + String.format("%-7s", createBuying.estimateBuyingPrice)+
+                + String.format("%-7s", createBuying.estimateBuyingPrice) +
                 String.format("%12s", buyingCalculation(createBuying)) + "\n");
     }
 
@@ -854,7 +855,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         stringBuilder.append("\n------------------------------------------");
         stringBuilder.append("\n------------------BUYING------------------");
         stringBuilder.append("\n------------------------------------------\n");
-        stringBuilder.append(String.format("%-7s", "Item")  + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%-7s", "Price")+ String.format("%12s", "Total") + "\n");
+        stringBuilder.append(String.format("%-7s", "Item") + String.format("%-7s", "G.Wt") + String.format("%-7s", "N.Wt") + String.format("%-7s", "Price") + String.format("%12s", "Total") + "\n");
         stringBuilder.append("------------------------------------------\n");
 
     }
@@ -912,8 +913,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                     break;
             }
         }
-        if(selling_total!=0) {
-            estimateStringBuilder.append("Total (Selling) " + round(selling_total, 2)+"\n");
+        if (selling_total != 0) {
+            estimateStringBuilder.append("Total (Selling) " + round(selling_total, 2) + "\n");
         }
         for (int i = 0; i < mCreateBuyingList.size(); i++) {
 
@@ -929,8 +930,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
             CreateBuying estimateBuying = mCreateBuyingList.get(i);
             buying_total += buyingCalculation(estimateBuying);
         }
-        if(buying_total!=0) {
-            estimateStringBuilder.append("Total (Buying) " + round(buying_total, 2)+"\n");
+        if (buying_total != 0) {
+            estimateStringBuilder.append("Total (Buying) " + round(buying_total, 2) + "\n");
         }
 
         //end of feature implementation 29th Jan 2018
@@ -940,6 +941,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         Log.d(TAG, "onClickEstimate: " + estimateStringBuilder.toString());
         //show Material Dialog
         showDialog(estimateStringBuilder.toString());
+
 
 
         //TODO enable it while testing
@@ -987,6 +989,19 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 .setDescription(string.split("_")[0])
                 .withDialogAnimation(true)
                 .setPositiveText("Print")
+                .setNeutralText("USB Print")
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                        PRINTER = "USB:/dev/bus/usb/001/002";
+                        Toast.makeText(mContext, "Printing", Toast.LENGTH_SHORT).show();
+                        registerClickEventInFabrics(1);
+                        runPrintReceiptSequence(string);
+                        showClearDialog();
+                        resetViews();
+                    }
+                })
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -1376,6 +1391,7 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         belowOne = product.getLessThanOne();
         one = product.getOne();
         two = product.getTwo();
+        two = product.getTwo();
         three = product.getThree();
         four = product.getFour();
         five = product.getFive();
@@ -1390,6 +1406,8 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
         EstimateLog estimateLog = new EstimateLog(timeStamp, printString);
         Log.d(TAG, "runPrintReceiptSequence: ");
         Log.d(TAG, "runPrintReceiptSequence: " + estimateLog.toString());
+        Toast.makeText(mContext, PRINTER, Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "runPrintReceiptSequence: Printer "+PRINTER);
         databaseReference.child("Estimates").child(product).child(dateStamp).child(estimateLog.getTimeStamp()).setValue(estimateLog);
         Log.d(TAG, "runPrintReceiptSequence: ");
         try {

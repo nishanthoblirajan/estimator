@@ -17,6 +17,7 @@
                 style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="Chosen Product" />
             <RadioGroup
                 android:id="@+id/rg_add"

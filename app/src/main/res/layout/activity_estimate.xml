@@ -248,6 +248,7 @@
                 fancy:mfb_icon="@string/fawi_plus_square"
                 fancy:mfb_radius="5dp"/>
 
+
             <com.rilixtech.materialfancybutton.MaterialFancyButton
                 android:id="@+id/bt_clear"
                 android:layout_width="wrap_content"

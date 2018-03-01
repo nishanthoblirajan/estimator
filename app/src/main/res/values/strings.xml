@@ -53,5 +53,5 @@
         battery.\nBattery of printer is almost empty.\n
     </string>
     <string name="handlingmsg_err_offline">Printer is offline.\n</string>
-    <string name="title_activity_view_products">View Products</string>
+    <string name="title_activity_view_products">Products</string>
 </resources>
