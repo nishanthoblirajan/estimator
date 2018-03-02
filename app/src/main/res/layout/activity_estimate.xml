@@ -262,6 +262,7 @@
                 fancy:mfb_icon="@string/fawi_trash_o"
                 fancy:mfb_radius="5dp"/>
 
+
         </LinearLayout>
         <com.rilixtech.materialfancybutton.MaterialFancyButton
             android:id="@+id/bt_estimate"

@@ -20,6 +20,8 @@
         <item>2</item>
     </string-array>
 
+    <string name="btn_discovery">Discovery</string>
+    <string name="title_target">Target</string>
     <string name="title_err_code">Error Code</string>
     <string name="title_err_method">Method</string>
     <string name="title_msg_result">Result</string>

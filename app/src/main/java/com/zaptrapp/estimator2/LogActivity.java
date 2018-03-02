@@ -1,6 +1,8 @@
 package com.zaptrapp.estimator2;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -171,21 +173,14 @@ public class LogActivity extends AppCompatActivity implements ReceiveListener {
                 .setStyle(Style.HEADER_WITH_TITLE)
                 .setTitle("\u20B9 " + string.split("_")[1])
                 .setDescription(string.split("_")[0])
-                .setNeutralText("USB Print")
-                .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
-                        PRINTER = "USB:/dev/bus/usb/001/002";
-                        Toast.makeText(mContext, "Printing", Toast.LENGTH_SHORT).show();
-                        runPrintReceiptSequence(string);
-                    }
-                })
                 .setPositiveText("Print")
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        runPrintReceiptSequence(string);
+                        Intent i = new Intent(getApplicationContext(),DiscoveryActivity.class);
+                        i.putExtra("stringToPrint",string);
+                        startActivityForResult(i,858);
+                        Toast.makeText(mContext, "Choose Printer", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setScrollable(true,20)
@@ -504,5 +499,17 @@ public class LogActivity extends AppCompatActivity implements ReceiveListener {
     private void initDatabase() {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("estimator2");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode){
+            case 858:
+                if(resultCode== Activity.RESULT_OK){
+                    PRINTER = data.getStringExtra("Target");
+                    runPrintReceiptSequence(data.getStringExtra("stringToPrint"));
+                }
+        }
     }
 }

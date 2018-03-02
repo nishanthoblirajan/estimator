@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
+    <changelogversion changeDate="March 2,2018" versionName="1.25">
+        <changelogtext>Printer Finder</changelogtext>
+    </changelogversion>
     <changelogversion changeDate="March 1,2018" versionName="1.24">
         <changelogtext>Printing via USB</changelogtext>
     </changelogversion>

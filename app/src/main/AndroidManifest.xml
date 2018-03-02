@@ -44,6 +44,8 @@
             android:label="About"
             android:theme="@style/AppTheme"/>
         <activity android:name=".VersionLogActivity">
+    </activity>
+        <activity android:name=".DiscoveryActivity">
         </activity>
     </application>
 

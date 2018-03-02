@@ -1,5 +1,6 @@
 package com.zaptrapp.estimator2;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -989,29 +990,20 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
                 .setDescription(string.split("_")[0])
                 .withDialogAnimation(true)
                 .setPositiveText("Print")
-                .setNeutralText("USB Print")
-                .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
-                        PRINTER = "USB:/dev/bus/usb/001/002";
-                        Toast.makeText(mContext, "Printing", Toast.LENGTH_SHORT).show();
-                        registerClickEventInFabrics(8);
-                        runPrintReceiptSequence(string);
-                        showClearDialog();
-                        resetViews();
-                    }
-                })
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 
-                        Toast.makeText(mContext, "Printing", Toast.LENGTH_SHORT).show();
-                        registerClickEventInFabrics(1);
-                        runPrintReceiptSequence(string);
-//                        mCreateEstimateList.clear();
-                        showClearDialog();
-                        resetViews();
+                        Intent i = new Intent(getApplicationContext(),DiscoveryActivity.class);
+                        i.putExtra("stringToPrint",string);
+                        startActivityForResult(i,858);
+                        Toast.makeText(mContext, "Choose Printer", Toast.LENGTH_SHORT).show();
+
+//                        registerClickEventInFabrics(1);
+//                        runPrintReceiptSequence(string);
+////                        mCreateEstimateList.clear();
+//                        showClearDialog();
+//                        resetViews();
                     }
                 })
                 .setScrollable(true, 20)
@@ -1731,5 +1723,24 @@ public class EstimateActivity extends AppCompatActivity implements ReceiveListen
 
     public void onClickAbout(View view) {
         startActivity(new Intent(this, About.class));
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode){
+            case 858:
+                if(resultCode== Activity.RESULT_OK){
+                    PRINTER = data.getStringExtra("Target");
+//                    For Development Purpose
+//                    Toast.makeText(mContext, PRINTER, Toast.LENGTH_SHORT).show();
+                    registerClickEventInFabrics(1);
+                    runPrintReceiptSequence(data.getStringExtra("stringToPrint"));
+//                        mCreateEstimateList.clear();
+                    showClearDialog();
+                    resetViews();
+                }
+        }
     }
 }

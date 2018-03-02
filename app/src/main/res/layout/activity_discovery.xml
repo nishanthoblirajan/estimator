@@ -1,0 +1,35 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+
+    android:orientation="vertical" android:background="#FFFFFF">
+
+
+    <com.rilixtech.materialfancybutton.MaterialFancyButton
+        android:layout_marginTop="8dp"
+        android:id="@+id/btnRestart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        fancy:mfb_defaultColor="@color/accent"
+        fancy:mfb_icon="@string/fawi_retweet"
+        fancy:mfb_radius="5dp"
+        fancy:mfb_text="RESTART"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PRINTERS"
+        android:id="@+id/txtList"
+        android:layout_marginTop="5dp"
+        android:textColor="#000000" />
+
+    <ListView
+        android:id="@+id/lstReceiveData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:cacheColorHint="#ffffff">
+    </ListView>
+
+</LinearLayout>
