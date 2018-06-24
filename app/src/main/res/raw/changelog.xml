@@ -1,21 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
-    <changelogversion changeDate="March 2,2018" versionName="1.25">
-        <changelogtext>Printer Finder</changelogtext>
-    </changelogversion>
-    <changelogversion changeDate="March 1,2018" versionName="1.24">
-        <changelogtext>Printing via USB</changelogtext>
-    </changelogversion>
-    <changelogversion changeDate="March 1,2018" versionName="1.23">
+    <changelogversion changeDate="June 24,2018" versionName="1.3">
         <changelogtext>Bug fix</changelogtext>
-    </changelogversion>
-    <changelogversion changeDate="Jan 28,2018" versionName="1.22">
-        <changelogtext>Buying template changed</changelogtext>
-        <changelogtext>Log features added</changelogtext>
-        <changelogtext>Bug fix</changelogtext>
-    </changelogversion>
-    <changelogversion changeDate="Jan 27,2018" versionName="1.21">
-        <changelogtext>Added LeakCanary</changelogtext>
     </changelogversion>
     <changelogversion changeDate="Jan 4,2018" versionName="1.2">
         <changelogtext>Added analytics</changelogtext>
