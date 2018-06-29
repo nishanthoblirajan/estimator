@@ -6,6 +6,7 @@ buildscript {
     dependencies {
         classpath 'io.fabric.tools:gradle:1.+'
     }
+
 }
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
@@ -21,8 +22,8 @@ android {
         applicationId "com.zaptrapp.estimator2"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 12
-        versionName "1.2"
+        versionCode 16
+        versionName "1.25"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -58,7 +59,7 @@ dependencies {
         transitive = true
     }
 
-    implementation("com.mikepenz:materialdrawer:6.0.1@aar") {
+    implementation("com.mikepenz:materialdrawer:6.0.8@aar") {
         transitive = true
     }
     implementation 'com.github.jrvansuita:MaterialAbout:0.2.3'
